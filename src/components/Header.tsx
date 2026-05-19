@@ -1,0 +1,139 @@
+import { useLocation, Link } from 'react-router-dom'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import Logo from '../assets/Layer _1.svg'
+import NavIcon from '../assets/Vector _3.svg'
+import { navSlideDown } from '../lib/animations'
+
+const FEATURE_NAV = [
+  { label: 'SCENARIOS',      to: '/page3' },
+  { label: 'KNOWLEDGE HUB', to: '/page5' },
+  { label: 'BLITZ',          to: '/page4' },
+  { label: 'PROFILE',        to: '/page10' },
+  { label: 'GUESS THE RANK', to: '/page8' },
+  { label: 'TRIVIA',         to: '/page6' },
+]
+
+const TRIVIA_PATHS = new Set(['/page6', '/page7', '/page9', '/page11', '/page12'])
+const BLITZ_PATHS  = new Set(['/page4'])
+const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...TRIVIA_PATHS, ...BLITZ_PATHS])
+
+export default function Header() {
+  const { pathname } = useLocation()
+  const reduced = useReducedMotion()
+
+  const isHome        = pathname === '/'
+  const isFeatures    = pathname === '/page2'
+  const isFeaturePage = FEATURE_PATHS.has(pathname)
+
+  const { scrollY } = useScroll()
+  const headerOpacity = useTransform(scrollY, [0, 120], reduced ? [1, 1] : [1, 0.85])
+  const headerBlur    = useTransform(scrollY, [0, 120], reduced ? ['blur(0px)', 'blur(0px)'] : ['blur(0px)', 'blur(8px)'])
+
+  return (
+    <motion.header
+      className="fixed top-0 left-0 w-full z-50 h-[85.2px] overflow-hidden"
+      style={{ backgroundColor: 'rgba(0, 20, 51, 0.9)', opacity: headerOpacity, backdropFilter: headerBlur }}
+      variants={navSlideDown}
+      initial={reduced ? false : 'hidden'}
+      animate="show"
+    >
+      <motion.div
+        className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#3AF9FF]/40 to-transparent z-10"
+        initial={reduced ? false : { scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }}
+        style={{ transformOrigin: 'left' }}
+      />
+
+      <div className="relative z-10 flex items-center w-full h-full">
+
+        <motion.img
+          src={Logo}
+          alt="GamerSense"
+          className="ml-[79px] w-[170px] h-[30.74px] object-contain flex-shrink-0"
+          initial={reduced ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        />
+
+        <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[28px]">
+          {isFeaturePage ? (
+            FEATURE_NAV.map(({ label, to }, i) => {
+              const active = label === 'TRIVIA' ? TRIVIA_PATHS.has(pathname)
+                           : label === 'BLITZ'  ? BLITZ_PATHS.has(pathname)
+                           : pathname === to
+              return (
+                <Link key={label} to={to} className="flex items-center gap-[4px] no-underline cursor-pointer">
+                  {active && (
+                    <img src={NavIcon} alt="" className="w-[10px] h-[13px] rotate-180 flex-shrink-0" />
+                  )}
+                  <motion.span
+                    className="font-beaufort font-medium leading-none transition-colors duration-200"
+                    style={{
+                      fontSize: '15px',
+                      color: active ? '#01F7FF' : '#FFFCF6',
+                    }}
+                    initial={reduced ? false : { opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 + i * 0.05 }}
+                  >
+                    {label}
+                  </motion.span>
+                </Link>
+              )
+            })
+          ) : (
+            <>
+              <Link to="/" className="flex items-center gap-[4px] no-underline cursor-pointer">
+                {isHome && (
+                  <img src={NavIcon} alt="" className="w-[10.44px] h-[13.92px] rotate-180 flex-shrink-0" />
+                )}
+                <motion.span
+                  className="font-beaufort text-[17px] font-medium leading-none transition-colors duration-200"
+                  style={{ color: isHome ? '#01F7FF' : '#FFFCF6' }}
+                  initial={reduced ? false : { opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                >
+                  HOME
+                </motion.span>
+              </Link>
+
+              <Link to="/page2" className="flex items-center gap-[4px] no-underline cursor-pointer">
+                {isFeatures && (
+                  <img src={NavIcon} alt="" className="w-[10.44px] h-[13.92px] rotate-180 flex-shrink-0" />
+                )}
+                <motion.span
+                  className="font-beaufort text-[17px] font-medium leading-none transition-colors duration-200"
+                  style={{ color: isFeatures ? '#01F7FF' : '#FFFCF6' }}
+                  initial={reduced ? false : { opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.6 }}
+                >
+                  FEATURES
+                </motion.span>
+              </Link>
+            </>
+          )}
+        </nav>
+
+        {isHome && (
+          <motion.div
+            className="absolute right-[89px] top-1/2 -translate-y-1/2 w-[103px] h-[34px] p-[2px] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity duration-200"
+            initial={reduced ? false : { opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.7 }}
+            whileTap={reduced ? {} : { scale: 0.97 }}
+          >
+            <div className="w-full h-full bg-[#0F1E2D]/95 flex items-center justify-center">
+              <span className="font-beaufort text-[12px] font-bold text-[#FFFCF6] tracking-wider leading-none">
+                LOGIN
+              </span>
+            </div>
+          </motion.div>
+        )}
+
+      </div>
+    </motion.header>
+  )
+}
