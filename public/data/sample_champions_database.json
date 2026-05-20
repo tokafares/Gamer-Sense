@@ -1,0 +1,201 @@
+{
+  "version": "14.23.1",
+  "lastUpdated": "2025-05-20",
+  "totalChampions": 170,
+  "champions": [
+    {
+      "id": "Ahri",
+      "key": "103",
+      "name": "Ahri",
+      "title": "the Nine-Tailed Fox",
+      "role": "Mid",
+      "tags": ["Mage", "Assassin"],
+      "difficulty": 3,
+      "description": "A nine-tailed fox spirit from Ionia, Ahri is a mobile magical assassin who excels at picking off isolated targets before dashing to safety. Her playstyle rewards roaming, wave management, and setting up picks with charm + flash combos. She thrives in mid-game skirmishes where enemies are spread out, but struggles in coordinated team fights where enemies stick together.",
+      "strengths": [
+        "Excellent at isolating and picking off single out-of-position targets",
+        "High mobility (Spirit Rush) allows her to create distance and kite defensively",
+        "Strong roam pressure forces enemies into reactive plays",
+        "Charm (E) is a high-impact engage tool for picks or peel"
+      ],
+      "weaknesses": [
+        "Falls off significantly if she doesn't secure early kills",
+        "Vulnerable in teamfights when charm is on cooldown",
+        "Extremely gold-dependent to stay relevant",
+        "Struggles against coordinated group play and instant CC"
+      ],
+      "gameSenseTip": "Ahri thrives when enemies are split. Ask: 'Are enemies grouped and protecting each other?' If YES → retreat. If NO → look for picks on isolated targets.",
+      "color": "#B366D9",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/Ahri.png",
+      "stats": {
+        "damage": 4,
+        "burstPotential": 5,
+        "durability": 2,
+        "crowdControl": 3,
+        "mobility": 5,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Jinx",
+      "key": "222",
+      "name": "Jinx",
+      "title": "the Loose Cannon",
+      "role": "ADC",
+      "tags": ["Marksman"],
+      "difficulty": 2,
+      "description": "Jinx is a chaotic ADC from Zaun who excels at dealing massive area damage with her minigun and rocket launcher. Her playstyle revolves around switching weapons to adapt to teamfight phases and using Fishbones (rockets) for AOE executes. She's strongest in teamfights where enemies are grouped, but extremely vulnerable to ganks and burst damage due to zero mobility.",
+      "strengths": [
+        "Unmatched area damage in teamfights with Fishbones (rocket launcher)",
+        "Resets on kills/assists (Get Excited!) make her a legendary teamfight carry",
+        "Chompers (W) and Super Mega Death Rocket (R) provide map control",
+        "Minigun (Pow-Pow) ramps attack speed for sustained damage"
+      ],
+      "weaknesses": [
+        "ZERO mobility—no dash, no escape tools; extremely vulnerable to ganks",
+        "Weak to burst damage and all-ins early game",
+        "Falls off hard if caught alone; needs team protection",
+        "Slow attack speed early before items and ramp-up"
+      ],
+      "gameSenseTip": "Jinx needs 3 things: (1) Teamfights where enemies are grouped, (2) Protection from burst, (3) Room to auto-attack safely. Ask: 'Can my team protect me while I right-click them to death?' If NO → Jinx is useless.",
+      "color": "#F50B7B",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jinx_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/Jinx.png",
+      "stats": {
+        "damage": 5,
+        "burstPotential": 2,
+        "durability": 1,
+        "crowdControl": 2,
+        "mobility": 1,
+        "rangeControl": 4
+      }
+    },
+    {
+      "id": "Garen",
+      "key": "86",
+      "name": "Garen",
+      "title": "the Might of Demacia",
+      "role": "Top",
+      "tags": ["Fighter", "Tank"],
+      "difficulty": 1,
+      "description": "Garen is a tanky top laner from Demacia who excels at running down enemies with his spinning sword (Judgment). His playstyle is straightforward—build tankiness, engage enemies, and silence/execute them. He's strongest in extended fights where he can absorb damage and dish out retaliation, but struggles against kiting and ranged poke.",
+      "strengths": [
+        "Massive sustained damage in extended fights (Judgment spin)",
+        "Incredible tankiness allows absorbing huge amounts of damage",
+        "Silence (Q) shuts down ability-reliant champions mid-fight",
+        "Executes low-health enemies with Demacian Justice (R) true damage",
+        "Passive health regen sustains in lane without backing"
+      ],
+      "weaknesses": [
+        "Extremely vulnerable to kiting and crowd control",
+        "No real engage tool—relies on walking at enemies",
+        "Weak against ranged poke before tankiness items",
+        "Falls off late game when enemies build armor"
+      ],
+      "gameSenseTip": "Garen needs TARGETS IN FRONT OF HIM. Ask: 'Can I run at them without dying?' If enemies are ranged, poke before he's close, or CC constantly → Garen is useless. Position near enemy lines, wait for chaos, then run down low-health targets.",
+      "color": "#5A9FBE",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/Garen.png",
+      "stats": {
+        "damage": 4,
+        "burstPotential": 2,
+        "durability": 5,
+        "crowdControl": 1,
+        "mobility": 1,
+        "rangeControl": 1
+      }
+    },
+    {
+      "id": "Caitlyn",
+      "key": "51",
+      "name": "Caitlyn",
+      "title": "the Sheriff of Piltover",
+      "role": "ADC",
+      "tags": ["Marksman"],
+      "difficulty": 2,
+      "description": "Caitlyn is a long-range ADC from Piltover who dominates laning phase with her range advantage and trap setup. Her playstyle revolves around controlling space with Yordle Snap Traps, poking enemies from safety, and executing targets with Ace in the Hole (R). She's strongest in sieges and poke scenarios, but falls off mid-game if she doesn't snowball her early lead.",
+      "strengths": [
+        "Longest base attack range (650) dominates laning phase trades",
+        "Yordle Snap Traps create zone control and set up kills",
+        "Ace in the Hole (R) is a guaranteed execute on low-health targets",
+        "90 Caliber Net (E) provides self-peel and repositioning",
+        "Excellent tower pushing and siege with range advantage"
+      ],
+      "weaknesses": [
+        "Falls off mid-game (levels 11-16) if not snowballing",
+        "Vulnerable to all-in engage champions who gap-close (Leona, Nautilus)",
+        "Traps are predictable and easily avoided by experienced players",
+        "Relies heavily on team peel to survive teamfights",
+        "Lower DPS than other ADCs in pure auto-attack battles"
+      ],
+      "gameSenseTip": "Caitlyn wins by controlling space, not by fighting. Ask: 'Am I ahead and can I poke safely?' If YES → set traps, poke, siege. If NO (behind or enemies have engage) → play defensively and wait for late game power spike.",
+      "color": "#00A8E8",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Caitlyn_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/Caitlyn.png",
+      "stats": {
+        "damage": 4,
+        "burstPotential": 3,
+        "durability": 2,
+        "crowdControl": 2,
+        "mobility": 2,
+        "rangeControl": 5
+      }
+    },
+    {
+      "id": "Braum",
+      "key": "201",
+      "name": "Braum",
+      "title": "the Heart of the Freljord",
+      "role": "Support",
+      "tags": ["Support", "Tank"],
+      "difficulty": 2,
+      "description": "Braum is a tanky support from the Freljord who excels at protecting his allies with his giant shield (Unbreakable). His playstyle revolves around engaging with Winter's Bite (Q), blocking damage with his shield, and stunning enemies with Concussive Blows (passive). He's strongest in extended fights where he can peel for carries, but struggles to make proactive plays when behind.",
+      "strengths": [
+        "Unbreakable (E) blocks ALL projectiles for allies behind him",
+        "Concussive Blows (passive) stuns enemies when allies auto-attack marked targets",
+        "Winter's Bite (Q) is a long-range slow that sets up engages or peel",
+        "Glacial Fissure (R) is a massive AOE knockup for teamfight control",
+        "Extremely tanky with high health and resistances"
+      ],
+      "weaknesses": [
+        "Very low damage output—can't threaten enemies alone",
+        "Struggles to create proactive plays when team is behind",
+        "Vulnerable to poke and ranged harass in lane",
+        "Reliant on allies following up on his engages and CC",
+        "Slow movement speed makes him easy to kite"
+      ],
+      "gameSenseTip": "Braum is a reactive tank, not a playmaker. Ask: 'Is my carry safe?' If YES → position aggressively to threaten engage. If NO (carry is in danger) → use Unbreakable to block damage and peel with Q/passive stun. Never overextend alone.",
+      "color": "#6BC5D2",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Braum_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/Braum.png",
+      "stats": {
+        "damage": 1,
+        "burstPotential": 1,
+        "durability": 5,
+        "crowdControl": 5,
+        "mobility": 1,
+        "rangeControl": 2
+      }
+    }
+  ],
+  "roleMapping": {
+    "Top": ["Garen", "Aatrox", "Sett", "Galio", "K'Sante"],
+    "Jungle": ["Amumu", "Nocturne", "Rek'Sai"],
+    "Mid": ["Ahri", "Brand", "Anivia", "Akali"],
+    "ADC": ["Jinx", "Caitlyn", "Ashe", "Senna"],
+    "Support": ["Braum", "Lulu"]
+  },
+  "championColors": {
+    "Ahri": "#B366D9",
+    "Jinx": "#F50B7B",
+    "Garen": "#5A9FBE",
+    "Caitlyn": "#00A8E8",
+    "Braum": "#6BC5D2",
+    "Aatrox": "#FF0000",
+    "Ashe": "#FFFFFF",
+    "Brand": "#FF6B1A",
+    "Anivia": "#00C8D7",
+    "Amumu": "#2ECC71"
+  }
+}

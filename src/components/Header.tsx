@@ -23,7 +23,8 @@ export default function Header() {
 
   const isHome        = pathname === '/'
   const isFeatures    = pathname === '/page2'
-  const isFeaturePage = FEATURE_PATHS.has(pathname)
+  const isChampion    = pathname.startsWith('/champion/')
+  const isFeaturePage = FEATURE_PATHS.has(pathname) || isChampion
 
   const { scrollY } = useScroll()
   const headerOpacity = useTransform(scrollY, [0, 120], reduced ? [1, 1] : [1, 0.85])
@@ -59,8 +60,9 @@ export default function Header() {
         <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[28px]">
           {isFeaturePage ? (
             FEATURE_NAV.map(({ label, to }, i) => {
-              const active = label === 'TRIVIA' ? TRIVIA_PATHS.has(pathname)
-                           : label === 'BLITZ'  ? BLITZ_PATHS.has(pathname)
+              const active = label === 'TRIVIA'         ? TRIVIA_PATHS.has(pathname)
+                           : label === 'BLITZ'          ? BLITZ_PATHS.has(pathname)
+                           : label === 'KNOWLEDGE HUB'  ? (pathname === to || isChampion)
                            : pathname === to
               return (
                 <Link key={label} to={to} className="flex items-center gap-[4px] no-underline cursor-pointer">

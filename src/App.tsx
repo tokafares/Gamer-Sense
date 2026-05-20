@@ -20,6 +20,7 @@ import Page9 from './pages/Page9'
 import Page10 from './pages/Page10'
 import Page11 from './pages/Page11'
 import Page12 from './pages/Page12'
+import ChampionDetail from './pages/ChampionDetail'
 
 function Landing() {
   return (
@@ -74,6 +75,7 @@ function App() {
       <Route path="/page10" element={<Page10 />} />
       <Route path="/page11" element={<Page11 />} />
       <Route path="/page12" element={<Page12 />} />
+      <Route path="/champion/:id" element={<ChampionDetail />} />
       </Routes>
     </>
   )

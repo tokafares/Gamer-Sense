@@ -96,6 +96,25 @@ Used on all section headings:
 </div>
 ```
 
+## Champion System
+
+### Architecture
+- Types: `src/types/champion.ts` — `Champion`, `ChampionsData`, `Role`
+- Hook: `src/hooks/useChampions.ts` — fetches `/data/champions.json`, module-level cache + listener queue prevents duplicate requests when multiple components mount simultaneously
+- Grid page: `src/pages/Page5.tsx` — role filter, search, hover preview modal
+- Detail page: `src/pages/ChampionDetail.tsx` — route `/champion/:id`
+- App.tsx: `<Route path="/champion/:id" element={<ChampionDetail />} />`
+- Header: `isChampion = pathname.startsWith('/champion/')` → `isFeaturePage = FEATURE_PATHS.has(pathname) || isChampion` + active highlight for 'KNOWLEDGE HUB' nav item
+
+### Scrollable grid inside a fixed-height background panel
+Use `overflow: hidden` on the outer div (bg image owner) and `overflow-y: auto` on the inner grid div. The outer clips scroll overflow; the background stays fixed. Scrollbar CSS lives in `index.css` under `.champion-grid-scroll`.
+
+### Fixed-position tooltip — avoid transform conflict with Framer Motion
+Never combine CSS `transform: translateY(-50%)` with Framer Motion's `x`/`y` animate values — they overwrite each other. Center vertically with `top: '50%'` and `marginTop: -N` (half estimated height) instead.
+
+### Dynamic-prefix routes + nav active state
+For routes like `/champion/:id` in a feature group: detect with `pathname.startsWith('/champion/')`, apply to both `isFeaturePage` and the per-nav-item `active` check for 'KNOWLEDGE HUB'.
+
 ## CSS Rules & Gotchas
 
 ### z-index only works on positioned elements
@@ -134,4 +153,42 @@ style={{
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
 }}
-```
+
+---
+
+## Champion System Task
+
+### Build complete champion pages for all 181 League of Legends champions
+
+**Data:** `/public/data/champions.json` (181 champions ready to use)
+**Reference:** `/public/data/sample_champions_database.json` (5 examples)
+**Full Specs:** `COMPLETE_CHAMPION_SYSTEM_IMPLEMENTATION.md`
+
+### 1. Update Page5.tsx (Knowledge Hub)
+Add to existing page:
+- Load champions from `/public/data/champions.json`
+- Role filter buttons (already exist, make them functional)
+- Search bar above grid
+- Hover effect: blur grid + show preview modal
+- Click champion → navigate to `/champion/[name]`
+
+### 2. Create ChampionDetail.tsx
+New dynamic route: `/champion/:name`
+
+Page sections:
+- Hero: Splash art + name overlay (use champion.color for gradient)
+- Info + Stats: Two columns (description left, stat bars right)
+- Strengths/Weaknesses: Two columns with bullets
+- Game Sense Tip: Highlighted box with 💡
+- Navigation: Prev/Next/Back buttons
+
+### Design:
+- Match existing Gamersense dark theme (navy bg, cyan accents)
+- Use champion.color for per-champion theming (hero gradient, stats bars, borders)
+- Follow existing card/button styles from Page5
+
+### Notes:
+- Use React Router dynamic routes
+- Filter/search champions by role and name
+- Responsive layout
+- Use existing animation patterns (see Framer Motion section above)

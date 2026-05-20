@@ -1,0 +1,5511 @@
+{
+  "version": "16.10.1",
+  "lastUpdated": "2025-05-20",
+  "totalChampions": 172,
+  "champions": [
+    {
+      "id": "Aatrox",
+      "key": "1",
+      "name": "Aatrox",
+      "title": "Champion #1",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Aatrox is a Top lane champion.",
+      "strengths": [
+        "Aatrox has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Aatrox has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Aatrox, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Aatrox.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ahri",
+      "key": "2",
+      "name": "Ahri",
+      "title": "Champion #2",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ahri is a Mid lane champion.",
+      "strengths": [
+        "Ahri has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ahri has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ahri, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#B366D9",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ahri.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Akali",
+      "key": "3",
+      "name": "Akali",
+      "title": "Champion #3",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Akali is a Mid lane champion.",
+      "strengths": [
+        "Akali has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Akali has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Akali, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#32C8A0",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Akali_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Akali.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Akshan",
+      "key": "4",
+      "name": "Akshan",
+      "title": "Champion #4",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Akshan is a Top lane champion.",
+      "strengths": [
+        "Akshan has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Akshan has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Akshan, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#D4AF37",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Akshan_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Akshan.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Alistar",
+      "key": "5",
+      "name": "Alistar",
+      "title": "Champion #5",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Alistar is a Support lane champion.",
+      "strengths": [
+        "Alistar has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Alistar has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Alistar, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Alistar_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Alistar.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ambessa",
+      "key": "6",
+      "name": "Ambessa",
+      "title": "Champion #6",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ambessa is a Top lane champion.",
+      "strengths": [
+        "Ambessa has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ambessa has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ambessa, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ambessa_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ambessa.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Amumu",
+      "key": "7",
+      "name": "Amumu",
+      "title": "Champion #7",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Amumu is a Jungle lane champion.",
+      "strengths": [
+        "Amumu has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Amumu has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Amumu, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2ECC71",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Amumu_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Amumu.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Anivia",
+      "key": "8",
+      "name": "Anivia",
+      "title": "Champion #8",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Anivia is a Mid lane champion.",
+      "strengths": [
+        "Anivia has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Anivia has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Anivia, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#00C8D7",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Anivia_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Anivia.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Annie",
+      "key": "9",
+      "name": "Annie",
+      "title": "Champion #9",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Annie is a Mid lane champion.",
+      "strengths": [
+        "Annie has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Annie has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Annie, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF6B6B",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Annie_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Annie.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Aphelios",
+      "key": "10",
+      "name": "Aphelios",
+      "title": "Champion #10",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Aphelios is a ADC lane champion.",
+      "strengths": [
+        "Aphelios has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Aphelios has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Aphelios, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aphelios_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Aphelios.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ashe",
+      "key": "11",
+      "name": "Ashe",
+      "title": "Champion #11",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ashe is a ADC lane champion.",
+      "strengths": [
+        "Ashe has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ashe has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ashe, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FFFFFF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ashe_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ashe.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "AurelionSol",
+      "key": "12",
+      "name": "Aurelion Sol",
+      "title": "Champion #12",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Aurelion Sol is a Mid lane champion.",
+      "strengths": [
+        "Aurelion Sol has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Aurelion Sol has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Aurelion Sol, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/AurelionSol_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/AurelionSol.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Aurora",
+      "key": "13",
+      "name": "Aurora",
+      "title": "Champion #13",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Aurora is a Mid lane champion.",
+      "strengths": [
+        "Aurora has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Aurora has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Aurora, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9370DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aurora_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Aurora.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Azir",
+      "key": "14",
+      "name": "Azir",
+      "title": "Champion #14",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Azir is a Mid lane champion.",
+      "strengths": [
+        "Azir has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Azir has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Azir, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#DAA520",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Azir_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Azir.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Bard",
+      "key": "15",
+      "name": "Bard",
+      "title": "Champion #15",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Bard is a Support lane champion.",
+      "strengths": [
+        "Bard has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Bard has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Bard, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FFD700",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Bard_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Bard.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Belveth",
+      "key": "16",
+      "name": "Bel'Veth",
+      "title": "Champion #16",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Bel'Veth is a Jungle lane champion.",
+      "strengths": [
+        "Bel'Veth has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Bel'Veth has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Bel'Veth, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#800080",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Belveth_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Belveth.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Blitzcrank",
+      "key": "17",
+      "name": "Blitzcrank",
+      "title": "Champion #17",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Blitzcrank is a Support lane champion.",
+      "strengths": [
+        "Blitzcrank has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Blitzcrank has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Blitzcrank, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Blitzcrank_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Blitzcrank.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Brand",
+      "key": "18",
+      "name": "Brand",
+      "title": "Champion #18",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Brand is a Mid lane champion.",
+      "strengths": [
+        "Brand has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Brand has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Brand, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF6B1A",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Brand_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Brand.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Braum",
+      "key": "19",
+      "name": "Braum",
+      "title": "Champion #19",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Braum is a Support lane champion.",
+      "strengths": [
+        "Braum has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Braum has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Braum, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#6BC5D2",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Braum_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Braum.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Briar",
+      "key": "20",
+      "name": "Briar",
+      "title": "Champion #20",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Briar is a Jungle lane champion.",
+      "strengths": [
+        "Briar has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Briar has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Briar, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Briar_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Briar.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Caitlyn",
+      "key": "21",
+      "name": "Caitlyn",
+      "title": "Champion #21",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Caitlyn is a ADC lane champion.",
+      "strengths": [
+        "Caitlyn has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Caitlyn has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Caitlyn, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#00A8E8",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Caitlyn_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Caitlyn.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Camille",
+      "key": "22",
+      "name": "Camille",
+      "title": "Champion #22",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Camille is a Top lane champion.",
+      "strengths": [
+        "Camille has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Camille has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Camille, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#5DADE2",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Camille_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Camille.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Cassiopeia",
+      "key": "23",
+      "name": "Cassiopeia",
+      "title": "Champion #23",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Cassiopeia is a Mid lane champion.",
+      "strengths": [
+        "Cassiopeia has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Cassiopeia has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Cassiopeia, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Cassiopeia_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Cassiopeia.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Chogath",
+      "key": "24",
+      "name": "Cho'Gath",
+      "title": "Champion #24",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Cho'Gath is a Top lane champion.",
+      "strengths": [
+        "Cho'Gath has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Cho'Gath has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Cho'Gath, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8E44AD",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Chogath_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Chogath.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Corki",
+      "key": "25",
+      "name": "Corki",
+      "title": "Champion #25",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Corki is a Mid lane champion.",
+      "strengths": [
+        "Corki has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Corki has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Corki, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Corki_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Corki.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Darius",
+      "key": "26",
+      "name": "Darius",
+      "title": "Champion #26",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Darius is a Top lane champion.",
+      "strengths": [
+        "Darius has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Darius has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Darius, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#B22222",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Darius_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Darius.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Diana",
+      "key": "27",
+      "name": "Diana",
+      "title": "Champion #27",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Diana is a Jungle lane champion.",
+      "strengths": [
+        "Diana has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Diana has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Diana, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#C0C0C0",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Diana_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Diana.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "DrMundo",
+      "key": "28",
+      "name": "Dr.Mundo",
+      "title": "Champion #28",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Dr.Mundo is a Top lane champion.",
+      "strengths": [
+        "Dr.Mundo has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Dr.Mundo has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Dr.Mundo, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/DrMundo_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/DrMundo.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Draven",
+      "key": "29",
+      "name": "Draven",
+      "title": "Champion #29",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Draven is a ADC lane champion.",
+      "strengths": [
+        "Draven has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Draven has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Draven, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#C0392B",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Draven_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Draven.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ekko",
+      "key": "30",
+      "name": "Ekko",
+      "title": "Champion #30",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ekko is a Mid lane champion.",
+      "strengths": [
+        "Ekko has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ekko has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ekko, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#1ABC9C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ekko_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ekko.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Elise",
+      "key": "31",
+      "name": "Elise",
+      "title": "Champion #31",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Elise is a Jungle lane champion.",
+      "strengths": [
+        "Elise has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Elise has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Elise, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Elise_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Elise.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Evelynn",
+      "key": "32",
+      "name": "Evelynn",
+      "title": "Champion #32",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Evelynn is a Jungle lane champion.",
+      "strengths": [
+        "Evelynn has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Evelynn has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Evelynn, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B30FF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Evelynn_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Evelynn.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ezreal",
+      "key": "33",
+      "name": "Ezreal",
+      "title": "Champion #33",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ezreal is a ADC lane champion.",
+      "strengths": [
+        "Ezreal has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ezreal has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ezreal, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F1C40F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ezreal_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ezreal.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Fiddlesticks",
+      "key": "34",
+      "name": "Fiddlesticks",
+      "title": "Champion #34",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Fiddlesticks is a Jungle lane champion.",
+      "strengths": [
+        "Fiddlesticks has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Fiddlesticks has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Fiddlesticks, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Fiddlesticks_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Fiddlesticks.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Fiora",
+      "key": "35",
+      "name": "Fiora",
+      "title": "Champion #35",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Fiora is a Top lane champion.",
+      "strengths": [
+        "Fiora has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Fiora has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Fiora, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Fiora_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Fiora.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Fizz",
+      "key": "36",
+      "name": "Fizz",
+      "title": "Champion #36",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Fizz is a Mid lane champion.",
+      "strengths": [
+        "Fizz has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Fizz has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Fizz, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Fizz_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Fizz.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Galio",
+      "key": "37",
+      "name": "Galio",
+      "title": "Champion #37",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Galio is a Mid lane champion.",
+      "strengths": [
+        "Galio has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Galio has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Galio, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Galio_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Galio.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Gangplank",
+      "key": "38",
+      "name": "Gangplank",
+      "title": "Champion #38",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Gangplank is a Top lane champion.",
+      "strengths": [
+        "Gangplank has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Gangplank has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Gangplank, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E67E22",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Gangplank_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Gangplank.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Garen",
+      "key": "39",
+      "name": "Garen",
+      "title": "Champion #39",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Garen is a Top lane champion.",
+      "strengths": [
+        "Garen has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Garen has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Garen, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#5A9FBE",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Garen.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Gnar",
+      "key": "40",
+      "name": "Gnar",
+      "title": "Champion #40",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Gnar is a Top lane champion.",
+      "strengths": [
+        "Gnar has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Gnar has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Gnar, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF8C00",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Gnar_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Gnar.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Gragas",
+      "key": "41",
+      "name": "Gragas",
+      "title": "Champion #41",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Gragas is a Top lane champion.",
+      "strengths": [
+        "Gragas has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Gragas has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Gragas, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Gragas_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Gragas.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Graves",
+      "key": "42",
+      "name": "Graves",
+      "title": "Champion #42",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Graves is a Jungle lane champion.",
+      "strengths": [
+        "Graves has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Graves has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Graves, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#A0522D",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Graves_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Graves.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Gwen",
+      "key": "43",
+      "name": "Gwen",
+      "title": "Champion #43",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Gwen is a Top lane champion.",
+      "strengths": [
+        "Gwen has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Gwen has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Gwen, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#87CEEB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Gwen_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Gwen.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Hecarim",
+      "key": "44",
+      "name": "Hecarim",
+      "title": "Champion #44",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Hecarim is a Jungle lane champion.",
+      "strengths": [
+        "Hecarim has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Hecarim has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Hecarim, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2C3E50",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Hecarim_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Hecarim.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Heimerdinger",
+      "key": "45",
+      "name": "Heimerdinger",
+      "title": "Champion #45",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Heimerdinger is a Mid lane champion.",
+      "strengths": [
+        "Heimerdinger has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Heimerdinger has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Heimerdinger, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Heimerdinger_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Heimerdinger.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Hwei",
+      "key": "46",
+      "name": "Hwei",
+      "title": "Champion #46",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Hwei is a Mid lane champion.",
+      "strengths": [
+        "Hwei has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Hwei has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Hwei, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Hwei_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Hwei.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Illaoi",
+      "key": "47",
+      "name": "Illaoi",
+      "title": "Champion #47",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Illaoi is a Top lane champion.",
+      "strengths": [
+        "Illaoi has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Illaoi has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Illaoi, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Illaoi_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Illaoi.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Irelia",
+      "key": "48",
+      "name": "Irelia",
+      "title": "Champion #48",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Irelia is a Top lane champion.",
+      "strengths": [
+        "Irelia has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Irelia has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Irelia, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Irelia_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Irelia.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ivern",
+      "key": "49",
+      "name": "Ivern",
+      "title": "Champion #49",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ivern is a Jungle lane champion.",
+      "strengths": [
+        "Ivern has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ivern has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ivern, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ivern_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ivern.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Janna",
+      "key": "50",
+      "name": "Janna",
+      "title": "Champion #50",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Janna is a Support lane champion.",
+      "strengths": [
+        "Janna has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Janna has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Janna, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#87CEEB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Janna_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Janna.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "JarvanIV",
+      "key": "51",
+      "name": "Jarvan IV",
+      "title": "Champion #51",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Jarvan IV is a Mid lane champion.",
+      "strengths": [
+        "Jarvan IV has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Jarvan IV has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Jarvan IV, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/JarvanIV_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/JarvanIV.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Jax",
+      "key": "53",
+      "name": "Jax",
+      "title": "Champion #53",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Jax is a Top lane champion.",
+      "strengths": [
+        "Jax has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Jax has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Jax, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jax_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Jax.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Jayce",
+      "key": "54",
+      "name": "Jayce",
+      "title": "Champion #54",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Jayce is a Top lane champion.",
+      "strengths": [
+        "Jayce has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Jayce has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Jayce, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jayce_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Jayce.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Jhin",
+      "key": "55",
+      "name": "Jhin",
+      "title": "Champion #55",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Jhin is a ADC lane champion.",
+      "strengths": [
+        "Jhin has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Jhin has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Jhin, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jhin_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Jhin.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Jinx",
+      "key": "56",
+      "name": "Jinx",
+      "title": "Champion #56",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Jinx is a ADC lane champion.",
+      "strengths": [
+        "Jinx has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Jinx has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Jinx, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F50B7B",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jinx_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Jinx.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "KSante",
+      "key": "57",
+      "name": "K'Sante",
+      "title": "Champion #57",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "K'Sante is a Top lane champion.",
+      "strengths": [
+        "K'Sante has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "K'Sante has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against K'Sante, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/KSante_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/KSante.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kaisa",
+      "key": "58",
+      "name": "Kai'Sa",
+      "title": "Champion #58",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kai'Sa is a ADC lane champion.",
+      "strengths": [
+        "Kai'Sa has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kai'Sa has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kai'Sa, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B30FF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kaisa_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kaisa.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kalista",
+      "key": "59",
+      "name": "Kalista",
+      "title": "Champion #59",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kalista is a ADC lane champion.",
+      "strengths": [
+        "Kalista has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kalista has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kalista, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2C3E50",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kalista_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kalista.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Karma",
+      "key": "60",
+      "name": "Karma",
+      "title": "Champion #60",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Karma is a Support lane champion.",
+      "strengths": [
+        "Karma has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Karma has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Karma, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Karma_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Karma.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Karthus",
+      "key": "61",
+      "name": "Karthus",
+      "title": "Champion #61",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Karthus is a Jungle lane champion.",
+      "strengths": [
+        "Karthus has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Karthus has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Karthus, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Karthus_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Karthus.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kassadin",
+      "key": "62",
+      "name": "Kassadin",
+      "title": "Champion #62",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kassadin is a Mid lane champion.",
+      "strengths": [
+        "Kassadin has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kassadin has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kassadin, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kassadin_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kassadin.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Katarina",
+      "key": "63",
+      "name": "Katarina",
+      "title": "Champion #63",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Katarina is a Mid lane champion.",
+      "strengths": [
+        "Katarina has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Katarina has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Katarina, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Katarina_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Katarina.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kayle",
+      "key": "64",
+      "name": "Kayle",
+      "title": "Champion #64",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kayle is a Top lane champion.",
+      "strengths": [
+        "Kayle has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kayle has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kayle, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kayle_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kayle.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kayn",
+      "key": "65",
+      "name": "Kayn",
+      "title": "Champion #65",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kayn is a Jungle lane champion.",
+      "strengths": [
+        "Kayn has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kayn has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kayn, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kayn_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kayn.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kennen",
+      "key": "66",
+      "name": "Kennen",
+      "title": "Champion #66",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kennen is a Top lane champion.",
+      "strengths": [
+        "Kennen has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kennen has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kennen, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kennen_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kennen.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Khazix",
+      "key": "67",
+      "name": "Kha'Zix",
+      "title": "Champion #67",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kha'Zix is a Jungle lane champion.",
+      "strengths": [
+        "Kha'Zix has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kha'Zix has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kha'Zix, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B30FF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Khazix_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Khazix.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kindred",
+      "key": "68",
+      "name": "Kindred",
+      "title": "Champion #68",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kindred is a Jungle lane champion.",
+      "strengths": [
+        "Kindred has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kindred has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kindred, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FFFFFF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kindred_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kindred.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Kled",
+      "key": "69",
+      "name": "Kled",
+      "title": "Champion #69",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kled is a Top lane champion.",
+      "strengths": [
+        "Kled has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kled has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kled, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kled_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Kled.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "KogMaw",
+      "key": "70",
+      "name": "Kog'Maw",
+      "title": "Champion #70",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Kog'Maw is a ADC lane champion.",
+      "strengths": [
+        "Kog'Maw has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Kog'Maw has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Kog'Maw, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/KogMaw_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/KogMaw.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Leblanc",
+      "key": "71",
+      "name": "LeBlanc",
+      "title": "Champion #71",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "LeBlanc is a Mid lane champion.",
+      "strengths": [
+        "LeBlanc has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "LeBlanc has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against LeBlanc, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Leblanc_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Leblanc.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "LeeSin",
+      "key": "72",
+      "name": "Lee Sin",
+      "title": "Champion #72",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Lee Sin is a Mid lane champion.",
+      "strengths": [
+        "Lee Sin has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Lee Sin has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Lee Sin, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/LeeSin_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/LeeSin.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Leona",
+      "key": "74",
+      "name": "Leona",
+      "title": "Champion #74",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Leona is a Support lane champion.",
+      "strengths": [
+        "Leona has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Leona has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Leona, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Leona_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Leona.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Lillia",
+      "key": "75",
+      "name": "Lillia",
+      "title": "Champion #75",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Lillia is a Jungle lane champion.",
+      "strengths": [
+        "Lillia has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Lillia has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Lillia, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9370DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lillia_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Lillia.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Lissandra",
+      "key": "76",
+      "name": "Lissandra",
+      "title": "Champion #76",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Lissandra is a Mid lane champion.",
+      "strengths": [
+        "Lissandra has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Lissandra has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Lissandra, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lissandra_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Lissandra.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Lucian",
+      "key": "77",
+      "name": "Lucian",
+      "title": "Champion #77",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Lucian is a ADC lane champion.",
+      "strengths": [
+        "Lucian has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Lucian has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Lucian, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FFFFFF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lucian_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Lucian.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Lulu",
+      "key": "78",
+      "name": "Lulu",
+      "title": "Champion #78",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Lulu is a Support lane champion.",
+      "strengths": [
+        "Lulu has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Lulu has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Lulu, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9370DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lulu_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Lulu.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Lux",
+      "key": "79",
+      "name": "Lux",
+      "title": "Champion #79",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Lux is a Mid lane champion.",
+      "strengths": [
+        "Lux has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Lux has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Lux, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lux_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Lux.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Malphite",
+      "key": "80",
+      "name": "Malphite",
+      "title": "Champion #80",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Malphite is a Top lane champion.",
+      "strengths": [
+        "Malphite has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Malphite has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Malphite, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Malphite_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Malphite.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Malzahar",
+      "key": "81",
+      "name": "Malzahar",
+      "title": "Champion #81",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Malzahar is a Mid lane champion.",
+      "strengths": [
+        "Malzahar has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Malzahar has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Malzahar, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Malzahar_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Malzahar.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Maokai",
+      "key": "82",
+      "name": "Maokai",
+      "title": "Champion #82",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Maokai is a Top lane champion.",
+      "strengths": [
+        "Maokai has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Maokai has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Maokai, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#228B22",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Maokai_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Maokai.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "MasterYi",
+      "key": "83",
+      "name": "Master Yi",
+      "title": "Champion #83",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Master Yi is a Mid lane champion.",
+      "strengths": [
+        "Master Yi has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Master Yi has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Master Yi, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/MasterYi_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/MasterYi.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Mel",
+      "key": "85",
+      "name": "Mel",
+      "title": "Champion #85",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Mel is a Mid lane champion.",
+      "strengths": [
+        "Mel has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Mel has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Mel, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Mel_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Mel.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Milio",
+      "key": "86",
+      "name": "Milio",
+      "title": "Champion #86",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Milio is a Support lane champion.",
+      "strengths": [
+        "Milio has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Milio has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Milio, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF6347",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Milio_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Milio.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "MissFortune",
+      "key": "87",
+      "name": "Miss Fortune",
+      "title": "Champion #87",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Miss Fortune is a Mid lane champion.",
+      "strengths": [
+        "Miss Fortune has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Miss Fortune has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Miss Fortune, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/MissFortune_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/MissFortune.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Mordekaiser",
+      "key": "89",
+      "name": "Mordekaiser",
+      "title": "Champion #89",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Mordekaiser is a Top lane champion.",
+      "strengths": [
+        "Mordekaiser has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Mordekaiser has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Mordekaiser, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2C3E50",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Mordekaiser_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Mordekaiser.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Morgana",
+      "key": "90",
+      "name": "Morgana",
+      "title": "Champion #90",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Morgana is a Support lane champion.",
+      "strengths": [
+        "Morgana has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Morgana has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Morgana, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Morgana_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Morgana.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Naafiri",
+      "key": "91",
+      "name": "Naafiri",
+      "title": "Champion #91",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Naafiri is a Mid lane champion.",
+      "strengths": [
+        "Naafiri has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Naafiri has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Naafiri, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Naafiri_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Naafiri.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nami",
+      "key": "92",
+      "name": "Nami",
+      "title": "Champion #92",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nami is a Support lane champion.",
+      "strengths": [
+        "Nami has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nami has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nami, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nami_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nami.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nasus",
+      "key": "93",
+      "name": "Nasus",
+      "title": "Champion #93",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nasus is a Top lane champion.",
+      "strengths": [
+        "Nasus has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nasus has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nasus, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nasus_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nasus.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nautilus",
+      "key": "94",
+      "name": "Nautilus",
+      "title": "Champion #94",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nautilus is a Support lane champion.",
+      "strengths": [
+        "Nautilus has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nautilus has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nautilus, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2C3E50",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nautilus_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nautilus.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Neeko",
+      "key": "95",
+      "name": "Neeko",
+      "title": "Champion #95",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Neeko is a Mid lane champion.",
+      "strengths": [
+        "Neeko has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Neeko has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Neeko, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF6347",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Neeko_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Neeko.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nidalee",
+      "key": "96",
+      "name": "Nidalee",
+      "title": "Champion #96",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nidalee is a Jungle lane champion.",
+      "strengths": [
+        "Nidalee has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nidalee has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nidalee, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nidalee_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nidalee.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nilah",
+      "key": "97",
+      "name": "Nilah",
+      "title": "Champion #97",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nilah is a ADC lane champion.",
+      "strengths": [
+        "Nilah has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nilah has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nilah, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nilah_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nilah.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nocturne",
+      "key": "98",
+      "name": "Nocturne",
+      "title": "Champion #98",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nocturne is a Jungle lane champion.",
+      "strengths": [
+        "Nocturne has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nocturne has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nocturne, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2C3E50",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nocturne_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nocturne.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Nunu",
+      "key": "99",
+      "name": "Nunu & Willump",
+      "title": "Champion #99",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Nunu & Willump is a Mid lane champion.",
+      "strengths": [
+        "Nunu & Willump has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Nunu & Willump has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Nunu & Willump, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nunu_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Nunu.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Olaf",
+      "key": "101",
+      "name": "Olaf",
+      "title": "Champion #101",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Olaf is a Top lane champion.",
+      "strengths": [
+        "Olaf has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Olaf has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Olaf, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Olaf_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Olaf.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Orianna",
+      "key": "102",
+      "name": "Orianna",
+      "title": "Champion #102",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Orianna is a Mid lane champion.",
+      "strengths": [
+        "Orianna has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Orianna has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Orianna, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Orianna_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Orianna.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ornn",
+      "key": "103",
+      "name": "Ornn",
+      "title": "Champion #103",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ornn is a Top lane champion.",
+      "strengths": [
+        "Ornn has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ornn has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ornn, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E67E22",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ornn_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ornn.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Pantheon",
+      "key": "104",
+      "name": "Pantheon",
+      "title": "Champion #104",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Pantheon is a Top lane champion.",
+      "strengths": [
+        "Pantheon has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Pantheon has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Pantheon, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Pantheon_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Pantheon.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Poppy",
+      "key": "105",
+      "name": "Poppy",
+      "title": "Champion #105",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Poppy is a Top lane champion.",
+      "strengths": [
+        "Poppy has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Poppy has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Poppy, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Poppy_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Poppy.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Pyke",
+      "key": "106",
+      "name": "Pyke",
+      "title": "Champion #106",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Pyke is a Support lane champion.",
+      "strengths": [
+        "Pyke has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Pyke has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Pyke, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Pyke_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Pyke.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Qiyana",
+      "key": "107",
+      "name": "Qiyana",
+      "title": "Champion #107",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Qiyana is a Mid lane champion.",
+      "strengths": [
+        "Qiyana has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Qiyana has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Qiyana, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Qiyana_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Qiyana.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Quinn",
+      "key": "108",
+      "name": "Quinn",
+      "title": "Champion #108",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Quinn is a Mid lane champion.",
+      "strengths": [
+        "Quinn has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Quinn has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Quinn, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Quinn_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Quinn.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Rakan",
+      "key": "109",
+      "name": "Rakan",
+      "title": "Champion #109",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Rakan is a Support lane champion.",
+      "strengths": [
+        "Rakan has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Rakan has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Rakan, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Rakan_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Rakan.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Rammus",
+      "key": "110",
+      "name": "Rammus",
+      "title": "Champion #110",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Rammus is a Jungle lane champion.",
+      "strengths": [
+        "Rammus has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Rammus has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Rammus, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Rammus_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Rammus.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "RekSai",
+      "key": "111",
+      "name": "Rek'Sai",
+      "title": "Champion #111",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Rek'Sai is a Jungle lane champion.",
+      "strengths": [
+        "Rek'Sai has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Rek'Sai has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Rek'Sai, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/RekSai_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/RekSai.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Rell",
+      "key": "112",
+      "name": "Rell",
+      "title": "Champion #112",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Rell is a Support lane champion.",
+      "strengths": [
+        "Rell has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Rell has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Rell, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#2C3E50",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Rell_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Rell.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Renata",
+      "key": "113",
+      "name": "Renata Glasc",
+      "title": "Champion #113",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Renata Glasc is a Mid lane champion.",
+      "strengths": [
+        "Renata Glasc has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Renata Glasc has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Renata Glasc, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Renata_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Renata.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Renekton",
+      "key": "115",
+      "name": "Renekton",
+      "title": "Champion #115",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Renekton is a Top lane champion.",
+      "strengths": [
+        "Renekton has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Renekton has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Renekton, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Renekton_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Renekton.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Rengar",
+      "key": "116",
+      "name": "Rengar",
+      "title": "Champion #116",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Rengar is a Jungle lane champion.",
+      "strengths": [
+        "Rengar has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Rengar has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Rengar, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Rengar_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Rengar.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Riven",
+      "key": "117",
+      "name": "Riven",
+      "title": "Champion #117",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Riven is a Top lane champion.",
+      "strengths": [
+        "Riven has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Riven has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Riven, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FFFFFF",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Riven_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Riven.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Rumble",
+      "key": "118",
+      "name": "Rumble",
+      "title": "Champion #118",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Rumble is a Top lane champion.",
+      "strengths": [
+        "Rumble has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Rumble has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Rumble, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Rumble_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Rumble.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ryze",
+      "key": "119",
+      "name": "Ryze",
+      "title": "Champion #119",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ryze is a Mid lane champion.",
+      "strengths": [
+        "Ryze has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ryze has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ryze, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ryze_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ryze.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Samira",
+      "key": "120",
+      "name": "Samira",
+      "title": "Champion #120",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Samira is a ADC lane champion.",
+      "strengths": [
+        "Samira has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Samira has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Samira, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Samira_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Samira.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Sejuani",
+      "key": "121",
+      "name": "Sejuani",
+      "title": "Champion #121",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Sejuani is a Jungle lane champion.",
+      "strengths": [
+        "Sejuani has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Sejuani has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Sejuani, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#87CEEB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Sejuani_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Sejuani.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Senna",
+      "key": "122",
+      "name": "Senna",
+      "title": "Champion #122",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Senna is a Support lane champion.",
+      "strengths": [
+        "Senna has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Senna has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Senna, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Senna_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Senna.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Seraphine",
+      "key": "123",
+      "name": "Seraphine",
+      "title": "Champion #123",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Seraphine is a Support lane champion.",
+      "strengths": [
+        "Seraphine has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Seraphine has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Seraphine, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF69B4",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Seraphine_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Seraphine.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Sett",
+      "key": "124",
+      "name": "Sett",
+      "title": "Champion #124",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Sett is a Top lane champion.",
+      "strengths": [
+        "Sett has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Sett has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Sett, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Sett_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Sett.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Shaco",
+      "key": "125",
+      "name": "Shaco",
+      "title": "Champion #125",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Shaco is a Jungle lane champion.",
+      "strengths": [
+        "Shaco has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Shaco has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Shaco, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Shaco_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Shaco.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Shen",
+      "key": "126",
+      "name": "Shen",
+      "title": "Champion #126",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Shen is a Top lane champion.",
+      "strengths": [
+        "Shen has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Shen has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Shen, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Shen_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Shen.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Shyvana",
+      "key": "127",
+      "name": "Shyvana",
+      "title": "Champion #127",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Shyvana is a Jungle lane champion.",
+      "strengths": [
+        "Shyvana has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Shyvana has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Shyvana, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Shyvana_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Shyvana.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Singed",
+      "key": "128",
+      "name": "Singed",
+      "title": "Champion #128",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Singed is a Top lane champion.",
+      "strengths": [
+        "Singed has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Singed has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Singed, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Singed_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Singed.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Sion",
+      "key": "129",
+      "name": "Sion",
+      "title": "Champion #129",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Sion is a Top lane champion.",
+      "strengths": [
+        "Sion has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Sion has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Sion, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Sion_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Sion.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Sivir",
+      "key": "130",
+      "name": "Sivir",
+      "title": "Champion #130",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Sivir is a ADC lane champion.",
+      "strengths": [
+        "Sivir has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Sivir has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Sivir, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Sivir_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Sivir.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Skarner",
+      "key": "131",
+      "name": "Skarner",
+      "title": "Champion #131",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Skarner is a Jungle lane champion.",
+      "strengths": [
+        "Skarner has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Skarner has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Skarner, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Skarner_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Skarner.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Smolder",
+      "key": "132",
+      "name": "Smolder",
+      "title": "Champion #132",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Smolder is a ADC lane champion.",
+      "strengths": [
+        "Smolder has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Smolder has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Smolder, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF6347",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Smolder_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Smolder.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Sona",
+      "key": "133",
+      "name": "Sona",
+      "title": "Champion #133",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Sona is a Support lane champion.",
+      "strengths": [
+        "Sona has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Sona has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Sona, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Sona_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Sona.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Soraka",
+      "key": "134",
+      "name": "Soraka",
+      "title": "Champion #134",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Soraka is a Support lane champion.",
+      "strengths": [
+        "Soraka has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Soraka has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Soraka, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Soraka_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Soraka.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Swain",
+      "key": "135",
+      "name": "Swain",
+      "title": "Champion #135",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Swain is a Support lane champion.",
+      "strengths": [
+        "Swain has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Swain has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Swain, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Swain_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Swain.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Sylas",
+      "key": "136",
+      "name": "Sylas",
+      "title": "Champion #136",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Sylas is a Mid lane champion.",
+      "strengths": [
+        "Sylas has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Sylas has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Sylas, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Sylas_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Sylas.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Syndra",
+      "key": "137",
+      "name": "Syndra",
+      "title": "Champion #137",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Syndra is a Mid lane champion.",
+      "strengths": [
+        "Syndra has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Syndra has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Syndra, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Syndra_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Syndra.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "TahmKench",
+      "key": "138",
+      "name": "Tahm Kench",
+      "title": "Champion #138",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Tahm Kench is a Mid lane champion.",
+      "strengths": [
+        "Tahm Kench has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Tahm Kench has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Tahm Kench, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/TahmKench_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/TahmKench.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Taliyah",
+      "key": "140",
+      "name": "Taliyah",
+      "title": "Champion #140",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Taliyah is a Mid lane champion.",
+      "strengths": [
+        "Taliyah has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Taliyah has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Taliyah, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Taliyah_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Taliyah.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Talon",
+      "key": "141",
+      "name": "Talon",
+      "title": "Champion #141",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Talon is a Mid lane champion.",
+      "strengths": [
+        "Talon has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Talon has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Talon, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Talon_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Talon.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Taric",
+      "key": "142",
+      "name": "Taric",
+      "title": "Champion #142",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Taric is a Support lane champion.",
+      "strengths": [
+        "Taric has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Taric has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Taric, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Taric_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Taric.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Teemo",
+      "key": "143",
+      "name": "Teemo",
+      "title": "Champion #143",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Teemo is a Top lane champion.",
+      "strengths": [
+        "Teemo has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Teemo has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Teemo, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Teemo_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Teemo.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Thresh",
+      "key": "144",
+      "name": "Thresh",
+      "title": "Champion #144",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Thresh is a Support lane champion.",
+      "strengths": [
+        "Thresh has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Thresh has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Thresh, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Thresh_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Thresh.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Tristana",
+      "key": "145",
+      "name": "Tristana",
+      "title": "Champion #145",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Tristana is a ADC lane champion.",
+      "strengths": [
+        "Tristana has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Tristana has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Tristana, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Tristana_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Tristana.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Trundle",
+      "key": "146",
+      "name": "Trundle",
+      "title": "Champion #146",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Trundle is a Top lane champion.",
+      "strengths": [
+        "Trundle has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Trundle has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Trundle, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#87CEEB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Trundle_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Trundle.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Tryndamere",
+      "key": "147",
+      "name": "Tryndamere",
+      "title": "Champion #147",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Tryndamere is a Top lane champion.",
+      "strengths": [
+        "Tryndamere has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Tryndamere has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Tryndamere, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Tryndamere_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Tryndamere.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "TwistedFate",
+      "key": "148",
+      "name": "Twisted Fate",
+      "title": "Champion #148",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Twisted Fate is a Mid lane champion.",
+      "strengths": [
+        "Twisted Fate has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Twisted Fate has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Twisted Fate, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/TwistedFate_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/TwistedFate.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Twitch",
+      "key": "150",
+      "name": "Twitch",
+      "title": "Champion #150",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Twitch is a ADC lane champion.",
+      "strengths": [
+        "Twitch has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Twitch has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Twitch, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Twitch_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Twitch.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Udyr",
+      "key": "151",
+      "name": "Udyr",
+      "title": "Champion #151",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Udyr is a Jungle lane champion.",
+      "strengths": [
+        "Udyr has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Udyr has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Udyr, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B4513",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Udyr_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Udyr.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Urgot",
+      "key": "152",
+      "name": "Urgot",
+      "title": "Champion #152",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Urgot is a Top lane champion.",
+      "strengths": [
+        "Urgot has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Urgot has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Urgot, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Urgot_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Urgot.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Varus",
+      "key": "153",
+      "name": "Varus",
+      "title": "Champion #153",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Varus is a ADC lane champion.",
+      "strengths": [
+        "Varus has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Varus has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Varus, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Varus_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Varus.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Vayne",
+      "key": "154",
+      "name": "Vayne",
+      "title": "Champion #154",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Vayne is a ADC lane champion.",
+      "strengths": [
+        "Vayne has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Vayne has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Vayne, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#C0C0C0",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Vayne_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Vayne.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Veigar",
+      "key": "155",
+      "name": "Veigar",
+      "title": "Champion #155",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Veigar is a Mid lane champion.",
+      "strengths": [
+        "Veigar has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Veigar has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Veigar, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Veigar_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Veigar.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Velkoz",
+      "key": "156",
+      "name": "Vel'Koz",
+      "title": "Champion #156",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Vel'Koz is a Mid lane champion.",
+      "strengths": [
+        "Vel'Koz has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Vel'Koz has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Vel'Koz, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Velkoz_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Velkoz.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Vex",
+      "key": "157",
+      "name": "Vex",
+      "title": "Champion #157",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Vex is a Mid lane champion.",
+      "strengths": [
+        "Vex has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Vex has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Vex, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Vex_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Vex.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Vi",
+      "key": "158",
+      "name": "Vi",
+      "title": "Champion #158",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Vi is a Jungle lane champion.",
+      "strengths": [
+        "Vi has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Vi has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Vi, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Vi_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Vi.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Viego",
+      "key": "159",
+      "name": "Viego",
+      "title": "Champion #159",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Viego is a Jungle lane champion.",
+      "strengths": [
+        "Viego has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Viego has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Viego, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Viego_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Viego.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Viktor",
+      "key": "160",
+      "name": "Viktor",
+      "title": "Champion #160",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Viktor is a Mid lane champion.",
+      "strengths": [
+        "Viktor has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Viktor has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Viktor, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Viktor_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Viktor.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Vladimir",
+      "key": "161",
+      "name": "Vladimir",
+      "title": "Champion #161",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Vladimir is a Mid lane champion.",
+      "strengths": [
+        "Vladimir has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Vladimir has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Vladimir, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Vladimir_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Vladimir.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Volibear",
+      "key": "162",
+      "name": "Volibear",
+      "title": "Champion #162",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Volibear is a Top lane champion.",
+      "strengths": [
+        "Volibear has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Volibear has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Volibear, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#87CEEB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Volibear_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Volibear.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Warwick",
+      "key": "163",
+      "name": "Warwick",
+      "title": "Champion #163",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Warwick is a Jungle lane champion.",
+      "strengths": [
+        "Warwick has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Warwick has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Warwick, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Warwick_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Warwick.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "MonkeyKing",
+      "key": "164",
+      "name": "Wukong",
+      "title": "Champion #164",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Wukong is a Jungle lane champion.",
+      "strengths": [
+        "Wukong has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Wukong has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Wukong, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F4D03F",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/MonkeyKing_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/MonkeyKing.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Xayah",
+      "key": "165",
+      "name": "Xayah",
+      "title": "Champion #165",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Xayah is a ADC lane champion.",
+      "strengths": [
+        "Xayah has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Xayah has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Xayah, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Xayah_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Xayah.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Xerath",
+      "key": "166",
+      "name": "Xerath",
+      "title": "Champion #166",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Xerath is a Mid lane champion.",
+      "strengths": [
+        "Xerath has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Xerath has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Xerath, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Xerath_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Xerath.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "XinZhao",
+      "key": "167",
+      "name": "Xin Zhao",
+      "title": "Champion #167",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Xin Zhao is a Mid lane champion.",
+      "strengths": [
+        "Xin Zhao has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Xin Zhao has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Xin Zhao, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/XinZhao_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/XinZhao.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Yasuo",
+      "key": "169",
+      "name": "Yasuo",
+      "title": "Champion #169",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Yasuo is a Mid lane champion.",
+      "strengths": [
+        "Yasuo has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Yasuo has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Yasuo, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#87CEEB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Yasuo.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Yone",
+      "key": "170",
+      "name": "Yone",
+      "title": "Champion #170",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Yone is a Mid lane champion.",
+      "strengths": [
+        "Yone has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Yone has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Yone, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#E74C3C",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yone_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Yone.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Yorick",
+      "key": "171",
+      "name": "Yorick",
+      "title": "Champion #171",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Yorick is a Top lane champion.",
+      "strengths": [
+        "Yorick has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Yorick has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Yorick, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yorick_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Yorick.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Yunara",
+      "key": "172",
+      "name": "Yunara",
+      "title": "Champion #172",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Yunara is a ADC lane champion.",
+      "strengths": [
+        "Yunara has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Yunara has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Yunara, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9370DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yunara_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Yunara.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Yuumi",
+      "key": "173",
+      "name": "Yuumi",
+      "title": "Champion #173",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Yuumi is a Support lane champion.",
+      "strengths": [
+        "Yuumi has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Yuumi has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Yuumi, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#9B59B6",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yuumi_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Yuumi.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zaahen",
+      "key": "174",
+      "name": "Zaahen",
+      "title": "Champion #174",
+      "role": "Top",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zaahen is a Top lane champion.",
+      "strengths": [
+        "Zaahen has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zaahen has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zaahen, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zaahen_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zaahen.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zac",
+      "key": "175",
+      "name": "Zac",
+      "title": "Champion #175",
+      "role": "Jungle",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zac is a Jungle lane champion.",
+      "strengths": [
+        "Zac has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zac has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zac, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#27AE60",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zac_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zac.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zed",
+      "key": "176",
+      "name": "Zed",
+      "title": "Champion #176",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zed is a Mid lane champion.",
+      "strengths": [
+        "Zed has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zed has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zed, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#8B0000",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zed_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zed.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zeri",
+      "key": "177",
+      "name": "Zeri",
+      "title": "Champion #177",
+      "role": "ADC",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zeri is a ADC lane champion.",
+      "strengths": [
+        "Zeri has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zeri has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zeri, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zeri_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zeri.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Ziggs",
+      "key": "178",
+      "name": "Ziggs",
+      "title": "Champion #178",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Ziggs is a Mid lane champion.",
+      "strengths": [
+        "Ziggs has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Ziggs has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Ziggs, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#F39C12",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ziggs_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Ziggs.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zilean",
+      "key": "179",
+      "name": "Zilean",
+      "title": "Champion #179",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zilean is a Mid lane champion.",
+      "strengths": [
+        "Zilean has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zilean has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zilean, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#3498DB",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zilean_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zilean.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zoe",
+      "key": "180",
+      "name": "Zoe",
+      "title": "Champion #180",
+      "role": "Mid",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zoe is a Mid lane champion.",
+      "strengths": [
+        "Zoe has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zoe has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zoe, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#FF69B4",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zoe_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zoe.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    },
+    {
+      "id": "Zyra",
+      "key": "181",
+      "name": "Zyra",
+      "title": "Champion #181",
+      "role": "Support",
+      "tags": [],
+      "difficulty": 2,
+      "description": "Zyra is a Support lane champion.",
+      "strengths": [
+        "Zyra has strong points in their kit",
+        "Excels in certain game phases",
+        "Good at specific playstyles"
+      ],
+      "weaknesses": [
+        "Zyra has weaknesses to exploit",
+        "Vulnerable in certain situations",
+        "Struggles against specific champions"
+      ],
+      "gameSenseTip": "When playing against Zyra, ask yourself key decision-making questions about positioning and timing.",
+      "color": "#228B22",
+      "splashUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Zyra_0.jpg",
+      "portraitUrl": "https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/Zyra.png",
+      "stats": {
+        "damage": 3,
+        "burstPotential": 3,
+        "durability": 3,
+        "crowdControl": 3,
+        "mobility": 3,
+        "rangeControl": 3
+      }
+    }
+  ]
+}
