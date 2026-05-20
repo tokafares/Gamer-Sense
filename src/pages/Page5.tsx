@@ -56,9 +56,8 @@ export default function Page5() {
     return list
   }, [champions, activeRole, search])
 
-  const tabs_h    = Math.round(113 * 670 / 1088)
-  const grid_h    = Math.round(557 * PANEL_W / 1087)
-  const SECTION_H = TOP_PAD + 60 + TITLE_MB + 52 + TABS_MB + grid_h + BOT_PAD
+  const tabs_h = Math.round(113 * 670 / 1088)
+  const grid_h = Math.round(557 * PANEL_W / 1087)
 
   return (
     <>
@@ -75,7 +74,7 @@ export default function Page5() {
               position: 'absolute',
               right: 0,
               top: 0,
-              height: `${SECTION_H}px`,
+              bottom: 0,
               width: '38%',
               objectFit: 'contain',
               objectPosition: 'right top',
