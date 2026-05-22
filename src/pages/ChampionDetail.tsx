@@ -1,11 +1,8 @@
+import type { CSSProperties } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import SeparatorLine from '../assets/Rectangle 6.svg'
 import { useChampions } from '../hooks/useChampions'
 import type { Role, ChampionStats } from '../types/champion'
-import { fadeUp, staggerContainer, staggerCards, cardItemAnim, scrollFadeUp } from '../lib/animations'
 
 const ROLE_COLORS: Record<Role, string> = {
   Top:     '#C9A227',
@@ -19,7 +16,7 @@ const ROLE_TIPS: Record<Role, string> = {
   Top:     'Ask yourself: Can they split push effectively? Do I need to match them in the sidelane, or does my team need me to group? A wrong call here costs you objectives, not just the lane.',
   Jungle:  'Ask yourself: Where will they gank next? Do I have vision on their likely path? Track their camps to predict timing — warn your laners before the gank arrives, not after.',
   Mid:     'Ask yourself: Can they roam and impact other lanes? Should I push the wave and follow, or stay safe and farm? Mid is the axis of the map — your decisions ripple to every sidelane.',
-  ADC:     'Ask yourself: Are they protected in teamfights? Can I actually reach their backline, or is diving them a trap? Identify the support\'s engage range before committing to a fight.',
+  ADC:     "Ask yourself: Are they protected in teamfights? Can I actually reach their backline, or is diving them a trap? Identify the support's engage range before committing to a fight.",
   Support: 'Ask yourself: What is their engage range? Can I punish their ADC when they step up to trade? Good support sense means controlling space and creating threats before the fight begins.',
 }
 
@@ -32,87 +29,37 @@ const STAT_LABELS: Record<keyof ChampionStats, string> = {
   rangeControl:   'RANGE CONTROL',
 }
 
-/* ─── shared heading component ───────────────────────────────────────────── */
+const BARLOW_COND = "'Barlow Condensed', sans-serif"
+const BARLOW      = "'Barlow', sans-serif"
 
-function SectionHeading({ children, color = 'teal' }: { children: string; color?: 'teal' | 'green' | 'red' | 'gradient' }) {
-  if (color === 'gradient') {
-    return (
-      <div style={{ position: 'relative', marginBottom: 28 }}>
-        <h2
-          className="font-beaufort font-bold"
-          style={{
-            fontSize: 36,
-            margin: 0,
-            lineHeight: 1.1,
-            mixBlendMode: 'multiply',
-            background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
-        >
-          {children}
-        </h2>
-        <h2
-          aria-hidden="true"
-          className="font-beaufort font-bold"
-          style={{
-            fontSize: 36,
-            margin: 0,
-            lineHeight: 1.1,
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
-        >
-          {children}
-        </h2>
-      </div>
-    )
-  }
-  const colorMap = { teal: '#00C9A7', green: '#00C9A7', red: '#EF4444' }
-  return (
-    <h2
-      className="font-beaufort font-bold"
-      style={{
-        fontSize: 32,
-        margin: 0,
-        marginBottom: 24,
-        letterSpacing: 2,
-        color: colorMap[color],
-      }}
-    >
-      {children}
-    </h2>
-  )
+const glass: CSSProperties = {
+  background: 'rgba(13, 31, 60, 0.25)',
+  backdropFilter: 'blur(40px)',
+  WebkitBackdropFilter: 'blur(40px)',
+  border: '1px solid rgba(255,255,255,0.07)',
+  borderRadius: 12,
 }
 
-/* ─── main component ─────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────── */
 
 export default function ChampionDetail() {
-  const { id }   = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const reduced  = useReducedMotion()
+  const { id }    = useParams<{ id: string }>()
+  const navigate  = useNavigate()
+  const reduced   = useReducedMotion()
   const { champions, loading } = useChampions()
 
   /* ── loading ── */
   if (loading) {
     return (
-      <>
-        <Header />
-        <main style={{ paddingTop: '85.2px', background: 'transparent', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <motion.div
-            style={{ color: '#8FA3C0', fontFamily: 'beaufort, serif', fontSize: 20, letterSpacing: 3 }}
-            animate={reduced ? {} : { opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            LOADING...
-          </motion.div>
-        </main>
-      </>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#060F1E' }}>
+        <motion.div
+          style={{ color: '#8FA3C0', fontFamily: BARLOW_COND, fontSize: 20, letterSpacing: 3 }}
+          animate={reduced ? {} : { opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          LOADING...
+        </motion.div>
+      </div>
     )
   }
 
@@ -121,32 +68,20 @@ export default function ChampionDetail() {
   /* ── not found ── */
   if (!champion) {
     return (
-      <>
-        <Header />
-        <main style={{ paddingTop: '85.2px', background: 'transparent', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24 }}>
-          <div className="font-beaufort font-bold" style={{ color: '#E8EDF5', fontSize: 40 }}>
-            Champion not found
-          </div>
-          <motion.button
-            onClick={() => navigate('/page5')}
-            style={{
-              background: 'none',
-              border: '1px solid #00C9A7',
-              color: '#00C9A7',
-              padding: '12px 32px',
-              cursor: 'pointer',
-              fontFamily: 'beaufort, serif',
-              fontSize: 14,
-              letterSpacing: 2,
-            }}
-            animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
-            transition={{ filter: { duration: 0.15 } }}
-            whileHover={reduced ? {} : { filter: 'brightness(1.2) drop-shadow(0 0 10px #00C9A7)', backgroundColor: 'rgba(0,201,167,0.08)' }}
-          >
-            ← KNOWLEDGE HUB
-          </motion.button>
-        </main>
-      </>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24, background: '#060F1E' }}>
+        <div style={{ color: '#E8EDF5', fontSize: 40, fontFamily: BARLOW_COND, fontWeight: 900 }}>
+          Champion not found
+        </div>
+        <motion.button
+          onClick={() => navigate('/page5')}
+          style={{ background: 'none', border: '1px solid #00C9A7', color: '#00C9A7', padding: '12px 32px', cursor: 'pointer', fontFamily: BARLOW_COND, fontWeight: 700, fontSize: 14, letterSpacing: 2, borderRadius: 6 }}
+          animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
+          transition={{ filter: { duration: 0.15 } }}
+          whileHover={reduced ? {} : { filter: 'brightness(1.2) drop-shadow(0 0 10px #00C9A7)', backgroundColor: 'rgba(0,201,167,0.08)' }}
+        >
+          ← KNOWLEDGE HUB
+        </motion.button>
+      </div>
     )
   }
 
@@ -154,606 +89,419 @@ export default function ChampionDetail() {
   const prevChamp  = currentIdx > 0 ? champions[currentIdx - 1] : null
   const nextChamp  = currentIdx < champions.length - 1 ? champions[currentIdx + 1] : null
   const stats      = Object.entries(champion.stats) as [keyof ChampionStats, number][]
-  const roleTip    = ROLE_TIPS[champion.role]
+  const tip        = champion.gameSenseTip || ROLE_TIPS[champion.role]
 
   return (
-    <>
-      <Header />
-      <main style={{ paddingTop: '85.2px', background: 'transparent' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', background: '#060F1E' }}>
 
-        {/* ══════════════════════════════════════════════════════════════
-            HERO
-        ══════════════════════════════════════════════════════════════ */}
-        <div style={{ position: 'relative', height: 580, overflow: 'hidden' }}>
-
-          {/* Splash art */}
-          <motion.img
-            src={champion.splashUrl}
-            alt=""
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center 18%',
-              display: 'block',
-            }}
-            initial={reduced ? false : { scale: 1.07, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.1, ease: 'easeOut' }}
-          />
-
-          {/* Flat 50% black overlay for readability */}
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.50)' }} />
-
-          {/* Gradient fade to navy at the bottom */}
-          <div style={{
+      {/* ══ BACKGROUND LAYER ══════════════════════════════════════════════════ */}
+      <div className="cd-bg">
+        {/* Splash art — left 65%, masked right edge */}
+        <img
+          className="cd-splash-img"
+          src={champion.splashUrl}
+          alt=""
+          style={{
             position: 'absolute',
-            inset: 0,
-            background: [
-              'linear-gradient(to bottom,',
-              '  transparent 0%,',
-              '  rgba(6,15,30,0.55) 55%,',
-              '  rgba(6,15,30,1.00) 100%)',
-            ].join(''),
-          }} />
+            left: 0,
+            top: 0,
+            height: '100%',
+            width: '75%',
+            objectFit: 'cover',
+            objectPosition: '20% center',
+            maskImage: 'linear-gradient(to right, black 50%, transparent 90%)',
+            WebkitMaskImage: 'linear-gradient(to right, black 50%, transparent 90%)',
+          } as CSSProperties}
+        />
+        {/* Champion-color atmospheric glow */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: `radial-gradient(ellipse at 20% 50%, ${champion.color}25 0%, transparent 60%)`,
+        }} />
+        {/* Dark vignette — only darkens behind the right panel, left stays clear */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to right, transparent 0%, transparent 40%, rgba(6,15,30,0.55) 58%, rgba(6,15,30,0.95) 100%)',
+        }} />
+      </div>
 
-          {/* Back button */}
-          <motion.button
-            onClick={() => navigate('/page5')}
-            style={{
+      {/* ══ BACK BUTTON ═══════════════════════════════════════════════════════ */}
+      <motion.button
+        onClick={() => navigate('/page5')}
+        style={{
+          position: 'fixed',
+          top: 28,
+          left: 32,
+          zIndex: 30,
+          background: 'rgba(6,15,30,0.7)',
+          border: '1px solid rgba(0,201,167,0.45)',
+          color: '#00C9A7',
+          padding: '9px 22px',
+          cursor: 'pointer',
+          fontFamily: BARLOW_COND,
+          fontWeight: 700,
+          fontSize: 13,
+          letterSpacing: '0.2em',
+          borderRadius: 6,
+          backdropFilter: 'blur(8px)',
+        }}
+        initial={reduced ? false : { opacity: 0, x: -16 }}
+        animate={{ opacity: 1, x: 0, filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
+        transition={{ default: { duration: 0.45, delay: 0.2 }, filter: { duration: 0.15 } }}
+        whileHover={reduced ? {} : {
+          filter: 'brightness(1.2) drop-shadow(0 0 8px #00C9A7)',
+          backgroundColor: 'rgba(0,201,167,0.12)',
+        }}
+      >
+        ← KNOWLEDGE HUB
+      </motion.button>
+
+      {/* ══ CHAMPION NAME — left panel, vertically centred ════════════════════ */}
+      <div className="cd-name-panel">
+        <motion.div
+          initial={reduced ? false : { opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <p style={{
+            fontSize: 11,
+            letterSpacing: '0.3em',
+            marginBottom: 14,
+            marginTop: 0,
+            color: champion.color,
+            fontFamily: BARLOW_COND,
+            fontWeight: 700,
+          }}>
+            #{String(currentIdx + 1).padStart(3, '0')} · {champion.role.toUpperCase()}
+          </p>
+
+          {/* Name — dark smoky backdrop + teal gradient + glow */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            {/* Smoky dark halo behind the text */}
+            <div style={{
               position: 'absolute',
-              top: 24,
-              left: 79,
-              background: 'rgba(6,15,30,0.65)',
-              border: '1px solid rgba(0,201,167,0.5)',
-              color: '#00C9A7',
-              padding: '8px 20px',
-              cursor: 'pointer',
-              fontFamily: 'beaufort, serif',
-              fontSize: 12,
-              letterSpacing: 2,
-              zIndex: 10,
-            }}
-            initial={reduced ? false : { opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0, filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
-            transition={{ default: { duration: 0.45, delay: 0.25 }, filter: { duration: 0.15 } }}
-            whileHover={reduced ? {} : {
-              filter: 'brightness(1.2) drop-shadow(0 0 8px #00C9A7)',
-              backgroundColor: 'rgba(0,201,167,0.12)',
-              borderColor: '#00C9A7',
-            }}
-          >
-            ← KNOWLEDGE HUB
-          </motion.button>
-
-          {/* Champion identity — centred, anchored to bottom */}
-          <div style={{ position: 'absolute', bottom: 52, left: 0, right: 0, textAlign: 'center', padding: '0 40px' }}>
-
-            {/* Animated gradient name with champion-color glow */}
-            <motion.h1
-              className={`font-beaufort font-bold ${reduced ? '' : 'hero-gradient-text'}`}
-              style={reduced ? {
-                fontSize: 96,
-                lineHeight: 1,
-                margin: 0,
-                marginBottom: 14,
-                background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              } : {
-                fontSize: 96,
-                lineHeight: 1,
-                margin: 0,
-                marginBottom: 14,
-                textShadow: `0 0 60px ${champion.color}55, 0 0 120px ${champion.color}28`,
-                filter: `drop-shadow(0 0 24px ${champion.color}50)`,
-              }}
-              initial={reduced ? false : { opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.15 }}
-            >
+              inset: '-20px -50px -20px -20px',
+              background: 'radial-gradient(ellipse at 35% 50%, rgba(2,6,18,0.92) 0%, rgba(4,10,28,0.7) 45%, transparent 75%)',
+              filter: 'blur(22px)',
+              pointerEvents: 'none',
+            }} />
+            {/* Warm golden-amber glow layer (depth) */}
+            <div style={{
+              position: 'absolute',
+              inset: '-10px -30px -10px -10px',
+              background: 'radial-gradient(ellipse at 30% 60%, rgba(180,120,20,0.18) 0%, transparent 60%)',
+              filter: 'blur(16px)',
+              pointerEvents: 'none',
+            }} />
+            <h1 style={{
+              position: 'relative',
+              fontSize: 'clamp(3.5rem, 7vw, 8.5rem)',
+              fontFamily: "'Beaufort for LOL', serif",
+              fontWeight: 700,
+              lineHeight: 0.95,
+              margin: 0,
+              marginBottom: 0,
+              color: champion.color,
+              textShadow: `
+                0 0 60px ${champion.color}90,
+                0 0 120px ${champion.color}40,
+                2px 2px 0px rgba(0,0,0,0.8),
+                0 8px 32px rgba(0,0,0,0.9)
+              `,
+              letterSpacing: '0.04em',
+              paintOrder: 'stroke fill',
+              WebkitTextStroke: `1px ${champion.color}`,
+            }}>
               {champion.name}
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              style={{
-                color: '#CBD5E1',
-                fontSize: 24,
-                fontFamily: 'beaufort, serif',
-                margin: 0,
-                marginBottom: 22,
-                textShadow: '0 2px 8px rgba(6,15,30,0.9)',
-                letterSpacing: 1,
-              }}
-              initial={reduced ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
-            >
-              {champion.title}
-            </motion.p>
-
-            {/* Role badge */}
-            <motion.span
-              style={{
-                display: 'inline-block',
-                padding: '7px 24px',
-                border: `2px solid ${ROLE_COLORS[champion.role]}`,
-                color: ROLE_COLORS[champion.role],
-                fontSize: 13,
-                fontFamily: 'beaufort, serif',
-                letterSpacing: 3,
-                background: `${ROLE_COLORS[champion.role]}18`,
-                textShadow: `0 0 12px ${ROLE_COLORS[champion.role]}80`,
-                boxShadow: `0 0 20px ${ROLE_COLORS[champion.role]}30`,
-              }}
-              initial={reduced ? false : { opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.45, delay: 0.5, type: 'spring', stiffness: 280, damping: 20 }}
-            >
-              {champion.role.toUpperCase()}
-            </motion.span>
+            </h1>
           </div>
-        </div>
 
-        {/* ══════════════════════════════════════════════════════════════
-            CONTENT
-        ══════════════════════════════════════════════════════════════ */}
-        <div style={{ maxWidth: 1280, marginLeft: 'auto', marginRight: 'auto', padding: '72px 79px 96px' }}>
+          <p style={{
+            marginTop: 14,
+            marginBottom: 0,
+            color: 'rgba(255,255,255,0.45)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(0.9rem, 1.3vw, 1.1rem)',
+            fontFamily: BARLOW,
+            letterSpacing: '0.05em',
+          }}>
+            {champion.title}
+          </p>
+        </motion.div>
+      </div>
 
-          {/* Two-column grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 64, alignItems: 'start' }}>
+      {/* ══ RIGHT SCROLLABLE COLUMN ═══════════════════════════════════════════ */}
+      <div className="cd-right-col">
 
-            {/* ── LEFT COLUMN ─────────────────────────────────────────── */}
-            <motion.div
-              variants={staggerContainer}
-              initial={reduced ? false : 'hidden'}
-              whileInView="show"
-              viewport={{ once: true, margin: '-80px' }}
-            >
+        {/* Role tag + description ─────────────────────────────────────────── */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          style={{ ...glass, padding: '24px 28px' }}
+        >
+          <span style={{
+            display: 'inline-block',
+            padding: '4px 14px',
+            border: `1px solid ${ROLE_COLORS[champion.role]}60`,
+            color: ROLE_COLORS[champion.role],
+            fontSize: 11,
+            fontFamily: BARLOW_COND,
+            fontWeight: 700,
+            letterSpacing: '0.2em',
+            background: `${ROLE_COLORS[champion.role]}15`,
+            borderRadius: 4,
+            marginBottom: 14,
+          }}>
+            {champion.role.toUpperCase()}
+          </span>
 
-              {/* Overview card */}
-              <motion.div variants={fadeUp} style={{ marginBottom: 80 }}>
-                <SectionHeading color="gradient">Overview</SectionHeading>
-                <div style={{
-                  border: `2px solid ${champion.color}`,
-                  background: `linear-gradient(135deg, ${champion.color}14 0%, rgba(13,31,60,0.80) 60%)`,
-                  padding: '40px 48px',
-                  backdropFilter: 'blur(6px)',
-                  boxShadow: `0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px ${champion.color}18`,
-                }}>
-                  {/* Role badge inside card */}
-                  <div style={{ marginBottom: 20 }}>
-                    <span style={{
-                      padding: '4px 14px',
-                      border: `1px solid ${ROLE_COLORS[champion.role]}55`,
-                      color: ROLE_COLORS[champion.role],
-                      fontSize: 11,
-                      fontFamily: 'beaufort, serif',
-                      letterSpacing: 2.5,
-                      background: `${ROLE_COLORS[champion.role]}12`,
-                    }}>
-                      {champion.role.toUpperCase()}
-                    </span>
-                  </div>
-                  <p style={{
-                    color: '#E8EDF5',
-                    fontSize: 20,
-                    lineHeight: 1.9,
-                    margin: 0,
-                    fontFamily: 'beaufort, serif',
-                  }}>
-                    {champion.description}
-                  </p>
-                </div>
-              </motion.div>
+          <p style={{
+            color: 'rgba(232,237,245,0.85)',
+            fontSize: 15,
+            lineHeight: 1.75,
+            margin: 0,
+            fontFamily: BARLOW,
+          }}>
+            {champion.description}
+          </p>
 
-              {/* Strengths */}
-              <motion.div variants={fadeUp} style={{ marginBottom: 80 }}>
-                <SectionHeading color="green">STRENGTHS</SectionHeading>
-                <motion.ul
-                  style={{ listStyle: 'none', padding: 0, margin: 0 }}
-                  variants={staggerCards}
-                >
-                  {champion.strengths.map((s, i) => (
-                    <motion.li key={i} variants={cardItemAnim} style={{ marginBottom: 16 }}>
-                      {/* outer div = entry via variants; inner motion.div = hover */}
-                      <motion.div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 16,
-                          padding: '16px 20px',
-                          border: `1px solid ${champion.color}40`,
-                          background: 'rgba(13,31,60,0.90)',
-                        }}
-                        animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
-                        transition={{ filter: { duration: 0.15 } }}
-                        whileHover={reduced ? {} : {
-                          x: 6,
-                          filter: `brightness(1.06) drop-shadow(0 0 10px ${champion.color}40)`,
-                          transition: { duration: 0.2 },
-                        }}
-                      >
-                        <span style={{
-                          color: '#00C9A7',
-                          fontSize: 26,
-                          lineHeight: 1.3,
-                          flexShrink: 0,
-                          textShadow: '0 0 10px #00C9A780',
-                        }}>
-                          ✓
-                        </span>
-                        <span style={{
-                          color: '#E8EDF5',
-                          fontSize: 19,
-                          lineHeight: 1.75,
-                          fontFamily: 'beaufort, serif',
-                        }}>
-                          {s}
-                        </span>
-                      </motion.div>
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              </motion.div>
-
-              {/* Weaknesses */}
-              <motion.div variants={fadeUp} style={{ marginBottom: 0 }}>
-                <SectionHeading color="red">WEAKNESSES</SectionHeading>
-                <motion.ul
-                  style={{ listStyle: 'none', padding: 0, margin: 0 }}
-                  variants={staggerCards}
-                >
-                  {champion.weaknesses.map((w, i) => (
-                    <motion.li key={i} variants={cardItemAnim} style={{ marginBottom: 16 }}>
-                      <motion.div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 16,
-                          padding: '16px 20px',
-                          border: '1px solid rgba(239,68,68,0.38)',
-                          background: 'rgba(13,31,60,0.90)',
-                        }}
-                        animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
-                        transition={{ filter: { duration: 0.15 } }}
-                        whileHover={reduced ? {} : {
-                          x: 6,
-                          filter: 'brightness(1.06) drop-shadow(0 0 10px rgba(239,68,68,0.40))',
-                          transition: { duration: 0.2 },
-                        }}
-                      >
-                        <span style={{
-                          color: '#EF4444',
-                          fontSize: 26,
-                          lineHeight: 1.3,
-                          flexShrink: 0,
-                          textShadow: '0 0 10px #EF444480',
-                        }}>
-                          ✗
-                        </span>
-                        <span style={{
-                          color: '#E8EDF5',
-                          fontSize: 19,
-                          lineHeight: 1.75,
-                          fontFamily: 'beaufort, serif',
-                        }}>
-                          {w}
-                        </span>
-                      </motion.div>
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              </motion.div>
-            </motion.div>
-
-            {/* ── RIGHT COLUMN ────────────────────────────────────────── */}
-            <motion.div
-              initial={reduced ? false : { opacity: 0, x: 32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-
-              {/* Stat bars */}
-              <div style={{ marginBottom: 52 }}>
-                <h3
-                  className="font-beaufort font-bold"
-                  style={{
-                    fontSize: 28,
-                    letterSpacing: 3,
-                    marginBottom: 28,
-                    marginTop: 0,
-                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  STATS
-                </h3>
-
-                {stats.map(([key, value], i) => {
-                  const pct = Math.round((value / 5) * 100)
-                  return (
-                    <div key={key} style={{ marginBottom: 22 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-                        <span style={{
-                          color: '#CBD5E1',
-                          fontSize: 12,
-                          fontFamily: 'beaufort, serif',
-                          fontWeight: 600,
-                          letterSpacing: 1.5,
-                        }}>
-                          {STAT_LABELS[key]}
-                        </span>
-                        <span style={{ color: '#E8EDF5', fontSize: 13, fontFamily: 'beaufort, serif', fontWeight: 700 }}>
-                          {value}/5
-                        </span>
-                      </div>
-                      {/* Track */}
-                      <div style={{ height: 16, background: '#1E3A5F', borderRadius: 8, overflow: 'hidden' }}>
-                        {/* Filled bar — animates from 0% to actual width */}
-                        <motion.div
-                          style={{
-                            height: '100%',
-                            background: `linear-gradient(90deg, ${champion.color}bb, ${champion.color})`,
-                            borderRadius: 8,
-                            boxShadow: `0 0 14px ${champion.color}90, 0 0 4px ${champion.color}`,
-                          }}
-                          initial={reduced ? false : { width: '0%' }}
-                          whileInView={{ width: `${pct}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.9, delay: 0.12 + i * 0.1, ease: 'easeOut' }}
-                        />
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-
-              {/* Difficulty */}
-              <div style={{ marginBottom: 40 }}>
-                <div style={{
+          {champion.tags.length > 0 && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+              {champion.tags.map(tag => (
+                <span key={tag} style={{
+                  padding: '3px 10px',
+                  border: `1px solid ${champion.color}40`,
                   color: '#8FA3C0',
                   fontSize: 11,
-                  fontFamily: 'beaufort, serif',
-                  letterSpacing: 2.5,
-                  marginBottom: 12,
+                  fontFamily: BARLOW_COND,
                   fontWeight: 700,
+                  letterSpacing: '0.15em',
+                  background: `${champion.color}0d`,
+                  borderRadius: 4,
                 }}>
-                  DIFFICULTY
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {Array.from({ length: 3 }, (_, i) => (
-                    <motion.span
-                      key={i}
-                      style={{ fontSize: 38, color: i < champion.difficulty ? '#C9A227' : '#1E3A5F', lineHeight: 1 }}
-                      initial={reduced ? false : { scale: 0, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3 + i * 0.1, type: 'spring', stiffness: 300, damping: 18 }}
-                    >
-                      ★
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </motion.div>
 
-              {/* Tags */}
-              {champion.tags.length > 0 && (
-                <div style={{ marginBottom: 40 }}>
-                  <div style={{
-                    color: '#8FA3C0',
-                    fontSize: 11,
-                    fontFamily: 'beaufort, serif',
-                    letterSpacing: 2.5,
-                    marginBottom: 12,
-                    fontWeight: 700,
-                  }}>
-                    TAGS
-                  </div>
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                    {champion.tags.map(tag => (
-                      <span
-                        key={tag}
-                        style={{
-                          padding: '5px 14px',
-                          border: `1px solid ${champion.color}60`,
-                          color: '#8FA3C0',
-                          fontSize: 12,
-                          fontFamily: 'beaufort, serif',
-                          letterSpacing: 1.5,
-                          background: `${champion.color}10`,
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </motion.div>
+        {/* Stats ──────────────────────────────────────────────────────────── */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          style={{ ...glass, padding: '24px 28px' }}
+        >
+          <p style={{ margin: 0, marginBottom: 18, fontSize: 11, letterSpacing: '0.25em', fontFamily: BARLOW_COND, fontWeight: 700, color: champion.color }}>
+            STATS
+          </p>
+
+          {/* Difficulty */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <span style={{ color: '#8FA3C0', fontSize: 11, fontFamily: BARLOW_COND, fontWeight: 700, letterSpacing: '0.2em' }}>
+              DIFFICULTY
+            </span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {Array.from({ length: 3 }, (_, i) => (
+                <motion.span
+                  key={i}
+                  style={{ fontSize: 22, color: i < champion.difficulty ? '#C9A227' : 'rgba(255,255,255,0.12)', lineHeight: 1 }}
+                  initial={reduced ? false : { scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.45 + i * 0.08, type: 'spring', stiffness: 300, damping: 18 }}
+                >
+                  ★
+                </motion.span>
+              ))}
+            </div>
           </div>
 
-          {/* ══════════════════════════════════════════════════════════
-              GAMERSENSE TIP — full width, most prominent section
-          ══════════════════════════════════════════════════════════ */}
-          <motion.div
-            variants={scrollFadeUp}
-            initial={reduced ? false : 'hidden'}
-            whileInView="show"
-            viewport={{ once: true, margin: '-40px' }}
-            style={{ marginTop: 80 }}
-          >
-            {/* Outer = entry via variants above; inner = pulsing box-shadow */}
-            <motion.div
-              style={{
-                border: `3px solid ${champion.color}`,
-                background: `linear-gradient(135deg, ${champion.color}12 0%, #0D1F3C 45%, #0a1628 100%)`,
-                padding: '52px 56px',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
+          {/* Stat bars */}
+          {stats.map(([key, value], i) => {
+            const pct = Math.round((value / 5) * 100)
+            return (
+              <div key={key} style={{ marginBottom: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                  <span style={{ color: '#8FA3C0', fontSize: 11, fontFamily: BARLOW_COND, fontWeight: 700, letterSpacing: '0.15em' }}>
+                    {STAT_LABELS[key]}
+                  </span>
+                  <span style={{ color: '#E8EDF5', fontSize: 12, fontFamily: BARLOW_COND, fontWeight: 700 }}>
+                    {value}/5
+                  </span>
+                </div>
+                <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' }}>
+                  <motion.div
+                    style={{
+                      height: '100%',
+                      background: `linear-gradient(90deg, ${champion.color}, #00C9A7)`,
+                      borderRadius: 4,
+                      boxShadow: `0 0 8px ${champion.color}70`,
+                    }}
+                    initial={reduced ? false : { width: '0%' }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.9, delay: 0.3 + i * 0.08, ease: 'easeOut' }}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </motion.div>
+
+        {/* Strengths ──────────────────────────────────────────────────────── */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          style={{ ...glass, padding: '24px 28px' }}
+        >
+          <p style={{ margin: 0, marginBottom: 16, fontSize: 11, letterSpacing: '0.25em', fontFamily: BARLOW_COND, fontWeight: 700, color: '#22c55e' }}>
+            STRENGTHS
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {champion.strengths.map((s, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <span style={{ color: '#22c55e', fontSize: 15, lineHeight: 1.55, flexShrink: 0 }}>✓</span>
+                <span style={{ color: 'rgba(232,237,245,0.9)', fontSize: 14, lineHeight: 1.65, fontFamily: BARLOW }}>
+                  {s}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        {/* Weaknesses ─────────────────────────────────────────────────────── */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          style={{ ...glass, padding: '24px 28px' }}
+        >
+          <p style={{ margin: 0, marginBottom: 16, fontSize: 11, letterSpacing: '0.25em', fontFamily: BARLOW_COND, fontWeight: 700, color: '#ef4444' }}>
+            WEAKNESSES
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {champion.weaknesses.map((w, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <span style={{ color: '#ef4444', fontSize: 15, lineHeight: 1.55, flexShrink: 0 }}>✗</span>
+                <span style={{ color: 'rgba(232,237,245,0.9)', fontSize: 14, lineHeight: 1.65, fontFamily: BARLOW }}>
+                  {w}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        {/* GamerSense Tip ─────────────────────────────────────────────────── */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          style={{
+            background: `linear-gradient(135deg, ${champion.color}20 0%, rgba(13,31,60,0.25) 100%)`,
+            border: `1px solid ${champion.color}35`,
+            borderRadius: 12,
+            padding: '24px 28px',
+            backdropFilter: 'blur(40px)',
+            WebkitBackdropFilter: 'blur(40px)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+            <motion.span
+              style={{ fontSize: 26, lineHeight: 1, flexShrink: 0 }}
               animate={reduced ? {} : {
-                boxShadow: [
-                  `0 0 0px 0px ${champion.color}00`,
-                  `0 0 44px 10px ${champion.color}50`,
-                  `0 0 0px 0px ${champion.color}00`,
+                filter: [
+                  'drop-shadow(0 0 0px transparent)',
+                  `drop-shadow(0 0 12px ${champion.color}90)`,
+                  'drop-shadow(0 0 0px transparent)',
                 ],
               }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              {/* Corner accent — top-left */}
-              <div style={{
-                position: 'absolute', top: -2, left: -2,
-                width: 52, height: 52,
-                borderTop: `4px solid ${champion.color}`,
-                borderLeft: `4px solid ${champion.color}`,
-                opacity: 0.7,
-              }} />
-              {/* Corner accent — bottom-right */}
-              <div style={{
-                position: 'absolute', bottom: -2, right: -2,
-                width: 52, height: 52,
-                borderBottom: `4px solid ${champion.color}`,
-                borderRight: `4px solid ${champion.color}`,
-                opacity: 0.7,
-              }} />
-
-              {/* Header row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
-                <motion.span
-                  style={{ fontSize: 56, lineHeight: 1, display: 'block', flexShrink: 0 }}
-                  animate={reduced ? {} : {
-                    filter: [
-                      'drop-shadow(0 0 0px transparent)',
-                      `drop-shadow(0 0 18px ${champion.color}90)`,
-                      'drop-shadow(0 0 0px transparent)',
-                    ],
-                  }}
-                  transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  💡
-                </motion.span>
-                <div style={{
-                  color: champion.color,
-                  fontSize: 14,
-                  letterSpacing: 4,
-                  fontFamily: 'beaufort, serif',
-                  fontWeight: 700,
-                  textShadow: `0 0 16px ${champion.color}90`,
-                }}>
-                  GAMERSENSE TIP
-                </div>
-              </div>
-
-              {/* Role-based tip text */}
-              <p style={{
-                color: '#E8EDF5',
-                fontSize: 22,
-                lineHeight: 1.85,
-                margin: 0,
-                fontFamily: 'beaufort, serif',
-                fontWeight: 600,
-              }}>
-                {roleTip}
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* ══════════════════════════════════════════════════════════
-              NAVIGATION BUTTONS
-          ══════════════════════════════════════════════════════════ */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 32, marginTop: 80 }}>
-            {prevChamp && (
-              /* Outer: entry animation */
-              <motion.div
-                initial={reduced ? false : { opacity: 0, x: -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                {/* Inner: hover — two-layer pattern */}
-                <motion.button
-                  onClick={() => navigate(`/champion/${prevChamp.id}`)}
-                  className="font-beaufort font-bold"
-                  style={{
-                    background: `linear-gradient(135deg, ${champion.color}0e, rgba(13,31,60,0.92))`,
-                    border: `2px solid #1E3A5F`,
-                    color: '#8FA3C0',
-                    padding: '20px 48px',
-                    cursor: 'pointer',
-                    fontSize: 18,
-                    letterSpacing: 1.5,
-                    minWidth: 220,
-                    textAlign: 'center',
-                  }}
-                  animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
-                  transition={{ filter: { duration: 0.15 } }}
-                  whileHover={reduced ? {} : {
-                    filter: `brightness(1.2) drop-shadow(0 0 22px ${champion.color})`,
-                    scale: 1.08,
-                    borderColor: champion.color,
-                    color: '#E8EDF5',
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  ← {prevChamp.name}
-                </motion.button>
-              </motion.div>
-            )}
-
-            {nextChamp && (
-              <motion.div
-                initial={reduced ? false : { opacity: 0, x: 24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <motion.button
-                  onClick={() => navigate(`/champion/${nextChamp.id}`)}
-                  className="font-beaufort font-bold"
-                  style={{
-                    background: `linear-gradient(135deg, rgba(13,31,60,0.92), ${champion.color}0e)`,
-                    border: `2px solid #1E3A5F`,
-                    color: '#8FA3C0',
-                    padding: '20px 48px',
-                    cursor: 'pointer',
-                    fontSize: 18,
-                    letterSpacing: 1.5,
-                    minWidth: 220,
-                    textAlign: 'center',
-                  }}
-                  animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
-                  transition={{ filter: { duration: 0.15 } }}
-                  whileHover={reduced ? {} : {
-                    filter: `brightness(1.2) drop-shadow(0 0 22px ${champion.color})`,
-                    scale: 1.08,
-                    borderColor: champion.color,
-                    color: '#E8EDF5',
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  {nextChamp.name} →
-                </motion.button>
-              </motion.div>
-            )}
+              💡
+            </motion.span>
+            <span style={{ color: champion.color, fontSize: 11, letterSpacing: '0.25em', fontFamily: BARLOW_COND, fontWeight: 700, textShadow: `0 0 12px ${champion.color}80` }}>
+              GAMERSENSE TIP
+            </span>
           </div>
+          <p style={{ color: 'rgba(232,237,245,0.85)', fontSize: 14, lineHeight: 1.75, margin: 0, fontFamily: BARLOW }}>
+            {tip}
+          </p>
+        </motion.div>
 
-        </div>
-      </main>
+      </div>
 
-      <img
-        src={SeparatorLine}
-        alt=""
-        style={{ display: 'block', width: '100%', height: '5px', objectFit: 'cover', margin: 0, position: 'relative', zIndex: 2 }}
-      />
-      <Footer />
-    </>
+      {/* ══ PREV / NEXT — fixed bottom ════════════════════════════════════════ */}
+      <div style={{
+        position: 'fixed',
+        bottom: 24,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 20,
+        display: 'flex',
+        gap: 12,
+      }}>
+        {prevChamp && (
+          <motion.button
+            onClick={() => navigate(`/champion/${prevChamp.id}`)}
+            style={{
+              background: 'rgba(13,31,60,0.8)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: '#8FA3C0',
+              padding: '10px 24px',
+              cursor: 'pointer',
+              fontFamily: BARLOW_COND,
+              fontWeight: 700,
+              fontSize: 13,
+              letterSpacing: '0.12em',
+              borderRadius: 8,
+              backdropFilter: 'blur(12px)',
+            }}
+            animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
+            transition={{ filter: { duration: 0.15 } }}
+            whileHover={reduced ? {} : {
+              filter: `brightness(1.2) drop-shadow(0 0 12px ${champion.color})`,
+              borderColor: champion.color,
+              color: '#E8EDF5',
+              transition: { duration: 0.2 },
+            }}
+          >
+            ← {prevChamp.name}
+          </motion.button>
+        )}
+        {nextChamp && (
+          <motion.button
+            onClick={() => navigate(`/champion/${nextChamp.id}`)}
+            style={{
+              background: 'rgba(13,31,60,0.8)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: '#8FA3C0',
+              padding: '10px 24px',
+              cursor: 'pointer',
+              fontFamily: BARLOW_COND,
+              fontWeight: 700,
+              fontSize: 13,
+              letterSpacing: '0.12em',
+              borderRadius: 8,
+              backdropFilter: 'blur(12px)',
+            }}
+            animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
+            transition={{ filter: { duration: 0.15 } }}
+            whileHover={reduced ? {} : {
+              filter: `brightness(1.2) drop-shadow(0 0 12px ${champion.color})`,
+              borderColor: champion.color,
+              color: '#E8EDF5',
+              transition: { duration: 0.2 },
+            }}
+          >
+            {nextChamp.name} →
+          </motion.button>
+        )}
+      </div>
+
+    </div>
   )
 }
