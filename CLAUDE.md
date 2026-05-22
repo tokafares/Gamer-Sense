@@ -39,6 +39,23 @@ textMuted: #8FA3C0
 - **Self-update rule:** Whenever a new pattern, fix, or lesson surfaces during a session that would have saved time if known upfront, append it to the relevant section of this file before ending the session
 - Always set `background: 'transparent'` on `<main>` in page components. App.tsx owns the global background (Group 249.png fixed div at `zIndex: -1`). Adding background images inside `<main>` creates duplicate layers at different scales.
 
+## Async Fetch Patterns
+
+### Module-level promise deduplication
+Prevents duplicate concurrent fetches without a listener queue. Store the in-flight promise at module scope; all callers share it. Pair with a sync `getCached*()` accessor so hooks initialise without a loading flash on re-mount.
+```ts
+let cache: T[] | null = null
+let promise: Promise<T[]> | null = null
+
+export const getCached = (): T[] | null => cache
+export async function getAll(): Promise<T[]> {
+  if (cache) return cache
+  if (promise) return promise
+  promise = (async () => { /* fetch, set cache, return */ })()
+  return promise
+}
+```
+
 ## Framer Motion Patterns
 
 ### Two-layer motion div — entry + hover
@@ -100,11 +117,17 @@ Used on all section headings:
 
 ### Architecture
 - Types: `src/types/champion.ts` — `Champion`, `ChampionsData`, `Role`
-- Hook: `src/hooks/useChampions.ts` — fetches `/data/champions.json`, module-level cache + listener queue prevents duplicate requests when multiple components mount simultaneously
+- Utility: `src/utils/championData.ts` — `getChampions()` (async, fetches + merges DDragon data, cached via module-level promise) + `getCachedChampions()` (sync, used by hook for zero-flash initial state)
+- Hook: `src/hooks/useChampions.ts` — delegates to `getChampions()`; initialises state from `getCachedChampions()` so re-mounting components skip `loading: true` when cache is warm
 - Grid page: `src/pages/Page5.tsx` — role filter, search, hover preview modal
 - Detail page: `src/pages/ChampionDetail.tsx` — route `/champion/:id`
 - App.tsx: `<Route path="/champion/:id" element={<ChampionDetail />} />`
 - Header: `isChampion = pathname.startsWith('/champion/')` → `isFeaturePage = FEATURE_PATHS.has(pathname) || isChampion` + active highlight for 'KNOWLEDGE HUB' nav item
+
+### DDragon data gotchas
+- The list endpoint (`champion.json`) has `name`, `title`, `blurb`, `info.difficulty`, `tags` — but NOT `lore`, `allytips`, or `enemytips`. Fetch individual files (`champion/{id}.json`) for those.
+- Portrait URL version is `16.10.1` (not `14.23.1`).
+- DDragon IDs differ from display names for: `JarvanIV`, `Kaisa`, `Khazix`, `LeeSin`, `Leblanc`, `MasterYi`, `MissFortune`, `TahmKench`, `TwistedFate`, `XinZhao`, `Velkoz`, `Belveth`, `Chogath`, `RekSai`, and `MonkeyKing` (Wukong). IDs in `champions.json` already align — use `id` field directly as the DDragon lookup key.
 
 ### Scrollable grid inside a fixed-height background panel
 Use `overflow: hidden` on the outer div (bg image owner) and `overflow-y: auto` on the inner grid div. The outer clips scroll overflow; the background stays fixed. Scrollbar CSS lives in `index.css` under `.champion-grid-scroll`.
