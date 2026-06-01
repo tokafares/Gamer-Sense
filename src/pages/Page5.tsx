@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -12,7 +13,7 @@ import BtnMidLane from '../assets/knowledgehub-btn-midlane.svg'
 import BtnADC from '../assets/knowledgehub-btn-adc.svg'
 import BtnSupport from '../assets/knowledgehub-btn-support.svg'
 import { useChampions } from '../hooks/useChampions'
-import type { Champion, Role } from '../types/champion'
+import type { Role } from '../types/champion'
 
 const LANE_BTNS: { src: string; alt: string; role: Role }[] = [
   { src: BtnTopLane, alt: 'Top Lane',  role: 'Top'     },
@@ -38,6 +39,17 @@ const TITLE_MB = 24
 const TABS_MB  = 20
 const BOT_PAD  = 80
 
+// Static variants — don't depend on per-card data or reduced motion
+const splashVariants: Variants = {
+  rest:    { opacity: 0 },
+  hovered: { opacity: 1 },
+}
+
+const gradientVariants: Variants = {
+  rest:    { opacity: 0 },
+  hovered: { opacity: 1 },
+}
+
 export default function Page5() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
@@ -46,7 +58,7 @@ export default function Page5() {
   const [activeRole,    setActiveRole]    = useState<Role | null>(null)
   const [search,        setSearch]        = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
-  const [hoveredChamp,  setHoveredChamp]  = useState<Champion | null>(null)
+  const [hoveredId,     setHoveredId]     = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     let list = champions
@@ -55,6 +67,16 @@ export default function Page5() {
     if (q) list = list.filter(c => c.name.toLowerCase().includes(q))
     return list
   }, [champions, activeRole, search])
+
+  // Stagger container for content lines — depends on reduced, memoised so reference is stable
+  const contentContainerVariants: Variants = reduced
+    ? { rest: {}, hovered: {} }
+    : { rest: {}, hovered: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }
+
+  const contentItemVariants: Variants = {
+    rest:    { opacity: 0, y: reduced ? 0 : 16 },
+    hovered: { opacity: 1, y: 0 },
+  }
 
   const tabs_h = Math.round(113 * 670 / 1088)
   const grid_h = Math.round(557 * PANEL_W / 1087)
@@ -239,69 +261,205 @@ export default function Page5() {
                     No champions found
                   </div>
                 ) : (
-                  filtered.map((champ, i) => (
-                    <motion.div
-                      key={champ.id}
-                      style={{ position: 'relative', cursor: 'pointer' }}
-                      initial={reduced ? false : { opacity: 0, scale: 0.88 }}
-                      animate={{
-                        opacity: 1,
-                        scale: 1,
-                        filter: 'brightness(1) drop-shadow(0 0 0px transparent)',
-                      }}
-                      transition={{
-                        default: { duration: 0.28, delay: Math.min(i, 17) * 0.025 },
-                        filter:  { duration: 0.15 },
-                      }}
-                      whileHover={reduced ? {} : {
-                        scale: 1.1,
-                        zIndex: 5,
-                        filter: `brightness(1.25) drop-shadow(0 0 10px ${champ.color})`,
-                        transition: { duration: 0.18 },
-                      }}
-                      onHoverStart={() => setHoveredChamp(champ)}
-                      onHoverEnd={() => setHoveredChamp(null)}
-                      onClick={() => navigate(`/champion/${champ.id}`)}
-                    >
-                      <img
-                        src={champ.portraitUrl}
-                        alt={champ.name}
-                        loading="lazy"
+                  filtered.map((champ, i) => {
+                    const isHovered = hoveredId === champ.id
+                    const isDimmed  = !!hoveredId && !isHovered
+                    const splashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg`
+
+                    // Per-card inner variants — depend on champ.color
+                    const innerVariants: Variants = {
+                      rest: {
+                        scale:     1,
+                        // three-layer rest shadow matches hovered structure for clean interpolation
+                        boxShadow: `0 0 0 0px ${champ.color}00, 0 0 0px 0px ${champ.color}00, 0 0 0px 0px ${champ.color}00`,
+                      },
+                      hovered: reduced ? {} : {
+                        scale:     1.22,
+                        boxShadow: `0 0 0 1.5px ${champ.color}99, 0 0 15px 4px ${champ.color}55, 0 0 35px 8px ${champ.color}22`,
+                      },
+                    }
+
+                    return (
+                      // Outer layer — entry animation + spotlight dimming
+                      // z-index elevated via style (not animated) so hovered card floats above neighbors
+                      <motion.div
+                        key={champ.id}
                         style={{
-                          width: '100%',
-                          aspectRatio: '1',
-                          objectFit: 'cover',
-                          display: 'block',
+                          position: 'relative',
+                          cursor: 'pointer',
+                          zIndex: isHovered ? 20 : 1,
                         }}
-                      />
-                      <div style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        background: 'linear-gradient(to top, rgba(6,15,30,0.95) 0%, transparent 100%)',
-                        paddingTop: 10,
-                        paddingBottom: 3,
-                        textAlign: 'center',
-                      }}>
-                        <span style={{
-                          color: '#E8EDF5',
-                          fontSize: '9px',
-                          fontFamily: 'beaufort, serif',
-                          letterSpacing: 0.3,
-                          lineHeight: 1,
-                          display: 'block',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          paddingLeft: 2,
-                          paddingRight: 2,
-                        }}>
-                          {champ.name}
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))
+                        initial={reduced ? false : { opacity: 0, y: 30 }}
+                        animate={{
+                          opacity: isDimmed ? 0.45 : 1,
+                          y: 0,
+                          scale: isDimmed ? (reduced ? 1 : 0.97) : 1,
+                        }}
+                        transition={{
+                          // delay only fires during initial y: 30→0 entry; subsequent y changes are instant
+                          y:       { duration: 0.35, delay: Math.min(i, 24) * 0.04, ease: 'easeOut' },
+                          opacity: { duration: 0.25 },
+                          scale:   { duration: 0.25 },
+                        }}
+                        onMouseEnter={() => setHoveredId(champ.id)}
+                        onMouseLeave={() => setHoveredId(null)}
+                        onClick={() => navigate(`/champion/${champ.id}`)}
+                      >
+                        {/* Inner layer — hover scale + glow, propagates "hovered" to all children */}
+                        <motion.div
+                          initial="rest"
+                          animate="rest"
+                          whileHover="hovered"
+                          variants={innerVariants}
+                          transition={{ duration: 0.28, ease: 'easeOut' }}
+                          style={{ position: 'relative', overflow: 'hidden' }}
+                        >
+                          {/* Layer 1: portrait — always visible, sets card aspect ratio */}
+                          <img
+                            src={champ.portraitUrl}
+                            alt={champ.name}
+                            loading="lazy"
+                            style={{
+                              width: '100%',
+                              aspectRatio: '1',
+                              objectFit: 'cover',
+                              display: 'block',
+                            }}
+                          />
+
+                          {/* Layer 2: splash art crossfade — fades in on hover */}
+                          <motion.img
+                            src={splashUrl}
+                            alt=""
+                            loading="lazy"
+                            variants={splashVariants}
+                            transition={{ duration: 0.35, ease: 'easeOut' }}
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              objectPosition: 'top center',
+                              pointerEvents: 'none',
+                            }}
+                          />
+
+                          {/* Gradient overlay — bottom 75% of card */}
+                          <motion.div
+                            variants={gradientVariants}
+                            transition={{ duration: 0.25 }}
+                            style={{
+                              position: 'absolute',
+                              top: '25%',
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: 'linear-gradient(to top, rgba(6,15,30,0.97) 0%, rgba(6,15,30,0.3) 60%, transparent 100%)',
+                              pointerEvents: 'none',
+                            }}
+                          />
+
+                          {/* Content block — stagger slides up on hover */}
+                          <motion.div
+                            variants={contentContainerVariants}
+                            style={{
+                              position: 'absolute',
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              padding: '0 4px 4px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 2,
+                              pointerEvents: 'none',
+                            }}
+                          >
+                            {/* Champion name */}
+                            <motion.div
+                              variants={contentItemVariants}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                              style={{
+                                color: '#E8EDF5',
+                                fontSize: 16,
+                                fontFamily: 'beaufort, serif',
+                                fontWeight: 700,
+                                lineHeight: 1.1,
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {champ.name}
+                            </motion.div>
+
+                            {/* Title */}
+                            <motion.div
+                              variants={contentItemVariants}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                              style={{
+                                color: '#8FA3C0',
+                                fontSize: 12,
+                                fontFamily: 'beaufort, serif',
+                                fontStyle: 'italic',
+                                lineHeight: 1.1,
+                                whiteSpace: 'normal',
+                                overflow: 'hidden',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                              }}
+                            >
+                              {champ.title}
+                            </motion.div>
+
+                            {/* Role badge + difficulty stars */}
+                            <motion.div
+                              variants={contentItemVariants}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                              style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                            >
+                              <span style={{
+                                display: 'inline-block',
+                                padding: '3px 8px',
+                                border: `1px solid ${ROLE_COLORS[champ.role]}`,
+                                color: ROLE_COLORS[champ.role],
+                                fontSize: 8,
+                                fontFamily: 'beaufort, serif',
+                                letterSpacing: 0.8,
+                                lineHeight: 1.3,
+                              }}>
+                                {champ.role.toUpperCase()}
+                              </span>
+                              <span style={{ color: '#C9A227', fontSize: 14, letterSpacing: 0 }}>
+                                {'★'.repeat(champ.difficulty)}
+                                {'☆'.repeat(Math.max(0, 3 - champ.difficulty))}
+                              </span>
+                            </motion.div>
+
+                            {/* View → */}
+                            <motion.div
+                              variants={contentItemVariants}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                              style={{
+                                color: champ.color,
+                                fontSize: 12,
+                                fontFamily: 'beaufort, serif',
+                                fontWeight: 700,
+                                letterSpacing: 0.5,
+                                lineHeight: 1,
+                              }}
+                            >
+                              View →
+                            </motion.div>
+                          </motion.div>
+                        </motion.div>
+                      </motion.div>
+                    )
+                  })
                 )}
               </div>
             </div>
@@ -320,83 +478,6 @@ export default function Page5() {
           </div>
         </div>
       </main>
-
-      {/* Hover preview modal */}
-      <AnimatePresence>
-        {hoveredChamp && (
-          <motion.div
-            key={hoveredChamp.id}
-            style={{
-              position: 'fixed',
-              right: 48,
-              top: '50%',
-              marginTop: -145,
-              width: 240,
-              background: '#0D1F3C',
-              border: `1px solid ${hoveredChamp.color}`,
-              zIndex: 200,
-              pointerEvents: 'none',
-              overflow: 'hidden',
-            }}
-            initial={reduced ? false : { opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.18 }}
-          >
-            <img
-              src={hoveredChamp.splashUrl}
-              alt=""
-              style={{
-                width: '100%',
-                height: 130,
-                objectFit: 'cover',
-                objectPosition: 'center 20%',
-                display: 'block',
-              }}
-            />
-            <div style={{ padding: '12px 14px 8px' }}>
-              <div style={{
-                color: '#E8EDF5',
-                fontSize: 17,
-                fontFamily: 'beaufort, serif',
-                fontWeight: 700,
-                lineHeight: 1.1,
-                marginBottom: 3,
-              }}>
-                {hoveredChamp.name}
-              </div>
-              <div style={{ color: '#8FA3C0', fontSize: 11, marginBottom: 10 }}>
-                {hoveredChamp.title}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '2px 8px',
-                  border: `1px solid ${ROLE_COLORS[hoveredChamp.role]}`,
-                  color: ROLE_COLORS[hoveredChamp.role],
-                  fontSize: 10,
-                  fontFamily: 'beaufort, serif',
-                  letterSpacing: 1.5,
-                }}>
-                  {hoveredChamp.role.toUpperCase()}
-                </span>
-                <span style={{ color: '#C9A227', fontSize: 14, letterSpacing: 1 }}>
-                  {'★'.repeat(hoveredChamp.difficulty)}
-                  {'☆'.repeat(Math.max(0, 3 - hoveredChamp.difficulty))}
-                </span>
-              </div>
-            </div>
-            <div style={{
-              borderTop: '1px solid #1E3A5F',
-              padding: '8px 14px',
-            }}>
-              <span style={{ color: '#00C9A7', fontSize: 11, fontFamily: 'beaufort, serif', letterSpacing: 1 }}>
-                CLICK TO VIEW →
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <img
         src={SeparatorLine}
