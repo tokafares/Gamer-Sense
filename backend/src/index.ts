@@ -23,7 +23,7 @@ async function main() {
   app.addContentTypeParser('application/x-www-form-urlencoded', { parseAs: 'string' }, (_req, _body, done) => done(null, {}))
 
   await app.register(cors, {
-    origin: process.env['FRONTEND_URL'] ?? 'http://localhost:5173',
+    origin: ['https://gamer-sense.vercel.app', 'http://localhost:5173'],
     credentials: true,
   })
 

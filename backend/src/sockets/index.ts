@@ -5,7 +5,7 @@ import { registerMatchHandler } from './matchHandler'
 export function createSocketServer(httpServer: HttpServer): Server {
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env['FRONTEND_URL'] ?? 'http://localhost:5173',
+      origin: ['https://gamer-sense.vercel.app', 'http://localhost:5173'],
       methods: ['GET', 'POST'],
       credentials: true,
     },
