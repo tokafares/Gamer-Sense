@@ -15,6 +15,7 @@ model User {
   avatarUrl      String?
   level          Int         @default(1)
   membershipTier String      @default("free")
+  role           String      @default("user")
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   stats          UserStats?

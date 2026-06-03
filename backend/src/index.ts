@@ -12,6 +12,7 @@ import { gtrRoutes } from './routes/gtr'
 import { matchRoutes } from './routes/matches'
 import { profileRoutes } from './routes/profile'
 import { leaderboardRoutes } from './routes/leaderboard'
+import { adminRoutes } from './routes/admin'
 import { createSocketServer } from './sockets/index'
 
 async function main() {
@@ -35,6 +36,7 @@ async function main() {
   await app.register(matchRoutes)
   await app.register(profileRoutes)
   await app.register(leaderboardRoutes)
+  await app.register(adminRoutes)
 
   app.get('/health', async () => ({
     status: 'ok',

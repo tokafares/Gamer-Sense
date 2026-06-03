@@ -30,7 +30,7 @@ export async function register(username: string, email: string, password: string
 
   await prisma.userStats.create({ data: { userId: user.id } })
 
-  const payload: JwtPayload = { userId: user.id, email: user.email, username: user.username }
+  const payload: JwtPayload = { userId: user.id, email: user.email, username: user.username, role: user.role }
   const token = signToken(payload)
 
   return {
@@ -42,6 +42,7 @@ export async function register(username: string, email: string, password: string
       avatarUrl: user.avatarUrl,
       level: user.level,
       membershipTier: user.membershipTier,
+      role: user.role,
     },
   }
 }
@@ -61,7 +62,7 @@ export async function login(email: string, password: string) {
     throw err
   }
 
-  const payload: JwtPayload = { userId: user.id, email: user.email, username: user.username }
+  const payload: JwtPayload = { userId: user.id, email: user.email, username: user.username, role: user.role }
   const token = signToken(payload)
 
   return {
@@ -73,6 +74,7 @@ export async function login(email: string, password: string) {
       avatarUrl: user.avatarUrl,
       level: user.level,
       membershipTier: user.membershipTier,
+      role: user.role,
     },
   }
 }

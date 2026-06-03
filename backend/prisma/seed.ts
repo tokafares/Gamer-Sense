@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
@@ -742,6 +743,20 @@ async function main() {
   ]
   await prisma.gTRRound.createMany({ data: gtrRounds })
   console.log(`✅  ${gtrRounds.length} GTR rounds seeded`)
+
+  // Upsert admin user
+  const adminHash = await bcrypt.hash('admin123', 12)
+  await prisma.user.upsert({
+    where: { email: 'admin@gamersense.com' },
+    update: { role: 'admin', passwordHash: adminHash },
+    create: {
+      username: 'admin',
+      email: 'admin@gamersense.com',
+      passwordHash: adminHash,
+      role: 'admin',
+    },
+  })
+  console.log('✅  Admin user seeded')
 
   console.log('🎉  Seed complete')
 }

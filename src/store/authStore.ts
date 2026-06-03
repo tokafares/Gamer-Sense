@@ -12,6 +12,7 @@ export interface AuthUser {
   avatarUrl: string
   level: number
   membershipTier: MembershipTier
+  role?: string
 }
 
 interface AuthState {
