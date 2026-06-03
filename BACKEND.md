@@ -316,6 +316,20 @@ model MatchResult {
 
 ## Lessons & Patterns
 
+### Admin Panel
+
+**`adminGuard` chains `authGuard` then checks role**
+`adminGuard` calls `authGuard` first, then checks `request.user.role === 'admin'`. Check `reply.sent` before accessing `request.user` — if `authGuard` already replied with 401, `request.user` is unset and accessing it throws.
+
+**Role must be in JWT payload to avoid an extra DB lookup per request**
+The `role` field is added to `JwtPayload` and included in `signToken()` at register/login time. This means a promoted user must re-login to get the updated token. That's acceptable for an admin panel — no polling, no DB hit per request.
+
+**`prisma db push` is sufficient for adding a non-nullable column with a default**
+`role String @default("user")` has a default, so `prisma db push` applies it without data migration. Use `migrate dev` only when default-less columns or complex renames are needed.
+
+**Seed upsert for admin user uses `update` to reset password on re-seed**
+The upsert `update` block re-hashes and sets the admin password so that re-running seed restores it if it was changed manually in DB. Include `role: 'admin'` in `update` as well so an accidentally demoted admin is restored.
+
 ### Phase 6 — Frontend Integration
 
 **Backend wraps arrays in objects — hooks must unwrap**

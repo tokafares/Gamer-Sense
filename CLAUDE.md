@@ -372,6 +372,18 @@ onClick={() => { void handleAsync() }}
 ```
 Avoids floating-promise TS errors without try/catch boilerplate at the call site.
 
+## Admin Panel
+
+### Architecture
+- Route: `/admin` — no `RequireAuth` wrapper needed; `AdminPanel.tsx` does its own `useEffect` redirect check (`user?.role !== 'admin'` → navigate to `/`)
+- `AuthUser` has optional `role?: string` field; populated from login/register response which now includes `role`
+- Three tabs: Questions (CRUD), GTR Rounds (add + list), Users (list + role toggle)
+- All admin API calls use existing `apiGet`, `apiPost`, `apiPut` from `src/lib/api.ts`; DELETE uses raw `fetch` with Bearer token (no `apiDelete` helper exists)
+- Styling is pure inline React CSS using the project color system (no Tailwind, no SVGs) — intentionally functional/minimal, not matching page designs
+
+### Admin credentials (seeded)
+- Email: `admin@gamersense.com` / Password: `admin123`
+
 ## SVG Asset Patterns
 
 ### New clean SVG frames vs old underscore variants
