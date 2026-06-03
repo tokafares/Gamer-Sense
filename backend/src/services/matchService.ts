@@ -1,0 +1,168 @@
+import { v4 as uuidv4 } from 'uuid'
+import prisma from '../lib/prisma'
+import redis from '../lib/redis'
+
+const TOKEN_TTL = 600 // 10 minutes
+const STATE_TTL = 7200 // 2 hours
+const TRIVIA_QUESTION_COUNT = 5
+
+// ── Redis key helpers ─────────────────────────────────────────────────────────
+
+export const tokenKey = (token: string) => `match:${token}`
+export const stateKey = (matchId: string) => `match:state:${matchId}`
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export interface MatchQuestion {
+  id: string
+  text: string
+  options: unknown
+  correctAnswer: string
+  explanation: string
+}
+
+export interface MatchState {
+  matchId: string
+  hostId: string
+  invitedId: string
+  questions: MatchQuestion[]
+  currentRound: number // 0-based index
+  hostScore: number
+  invitedScore: number
+  // answers[roundIndex][userId] = selected answer
+  answers: Record<number, Record<string, string>>
+  status: 'waiting' | 'active' | 'completed'
+}
+
+// ── REST handlers ─────────────────────────────────────────────────────────────
+
+export async function createMatch(hostId: string) {
+  const inviteToken = uuidv4()
+
+  const match = await prisma.match.create({
+    data: { hostId, inviteToken },
+  })
+
+  await redis.setex(tokenKey(inviteToken), TOKEN_TTL, match.id)
+
+  return {
+    matchId: match.id,
+    inviteToken,
+    inviteUrl: `${process.env['FRONTEND_URL'] ?? 'http://localhost:5173'}/match/join/${inviteToken}`,
+  }
+}
+
+export async function joinMatch(token: string, invitedId: string) {
+  const matchId = await redis.get(tokenKey(token))
+  if (!matchId) {
+    const err = new Error('Invite token is invalid or has expired') as Error & { statusCode: number }
+    err.statusCode = 404
+    throw err
+  }
+
+  const match = await prisma.match.findUnique({ where: { id: matchId } })
+  if (!match) {
+    const err = new Error('Match not found') as Error & { statusCode: number }
+    err.statusCode = 404
+    throw err
+  }
+  if (match.status !== 'waiting') {
+    const err = new Error('Match is already active or completed') as Error & { statusCode: number }
+    err.statusCode = 409
+    throw err
+  }
+  if (match.hostId === invitedId) {
+    const err = new Error('Host cannot join their own match as guest') as Error & { statusCode: number }
+    err.statusCode = 400
+    throw err
+  }
+
+  const updated = await prisma.match.update({
+    where: { id: matchId },
+    data: { invitedId, status: 'active' },
+  })
+
+  // Token is single-use — delete immediately after successful join
+  await redis.del(tokenKey(token))
+
+  return { matchId: updated.id, hostId: updated.hostId, invitedId: updated.invitedId }
+}
+
+// ── State helpers used by socket handler ─────────────────────────────────────
+
+export async function loadState(matchId: string): Promise<MatchState | null> {
+  const raw = await redis.get(stateKey(matchId))
+  return raw ? (JSON.parse(raw) as MatchState) : null
+}
+
+export async function saveState(state: MatchState): Promise<void> {
+  await redis.setex(stateKey(state.matchId), STATE_TTL, JSON.stringify(state))
+}
+
+export async function initMatchState(matchId: string, hostId: string, invitedId: string): Promise<MatchState> {
+  // Pull random trivia questions for the match
+  const rows = await prisma.question.findMany({
+    where: { type: 'trivia' },
+    take: TRIVIA_QUESTION_COUNT * 3, // fetch extra, shuffle, take N
+    orderBy: { createdAt: 'asc' },
+  })
+
+  const shuffled = rows.sort(() => Math.random() - 0.5).slice(0, TRIVIA_QUESTION_COUNT)
+  const questions: MatchQuestion[] = shuffled.map((q) => ({
+    id: q.id,
+    text: q.text,
+    options: q.options,
+    correctAnswer: q.correctAnswer,
+    explanation: q.explanation,
+  }))
+
+  const state: MatchState = {
+    matchId,
+    hostId,
+    invitedId,
+    questions,
+    currentRound: 0,
+    hostScore: 0,
+    invitedScore: 0,
+    answers: {},
+    status: 'active',
+  }
+
+  await saveState(state)
+  return state
+}
+
+export async function finalizeMatch(state: MatchState): Promise<void> {
+  const winnerId = state.hostScore >= state.invitedScore ? state.hostId : state.invitedId
+
+  // Write result to PostgreSQL
+  await prisma.match.update({
+    where: { id: state.matchId },
+    data: { status: 'completed' },
+  })
+  await prisma.matchResult.create({
+    data: {
+      matchId: state.matchId,
+      winnerId,
+      hostScore: state.hostScore,
+      invitedScore: state.invitedScore,
+    },
+  })
+
+  // Award +200 pts to winner and update triviaPlayed for both players
+  await prisma.userStats.upsert({
+    where: { userId: winnerId },
+    create: { userId: winnerId, points: 200, triviaPlayed: 1 },
+    update: { points: { increment: 200 }, triviaPlayed: { increment: 1 } },
+  })
+
+  const loserId = winnerId === state.hostId ? state.invitedId : state.hostId
+  await prisma.userStats.upsert({
+    where: { userId: loserId },
+    create: { userId: loserId, points: 0, triviaPlayed: 1 },
+    update: { triviaPlayed: { increment: 1 } },
+  })
+
+  // Evict match state from Redis
+  await redis.del(stateKey(state.matchId))
+}

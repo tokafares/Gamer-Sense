@@ -1,36 +1,23 @@
+import { useEffect, useState, useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
+import { useGameStore } from '../store/gameStore'
+import { useAuthStore }  from '../store/authStore'
+import { getSocket, connectSocket } from '../lib/socket'
 
-// ── Round 3 Results dialog ──────────────────────────────────────────────────
+// ── Round Results dialog — updated SVG frames (no baked-in text) ───────────
 import ResultsBar      from '../assets/Group 370.svg'       // 1266 × 69  title bar
 import CloseBtn        from '../assets/Group 369.svg'       // 45 × 45    ✕ button
-import YourAnswerCard  from '../assets/Group _375.svg'      // 376 × 418  left card
-import PointsCard      from '../assets/Group _349.svg'      // 376 × 418  center card
-import CorrectCard     from '../assets/Group _373.svg'      // 376 × 418  right card
+import YourAnswerCard  from '../assets/Group 375.svg'       // 376 × 418  left card
+import PointsCard      from '../assets/Group 349.svg'       // 376 × 418  center card (clean frame, no baked-in text)
+import CorrectCard     from '../assets/Group 373.svg'       // 376 × 418  right card  (clean frame, no baked-in text)
 
 // ── Voting statistics ───────────────────────────────────────────────────────
 import VotingBg        from '../assets/voting statisticsBg.svg'      // 1266 × 519
 import ViewResultBtn   from '../assets/view result button 359.svg'   // 353 × 65
 
-// ── Percentage bars (Rectangle 46–52) ──────────────────────────────────────
-import Bar46 from '../assets/Rectangle 46.svg'   // 114 × 191  dark
-import Bar47 from '../assets/Rectangle 47.svg'   // 114 × 295  dark
-import Bar48 from '../assets/Rectangle 48.svg'   // 114 × 316  dark
-import Bar49 from '../assets/Rectangle 49.svg'   // 114 × 303  teal  (your answer)
-import Bar50 from '../assets/Rectangle 50.svg'   // 114 × 241  gold  (correct answer)
-import Bar51 from '../assets/Rectangle 51.svg'   // 114 × 241  dark
-import Bar52 from '../assets/Rectangle 52.svg'   // 114 × 206  dark
-
-// ── Bar top-cap indicators (Rectangle 53–59) ───────────────────────────────
-import Cap53 from '../assets/Rectangle 53.svg'   // 114 × 8  teal  (Platinum)
-import Cap54 from '../assets/Rectangle 54.svg'   // 114 × 8  gold  (Gold)
-import Cap55 from '../assets/Rectangle 55.svg'   // 114 × 8  dark  (Iron)
-import Cap56 from '../assets/Rectangle 56.svg'   // 114 × 8  dark  (Bronze)
-import Cap57 from '../assets/Rectangle 57.svg'   // 114 × 8  dark  (Silver)
-import Cap58 from '../assets/Rectangle 58.svg'   // 114 × 8  dark  (Diamond)
-import Cap59 from '../assets/Rectangle 59.svg'   // 114 × 8  dark  (Master)
 
 // ── Separator line ──────────────────────────────────────────────────────────
 import Line2 from '../assets/Line 2.svg'
@@ -58,26 +45,60 @@ const RANK_TILES = [
   RankTile6, RankTile7, RankTile8, RankTile9,
 ]
 
-// Bar data: src, native height, label, cap — null = no bar (0 votes)
-const BARS: Array<{ src: string; nativeH: number; label: string; cap: string } | null> = [
-  { src: Bar46, nativeH: 191, label: '4%',  cap: Cap55 },   // Iron
-  { src: Bar47, nativeH: 295, label: '27%', cap: Cap56 },   // Bronze
-  { src: Bar48, nativeH: 316, label: '32%', cap: Cap57 },   // Silver
-  { src: Bar49, nativeH: 303, label: '25%', cap: Cap53 },   // Platinum (your answer – teal)
-  { src: Bar50, nativeH: 241, label: '4%',  cap: Cap54 },   // Gold     (correct answer – gold)
-  { src: Bar51, nativeH: 241, label: '8%',  cap: Cap58 },   // Diamond
-  { src: Bar52, nativeH: 206, label: '0%',  cap: Cap59 },   // Master
-  null,                                                       // GrandMaster
-  null,                                                       // Challenger
-]
+// Rank order matching the 9 rank tiles
+const RANKS = ['iron', 'bronze', 'silver', 'gold', 'platinum', 'diamond', 'master', 'grandmaster', 'challenger']
 
-// Scale bars so the tallest fits in ~290 px (leaves room for tiles + labels)
-const BAR_MAX_NATIVE = 316
-const BAR_RENDER_MAX = 290
-const BAR_SCALE = BAR_RENDER_MAX / BAR_MAX_NATIVE  // ≈ 0.918
+const BAR_RENDER_MAX = 290  // px — tallest bar at 100%
 
 export default function Page12() {
   const reduced = useReducedMotion()
+  const { points, answers, currentRound, gtrResult } = useGameStore()
+  const completedRound = answers.length || currentRound
+
+  const votedRank   = gtrResult?.votedRank   ?? ''
+  const correctRank = gtrResult?.correctRank ?? ''
+  const totalVotes  = gtrResult?.totalVotes  ?? 0
+  const percentages = gtrResult?.percentages ?? {}
+
+  // Build bar heights from live percentages; scale so tallest = BAR_RENDER_MAX
+  const bars = useMemo(() => {
+    const maxPct = Math.max(...RANKS.map(r => percentages[r] ?? 0), 1)
+    return RANKS.map(rank => {
+      const pct = percentages[rank] ?? 0
+      return {
+        rank,
+        pct,
+        height: Math.round((pct / maxPct) * BAR_RENDER_MAX),
+        isVoted:   rank.toLowerCase() === votedRank.toLowerCase(),
+        isCorrect: rank.toLowerCase() === correctRank.toLowerCase(),
+      }
+    })
+  }, [percentages, votedRank, correctRank])
+
+  // Socket: listen for match:join confirmation — used when guest lands here via invite URL
+  const { user } = useAuthStore()
+  const [_joinStatus, setJoinStatus] = useState<string | null>(null)
+
+  useEffect(() => {
+    const socket = getSocket()
+    socket.on('match:waiting', () => setJoinStatus('Waiting for opponent…'))
+    socket.on('match:start',   () => setJoinStatus('Match started!'))
+    socket.on('match:error',   (d: { message: string }) => setJoinStatus(`Error: ${d.message}`))
+    return () => {
+      socket.off('match:waiting')
+      socket.off('match:start')
+      socket.off('match:error')
+    }
+  }, [])
+
+  // If there's a token param in the URL, auto-join via socket
+  useEffect(() => {
+    if (!user) return
+    const token = new URLSearchParams(window.location.search).get('token')
+    if (!token) return
+    const socket = connectSocket()
+    socket.emit('match:join', { token, userId: user.id })
+  }, [user])
 
   return (
     <>
@@ -104,9 +125,28 @@ export default function Page12() {
             <div style={{ position: 'relative' }}>
               <img
                 src={ResultsBar}
-                alt="Round 3 Results"
+                alt=""
                 style={{ display: 'block', width: '100%', height: `${RESULTS_BAR_H}px`, objectFit: 'fill' }}
               />
+              {/* Dynamic round title — no baked-in text in new SVG */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                pointerEvents: 'none',
+              }}>
+                <span
+                  className="font-beaufort font-bold"
+                  style={{
+                    fontSize: 30, lineHeight: 1,
+                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Round {completedRound} Results
+                </span>
+              </div>
               <div style={{ position: 'absolute', top: '50%', right: '12px', transform: 'translateY(-50%)' }}>
                 <motion.div
                   style={{ cursor: 'pointer' }}
@@ -129,13 +169,35 @@ export default function Page12() {
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.2 }}
-                style={{ flex: 1, minWidth: 0 }}
+                style={{ flex: 1, minWidth: 0, position: 'relative' }}
               >
                 <img
                   src={YourAnswerCard}
-                  alt="Your Answer: Platinum"
+                  alt="Your Answer"
                   style={{ display: 'block', width: '100%', height: 'auto' }}
                 />
+                {/* Text overlays — Group 375.svg is a clean frame, no baked-in text */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'flex-end',
+                  paddingBottom: '10%', gap: 6, pointerEvents: 'none',
+                }}>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 31.31, lineHeight: 1,
+                    background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    Your Answer
+                  </span>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 35, lineHeight: 1, textTransform: 'capitalize',
+                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    {votedRank || '—'}
+                  </span>
+                </div>
               </motion.div>
 
               {/* Points */}
@@ -143,13 +205,35 @@ export default function Page12() {
                 initial={reduced ? false : { opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.45, delay: 0.28 }}
-                style={{ flex: 1, minWidth: 0 }}
+                style={{ flex: 1, minWidth: 0, position: 'relative' }}
               >
                 <img
                   src={PointsCard}
-                  alt="Points: 50"
+                  alt=""
                   style={{ display: 'block', width: '100%', height: 'auto' }}
                 />
+                {/* Text overlays — new SVG has no baked-in text */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  gap: 12, pointerEvents: 'none',
+                }}>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 50, lineHeight: 1,
+                    background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    Points
+                  </span>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 50, lineHeight: 1,
+                    background: 'linear-gradient(to bottom, #FFCA3A, #AD7600)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    {points}
+                  </span>
+                </div>
               </motion.div>
 
               {/* Correct Answer */}
@@ -157,13 +241,35 @@ export default function Page12() {
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.36 }}
-                style={{ flex: 1, minWidth: 0 }}
+                style={{ flex: 1, minWidth: 0, position: 'relative' }}
               >
                 <img
                   src={CorrectCard}
-                  alt="Correct Answer: Gold"
+                  alt="Correct Answer"
                   style={{ display: 'block', width: '100%', height: 'auto' }}
                 />
+                {/* Text overlays — new SVG has no baked-in text */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'flex-end',
+                  paddingBottom: '10%', gap: 6, pointerEvents: 'none',
+                }}>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 31.31, lineHeight: 1,
+                    background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    Correct Answer
+                  </span>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 35, lineHeight: 1, textTransform: 'capitalize',
+                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    {correctRank || '—'}
+                  </span>
+                </div>
               </motion.div>
             </div>
           </motion.div>
@@ -217,7 +323,7 @@ export default function Page12() {
                     backgroundClip: 'text',
                   }}
                 >
-                  79 votes
+                  {totalVotes > 0 ? `${totalVotes} votes` : '— votes'}
                 </span>
               </div>
 
@@ -238,8 +344,7 @@ export default function Page12() {
                 minHeight: 0,
               }}>
                 {RANK_TILES.map((tileSrc, i) => {
-                  const bar = BARS[i]
-                  const renderedBarH = bar ? Math.round(bar.nativeH * BAR_SCALE) : 0
+                  const bar = bars[i]
                   return (
                     <div
                       key={i}
@@ -251,8 +356,7 @@ export default function Page12() {
                         justifyContent: 'flex-end',
                       }}
                     >
-                      {/* Bar + cap + label */}
-                      {bar && (
+                      {bar && bar.height > 0 && (
                         <>
                           <span
                             className="font-beaufort font-bold"
@@ -264,21 +368,24 @@ export default function Page12() {
                               letterSpacing: '0.02em',
                             }}
                           >
-                            {bar.label}
+                            {bar.pct}%
                           </span>
-                          <img
-                            src={bar.cap}
-                            alt=""
-                            style={{ display: 'block', width: '82%', height: '8px', objectFit: 'fill' }}
-                          />
-                          <motion.img
-                            src={bar.src}
-                            alt=""
+                          {/* Cap line */}
+                          <div style={{
+                            width: '82%', height: '6px', borderRadius: '2px 2px 0 0',
+                            background: bar.isVoted ? '#00C9A7' : bar.isCorrect ? '#C9A227' : '#8FA3C0',
+                          }} />
+                          {/* Bar body */}
+                          <motion.div
                             style={{
-                              display: 'block',
                               width: '82%',
-                              height: `${renderedBarH}px`,
-                              objectFit: 'fill',
+                              height: `${bar.height}px`,
+                              background: bar.isVoted
+                                ? 'linear-gradient(to top, #007A67, #00C9A7)'
+                                : bar.isCorrect
+                                  ? 'linear-gradient(to top, #8B6F1A, #C9A227)'
+                                  : 'linear-gradient(to top, #0D1F3C, #1E3A5F)',
+                              borderRadius: '0 0 2px 2px',
                             }}
                             initial={reduced ? false : { scaleY: 0, originY: 1 }}
                             animate={{ scaleY: 1 }}

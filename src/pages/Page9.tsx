@@ -1,14 +1,16 @@
+import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import PlayerBg    from '../assets/Player Profile Bg.svg'
-import Player1     from '../assets/player 1.png'
 import GrayProfile from '../assets/gray profile.png'
-import WinnerCup   from '../assets/Group 323.png'
-import ScoreLeft   from '../assets/Group 322.svg'
-import ScoreRight  from '../assets/Group 12.svg'
-import RematchBtn  from '../assets/Group 321.svg'
+import { useAuthStore } from '../store/authStore'
+import WinnerCup  from '../assets/Group 323.png'
+import RematchBtn from '../assets/Group 321.svg'
+import { useGameStore } from '../store/gameStore'
+import { getSocket } from '../lib/socket'
+import { useGTRRound } from '../hooks/useGTRRound'
 
 const CARD_W  = 360
 const CARD_H  = Math.round(CARD_W * 504 / 441)  // 411 px
@@ -122,6 +124,39 @@ function PlayerCard({
 
 export default function Page9() {
   const reduced = useReducedMotion()
+  const { answers, opponentScore } = useGameStore()
+  const { user } = useAuthStore()
+  const correctCount = answers.filter(a => a.isCorrect).length
+
+  // match:end from socket — updates winner display
+  const [socketWinnerId, setSocketWinnerId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const socket = getSocket()
+    socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
+      setSocketWinnerId(d.winnerId)
+    })
+    return () => { socket.off('match:end') }
+  }, [])
+
+  // GTR round stats
+  const { round: gtrRound, stats: gtrStats, loading: gtrLoading, submitVote, result: gtrVoteResult } = useGTRRound()
+  const { setGTRResult } = useGameStore()
+
+  // Persist GTR result to game store for Page 12 to consume
+  useEffect(() => {
+    if (gtrVoteResult && gtrStats && gtrRound) {
+      setGTRResult({
+        roundId: gtrRound.id,
+        votedRank: gtrVoteResult.votedRank,
+        correctRank: gtrVoteResult.correctRank,
+        totalVotes: gtrStats.totalVotes,
+        percentages: gtrStats.percentages,
+      })
+    }
+  }, [gtrVoteResult, gtrStats, gtrRound, setGTRResult])
+  const isWinner = socketWinnerId ? socketWinnerId === user?.id : correctCount > opponentScore
+  void isWinner // used by parent scope to determine UI — suppress lint
 
   return (
     <>
@@ -164,7 +199,7 @@ export default function Page9() {
             {/* Left column: Winner panel + score */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
               <PlayerCard
-                img={Player1}
+                img={user?.avatarUrl ?? GrayProfile}
                 blurred
                 overlayImg={WinnerCup}
                 label="WINNER"
@@ -172,14 +207,23 @@ export default function Page9() {
                 reduced={reduced}
                 delay={0.1}
               />
-              <motion.img
-                src={ScoreLeft}
-                alt="35 Correct Answers"
-                style={{ width: 287, height: 54, display: 'block' }}
+              <motion.div
+                style={{
+                  width: 287, height: 54,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  background: '#0D1F3C', border: '1px solid #1E3A5F',
+                }}
                 initial={reduced ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
-              />
+              >
+                <span className="font-beaufort font-bold" style={{ fontSize: 24, color: '#00C9A7', lineHeight: 1 }}>
+                  {correctCount}
+                </span>
+                <span className="font-beaufort font-medium" style={{ fontSize: 13, color: '#8FA3C0', letterSpacing: '0.05em', lineHeight: 1 }}>
+                  Correct Answers
+                </span>
+              </motion.div>
             </div>
 
             {/* Right column: Invited panel + score */}
@@ -193,14 +237,23 @@ export default function Page9() {
                 reduced={reduced}
                 delay={0.2}
               />
-              <motion.img
-                src={ScoreRight}
-                alt="12 Correct Answers"
-                style={{ width: 287, height: 54, display: 'block' }}
+              <motion.div
+                style={{
+                  width: 287, height: 54,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  background: '#0D1F3C', border: '1px solid #1E3A5F',
+                }}
                 initial={reduced ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
-              />
+              >
+                <span className="font-beaufort font-bold" style={{ fontSize: 24, color: '#8FA3C0', lineHeight: 1 }}>
+                  {opponentScore}
+                </span>
+                <span className="font-beaufort font-medium" style={{ fontSize: 13, color: '#8FA3C0', letterSpacing: '0.05em', lineHeight: 1 }}>
+                  Correct Answers
+                </span>
+              </motion.div>
             </div>
 
           </div>
@@ -215,6 +268,56 @@ export default function Page9() {
             transition={{ duration: 0.5, delay: 0.6, ease: 'easeOut' }}
             whileHover={reduced ? {} : { scale: 1.05, transition: { duration: 0.2 } }}
           />
+
+          {/* GTR round stats — shown after voting */}
+          {!gtrLoading && gtrRound && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              style={{ marginTop: 40, width: '100%', maxWidth: 600, background: '#0D1F3C', border: '1px solid #1E3A5F', borderRadius: 8, padding: '24px 28px' }}
+            >
+              <p className="font-beaufort font-bold" style={{ fontSize: 18, color: '#E8EDF5', margin: '0 0 16px' }}>
+                Guess The Rank
+              </p>
+              <img src={gtrRound.imageUrl} alt="GTR Round" style={{ width: '100%', borderRadius: 4, marginBottom: 16 }} />
+              {gtrStats ? (
+                <div>
+                  <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.1em', marginBottom: 8 }}>
+                    CORRECT RANK: <span style={{ color: '#00C9A7' }}>{gtrRound.correctRank.toUpperCase()}</span> — {gtrStats.totalVotes} votes
+                  </p>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {Object.entries(gtrStats.percentages).map(([rank, pct]) => (
+                      <div key={rank} style={{ textAlign: 'center', minWidth: 52 }}>
+                        <div style={{ height: 60, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', marginBottom: 4 }}>
+                          <div style={{ width: 36, background: rank === gtrRound.correctRank ? '#00C9A7' : '#1E3A5F', height: `${Math.max(4, pct * 0.6)}px`, borderRadius: '2px 2px 0 0' }} />
+                        </div>
+                        <p style={{ color: '#8FA3C0', fontSize: 10, fontFamily: "'Barlow Condensed', sans-serif", margin: 0, textTransform: 'capitalize' }}>{rank.slice(0,3)}</p>
+                        <p style={{ color: '#E8EDF5', fontSize: 11, fontFamily: "'Barlow Condensed', sans-serif", margin: 0 }}>{pct}%</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {['iron','bronze','silver','gold','platinum','emerald','diamond','master','grandmaster','challenger'].map(rank => (
+                    <button
+                      key={rank}
+                      onClick={() => void submitVote(rank)}
+                      style={{
+                        padding: '6px 12px', background: '#112040', border: '1px solid #1E3A5F',
+                        borderRadius: 4, cursor: 'pointer', color: '#E8EDF5',
+                        fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.08em',
+                        textTransform: 'capitalize', transition: 'border-color 0.2s',
+                      }}
+                    >
+                      {rank}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
 
         </div>
       </main>

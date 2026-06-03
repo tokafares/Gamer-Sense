@@ -2,9 +2,9 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import PlayerBg from '../assets/Player Profile Bg.svg'
-import Player1  from '../assets/player 1.png'
-import Player2  from '../assets/player 2.png'
+import PlayerBg    from '../assets/Player Profile Bg.svg'
+import GrayProfile from '../assets/gray profile.png'
+import { useAuthStore } from '../store/authStore'
 
 const CARD_W  = 360
 const CARD_H  = Math.round(CARD_W * 504 / 441)  // 411 px — natural SVG ratio
@@ -14,10 +14,12 @@ function PlayerCard({
   img,
   reduced,
   delay,
+  label = 'Player Profile',
 }: {
   img: string
   reduced: boolean | null
   delay: number
+  label?: string
 }) {
   return (
     <motion.div
@@ -84,7 +86,7 @@ function PlayerCard({
               backgroundClip: 'text',
             }}
           >
-            Player Profile
+            {label}
           </span>
         </div>
       </motion.div>
@@ -94,6 +96,7 @@ function PlayerCard({
 
 export default function Page6() {
   const reduced = useReducedMotion()
+  const { user } = useAuthStore()
 
   return (
     <>
@@ -131,7 +134,12 @@ export default function Page6() {
 
           {/* Player cards + VS */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '64px' }}>
-            <PlayerCard img={Player1} reduced={reduced} delay={0.1} />
+            <PlayerCard
+              img={user?.avatarUrl ?? GrayProfile}
+              label={user?.username ?? 'Player Profile'}
+              reduced={reduced}
+              delay={0.1}
+            />
 
             {/* VS */}
             <motion.span
@@ -153,7 +161,7 @@ export default function Page6() {
               VS
             </motion.span>
 
-            <PlayerCard img={Player2} reduced={reduced} delay={0.3} />
+            <PlayerCard img={GrayProfile} reduced={reduced} delay={0.3} />
           </div>
         </div>
       </main>

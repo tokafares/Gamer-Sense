@@ -3,9 +3,9 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine   from '../assets/Rectangle 6.svg'
-import RoundBg         from '../assets/RoundBg.svg'
-import RoundText       from '../assets/Group 364.svg'
-import FlagIcon        from '../assets/Flag Group171.svg'
+import RoundBg  from '../assets/RoundBg.svg'
+import FlagIcon from '../assets/Flag Group171.svg'
+import { useGameStore } from '../store/gameStore'
 import GameFrame       from '../assets/Group 353.svg'
 import RankContainer   from '../assets/Group 365.svg'
 import RankTile1       from '../assets/Group _337.svg'
@@ -32,6 +32,7 @@ const ROUND_H    = 65            // RoundBg native height (px)
 export default function Page11() {
   const reduced  = useReducedMotion()
   const [selected, setSelected] = useState<number | null>(null)
+  const { currentRound, totalRounds, points } = useGameStore()
 
   function toggle(i: number) {
     setSelected(prev => (prev === i ? null : i))
@@ -65,19 +66,31 @@ export default function Page11() {
                 alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
               />
-              <img
-                src={RoundText}
-                alt="Round 3/3 ◆◆◆ Points 13"
+              <div
                 style={{
                   position: 'absolute',
                   top: '50%',
                   left: '1.2%',
                   width: '97.5%',
-                  height: 'auto',
                   transform: 'translateY(-50%)',
                   pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0 16px',
+                  boxSizing: 'border-box',
                 }}
-              />
+              >
+                <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#E8EDF5', lineHeight: 1 }}>
+                  Round {currentRound}/{totalRounds}
+                </span>
+                <span style={{ color: '#C9A227', fontSize: 18, letterSpacing: 4, lineHeight: 1 }}>
+                  {Array.from({ length: totalRounds }, (_, i) => i < currentRound ? '◆' : '◇').join(' ')}
+                </span>
+                <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#00C9A7', lineHeight: 1 }}>
+                  Points {points}
+                </span>
+              </div>
             </div>
             {/* Flag icon — right end */}
             <img

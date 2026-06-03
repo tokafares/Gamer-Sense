@@ -1,17 +1,12 @@
+import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { fadeUp, staggerContainer, slideFromLeft } from '../lib/animations'
+import { useLeaderboard } from '../hooks/useLeaderboard'
+import { getSocket } from '../lib/socket'
 
 /* ─── data ────────────────────────────────────────────── */
-
-const leaderboard = [
-  { rank: 1, name: 'Summoner 01', points: 3000, tier: 'Challenger' },
-  { rank: 2, name: 'Summoner 02', points: 2900, tier: 'Master'     },
-  { rank: 3, name: 'Summoner 03', points: 2800, tier: 'Diamond'    },
-  { rank: 4, name: 'Summoner 04', points: 2700, tier: 'Platinum'   },
-  { rank: 5, name: 'Summoner 05', points: 2600, tier: 'Gold'       },
-]
 
 const offerCards = [
   {
@@ -53,12 +48,133 @@ const PlayIcon = ({ size = 14 }: { size?: number }) => (
 
 /* ─── page ────────────────────────────────────────────── */
 
+interface SocketQuestion {
+  id: string
+  text: string
+  options: { id: string; text: string }[]
+}
+
+interface RoundResult {
+  roundIndex: number
+  correctAnswer: string
+  hostScore: number
+  invitedScore: number
+}
+
 const Home = () => {
   const rm = useReducedMotion()
+  const { entries, loading, error } = useLeaderboard()
+  // Live trivia socket state — only active when a match is in progress
+  const [activeMatchId,   setActiveMatchId]   = useState<string | null>(null)
+  const [currentQuestion, setCurrentQuestion] = useState<SocketQuestion | null>(null)
+  const [roundIndex,      setRoundIndex]       = useState(0)
+  const [selectedAnswer,  setSelectedAnswer]   = useState<string | null>(null)
+  const [lastResult,      setLastResult]       = useState<RoundResult | null>(null)
+  const [matchEnded,      setMatchEnded]       = useState(false)
+
+  useEffect(() => {
+    const socket = getSocket()
+
+    socket.on('match:start', (d: { matchId: string; questions: SocketQuestion[] }) => {
+      setActiveMatchId(d.matchId)
+      setMatchEnded(false)
+    })
+    socket.on('round:question', (d: { roundIndex: number; question: SocketQuestion }) => {
+      setCurrentQuestion(d.question)
+      setRoundIndex(d.roundIndex)
+      setSelectedAnswer(null)
+      setLastResult(null)
+    })
+    socket.on('round:result', (d: RoundResult) => {
+      setLastResult(d)
+    })
+    socket.on('match:end', () => {
+      setMatchEnded(true)
+      setActiveMatchId(null)
+      setCurrentQuestion(null)
+    })
+
+    return () => {
+      socket.off('match:start')
+      socket.off('round:question')
+      socket.off('round:result')
+      socket.off('match:end')
+    }
+  }, [])
+
+  function submitAnswer(answer: string) {
+    if (!activeMatchId || selectedAnswer) return
+    setSelectedAnswer(answer)
+    getSocket().emit('round:answer', { matchId: activeMatchId, roundIndex, answer })
+  }
 
   return (
     <>
       <Header />
+
+      {/* ── Live trivia overlay — shown when a socket match is active ── */}
+      <AnimatePresence>
+        {activeMatchId && currentQuestion && (
+          <motion.div
+            key="trivia-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200,
+              background: 'rgba(4,10,22,0.92)', backdropFilter: 'blur(6px)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              padding: '40px 24px',
+            }}
+          >
+            <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.15em', marginBottom: 12 }}>
+              ROUND {roundIndex + 1}
+            </p>
+            <p style={{ color: '#E8EDF5', fontFamily: "'Beaufort for LOL', serif", fontWeight: 700, fontSize: 22, textAlign: 'center', maxWidth: 600, marginBottom: 32 }}>
+              {currentQuestion.text}
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', maxWidth: 480 }}>
+              {currentQuestion.options.map(opt => (
+                <button
+                  key={opt.id}
+                  onClick={() => submitAnswer(opt.id)}
+                  disabled={!!selectedAnswer}
+                  style={{
+                    padding: '14px 20px', textAlign: 'left', cursor: selectedAnswer ? 'default' : 'pointer',
+                    background: selectedAnswer === opt.id ? 'rgba(0,201,167,0.15)' : lastResult && opt.id === lastResult.correctAnswer ? 'rgba(0,201,167,0.1)' : '#0D1F3C',
+                    border: `1px solid ${selectedAnswer === opt.id ? '#00C9A7' : lastResult && opt.id === lastResult.correctAnswer ? '#00C9A7' : '#1E3A5F'}`,
+                    borderRadius: 6, color: '#E8EDF5',
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15,
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <span style={{ color: '#00C9A7', marginRight: 10 }}>{opt.id}.</span>{opt.text}
+                </button>
+              ))}
+            </div>
+            {lastResult && (
+              <motion.p
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                style={{ marginTop: 20, color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14 }}
+              >
+                Correct: {lastResult.correctAnswer} — You: {lastResult.hostScore} | Opponent: {lastResult.invitedScore}
+              </motion.p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {matchEnded && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          style={{ position: 'fixed', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 200,
+            background: '#0D1F3C', border: '1px solid #00C9A7', borderRadius: 8, padding: '16px 32px',
+            color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, letterSpacing: '0.1em' }}
+        >
+          MATCH COMPLETE!
+        </motion.div>
+      )}
+
       <div className="w-full">
 
       {/* ══════════════════════════════════════════
@@ -280,31 +396,74 @@ const Home = () => {
               ))}
             </div>
 
-            <motion.div
-              variants={staggerContainer}
-              initial={rm ? false : 'hidden'}
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              {leaderboard.map((row, i) => (
-                <motion.div
-                  key={row.rank}
-                  variants={slideFromLeft}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="grid grid-cols-4 text-center"
-                  style={{
-                    padding: '16px 32px',
-                    fontSize: '14px',
-                    background: i % 2 === 0 ? '#0D1F3C' : '#112040',
-                  }}
-                >
-                  <span className="text-gs-textMuted">{row.rank}</span>
-                  <span className="text-gs-text">{row.name}</span>
-                  <span className="text-gs-text">{row.points.toLocaleString()}</span>
-                  <span className="text-gs-textMuted">{row.tier}</span>
-                </motion.div>
-              ))}
-            </motion.div>
+            {/* minHeight prevents frame collapse in error state */}
+            <div style={{ minHeight: '260px' }}>
+            {loading ? (
+              /* ── Skeleton rows — pulse wrapper respects reduced motion ── */
+              <motion.div
+                animate={rm ? {} : { opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                {Array.from({ length: 5 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="grid grid-cols-4 text-center"
+                    style={{
+                      padding: '16px 32px',
+                      fontSize: '14px',
+                      background: i % 2 === 0 ? '#0D1F3C' : '#112040',
+                    }}
+                  >
+                    {[28, 55, 35, 45].map((w, j) => (
+                      <div key={j} style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{
+                          height: '20px',
+                          width: `${w}%`,
+                          background: '#1E3A5F',
+                          borderRadius: 3,
+                        }} />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </motion.div>
+            ) : error ? (
+              /* ── Error state — vertically centred inside the reserved body area ── */
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: '260px',
+              }}>
+                <span className="text-gs-textMuted" style={{ fontSize: '14px' }}>{error}</span>
+              </div>
+            ) : (
+              /* ── Live data rows ── */
+              <motion.div
+                variants={staggerContainer}
+                initial={rm ? false : 'hidden'}
+                whileInView="show"
+                viewport={{ once: true }}
+              >
+                {entries.map((row, i) => (
+                  <motion.div
+                    key={row.rank}
+                    variants={slideFromLeft}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                    className="grid grid-cols-4 text-center"
+                    style={{
+                      padding: '16px 32px',
+                      fontSize: '14px',
+                      background: i % 2 === 0 ? '#0D1F3C' : '#112040',
+                    }}
+                  >
+                    <span className="text-gs-textMuted">{row.rank}</span>
+                    <span className="text-gs-text">{row.username}</span>
+                    <span className="text-gs-text">{row.points.toLocaleString()}</span>
+                    <span className="text-gs-textMuted">{row.tier}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+            </div>
           </div>
 
           {/* prize draw */}

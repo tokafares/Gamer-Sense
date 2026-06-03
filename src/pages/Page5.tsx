@@ -53,7 +53,7 @@ const gradientVariants: Variants = {
 export default function Page5() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
-  const { champions, loading } = useChampions()
+  const { champions, loading, error } = useChampions()
 
   const [activeRole,    setActiveRole]    = useState<Role | null>(null)
   const [search,        setSearch]        = useState('')
@@ -238,7 +238,18 @@ export default function Page5() {
                   alignContent: 'start',
                 }}
               >
-                {loading ? (
+                {error ? (
+                  <div style={{
+                    gridColumn: '1 / -1',
+                    color: '#ef4444',
+                    fontFamily: 'beaufort, serif',
+                    textAlign: 'center',
+                    padding: 32,
+                    fontSize: 13,
+                  }}>
+                    Failed to load champions. Check your connection and refresh.
+                  </div>
+                ) : loading ? (
                   Array.from({ length: 18 }, (_, i) => (
                     <div
                       key={i}

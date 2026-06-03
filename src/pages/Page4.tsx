@@ -3,6 +3,9 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
+import { useQuestions } from '../hooks/useQuestions'
+import { apiPost } from '../lib/api'
+import { useGameStore } from '../store/gameStore'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -16,7 +19,6 @@ import DialogBgSvg   from '../assets/DialogBg.svg'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
-import Group310Svg   from '../assets/Group 310.svg'
 
 const LANES = [
   { key: 'top',     label: 'Top Lane', svg: TopLaneSvg  },
@@ -57,16 +59,29 @@ const ANSWER_REGIONS = [
 
 const LABEL_CLS = 'font-beaufort font-bold bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent'
 const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent'
-const TEAL_CLS  = 'font-beaufort font-bold bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent'
-
-const REVEAL_BG  = 'linear-gradient(180deg, #192F50 0%, #0E1B2F 100%)'
-const REVEAL_BRD = '2px solid #B4B4B4'
 
 export default function Page4() {
   const reduced = useReducedMotion()
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
+  const { question, loading, error } = useQuestions('blitz', activeLane)
+  const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
+
+  async function handleLockIn() {
+    if (!selectedAnswer || locked || loading || !question) return
+    setLocked(true)
+    if (import.meta.env.VITE_API_URL) {
+      try {
+        const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number }>('/answers/submit', {
+          questionId: question.id,
+          selectedAnswer,
+        })
+        addPoints(res.pointsEarned)
+        recordAnswer({ round: currentRound, selectedId: selectedAnswer, correctId: res.correctAnswer, isCorrect: res.correct, pointsEarned: res.pointsEarned })
+      } catch { /* silent */ }
+    }
+  }
 
   return (
     <>
@@ -76,7 +91,7 @@ export default function Page4() {
 
         <div style={{
           maxWidth: '1440px', margin: '0 auto',
-          padding: '16px 79px 40px',
+          padding: '16px 79px 80px',
           position: 'relative', zIndex: 1,
         }}>
 
@@ -114,7 +129,7 @@ export default function Page4() {
                 <motion.button
                   key={key}
                   variants={cardItemAnim}
-                  onClick={() => setActiveLane(key)}
+                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false) }}
                   aria-label={label}
                   style={{
                     position: 'relative',
@@ -166,8 +181,7 @@ export default function Page4() {
                   Question
                 </p>
                 <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                  Which of these champions is traditionally considered a&nbsp;'lane&nbsp;bully'
-                  in the top lane due to their high early-game pressure and range?
+                  {loading ? 'Loading question…' : error ? error : (question?.text ?? '')}
                 </p>
               </div>
 
@@ -178,12 +192,35 @@ export default function Page4() {
               }}>
                 <img src={AnswerBtnsSvg} alt=""
                   style={{ display: 'block', width: '100%', height: '100%' }} />
+
+                {/* Dynamic answer text overlaid on each button frame */}
+                {question && ANSWER_REGIONS.map(({ id, top, height }) => {
+                  const ans = question.options.find(a => a.id === id)
+                  if (!ans) return null
+                  return (
+                    <div
+                      key={`ans-text-${id}`}
+                      style={{
+                        position: 'absolute', top: `${top + 2}px`, left: '2px',
+                        width: 'calc(100% - 4px)', height: `${height - 4}px`,
+                        display: 'flex', alignItems: 'center',
+                        padding: '0 20px', pointerEvents: 'none',
+                        background: '#0D1F3C',
+                      }}
+                    >
+                      <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                        {id}.&nbsp;{ans.text}
+                      </p>
+                    </div>
+                  )
+                })}
+
                 {ANSWER_REGIONS.map(({ id, top, height }, i) => (
                   <motion.div
                     key={id}
                     role="button"
                     tabIndex={locked ? -1 : 0}
-                    onClick={() => !locked && setSelectedAnswer(id)}
+                    onClick={() => !locked && !loading && setSelectedAnswer(id)}
                     onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
                     initial={reduced ? false : { opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -207,19 +244,21 @@ export default function Page4() {
                 ))}
               </div>
 
-              {/* Hint text overlay */}
-              <div style={{
-                position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                width: '100%', height: `${HINT_H}px`,
-                padding: '14px 20px', boxSizing: 'border-box',
-              }}>
-                <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                  Hint:
-                </p>
-                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
-                  "Think of a champion that uses range to punish melee opponents from level&nbsp;1."
-                </p>
-              </div>
+              {/* Hint text overlay — only shown when hint data exists */}
+              {question?.hint && (
+                <div style={{
+                  position: 'absolute', top: `${HINT_TOP}px`, left: 0,
+                  width: '100%', height: `${HINT_H}px`,
+                  padding: '14px 20px', boxSizing: 'border-box',
+                }}>
+                  <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
+                    Hint:
+                  </p>
+                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
+                    "{question.hint}"
+                  </p>
+                </div>
+              )}
             </motion.div>
           </div>
 
@@ -230,16 +269,15 @@ export default function Page4() {
             transition={{ duration: 0.4, delay: 0.6 }}
             style={{
               marginTop: '16px',
-              opacity: selectedAnswer || locked ? 1 : 0.45,
-              display: 'inline-block',
+              opacity: selectedAnswer && !loading ? 1 : 0.45,
             }}
           >
             <button
-              onClick={() => { if (selectedAnswer && !locked) setLocked(true) }}
+              onClick={() => { void handleLockIn() }}
               aria-label="Lock in answer"
               style={{
                 background: 'none', border: 'none', padding: 0,
-                cursor: selectedAnswer && !locked ? 'pointer' : 'default',
+                cursor: selectedAnswer && !locked && !loading ? 'pointer' : 'default',
                 display: 'block',
               }}
             >
@@ -248,38 +286,36 @@ export default function Page4() {
             </button>
           </motion.div>
 
-          {/* ── Answer reveal ── */}
-          {locked && (
-            <motion.div
-              variants={scrollFadeIn}
-              initial={reduced ? false : 'hidden'}
-              animate="show"
-              style={{
-                marginTop: '10px',
-                background: REVEAL_BG, border: REVEAL_BRD,
-                padding: '6px 14px',
-                display: 'inline-block',
-                minWidth: '260px',
-                maxWidth: '400px',
-              }}
-            >
-              <p className={TEAL_CLS} style={{ fontSize: '12px', letterSpacing: '0.06em', margin: '0 0 2px' }}>
-                C. Quinn
-              </p>
-              <p className={PARA_CLS} style={{ fontSize: '11px', lineHeight: '16px', margin: 0 }}>
-                That's right! Quinn uses her ranged advantage and vault to harass melee
-                top laners, making her a classic example of a lane bully.
-              </p>
-            </motion.div>
-          )}
+          {/* ── Answer reveal — only shown after lock-in ── */}
+          {locked && question && (() => {
+            const correctAns = question.options.find(a => a.id === question.correctAnswer)
+            return (
+              <motion.div
+                variants={scrollFadeIn}
+                initial={reduced ? false : 'hidden'}
+                animate="show"
+                style={{
+                  marginTop: '16px',
+                  background: '#0D1F3C',
+                  border: '1px solid #1E3A5F',
+                  borderLeft: '3px solid #00C9A7',
+                  borderRadius: 4,
+                  padding: '14px 20px',
+                }}
+              >
+                <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
+                  {question.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
+                </p>
+                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                  {question.explanation}
+                </p>
+              </motion.div>
+            )
+          })()}
 
         </div>
       </main>
 
-      {/* c.quinn — smaller, left-aligned, with space before separator */}
-      <div style={{ maxWidth: '1440px', marginLeft: 'auto', marginRight: 'auto', marginTop: '0px', marginBottom: '48px', paddingBottom: '32px' }}>
-        <img src={Group310Svg} alt="" style={{ display: 'block', width: '62%', height: 'auto', marginLeft: '79px' }} />
-      </div>
       <img src={SeparatorLine} alt="" style={{ display: 'block', width: '100%', height: '5px', objectFit: 'cover', margin: 0 }} />
       <Footer />
     </>

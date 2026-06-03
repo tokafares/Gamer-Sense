@@ -3,6 +3,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import Logo from '../assets/Layer _1.svg'
 import NavIcon from '../assets/Vector _3.svg'
 import { navSlideDown } from '../lib/animations'
+import { useAuthStore } from '../store/authStore'
 
 const FEATURE_NAV = [
   { label: 'SCENARIOS',      to: '/page3' },
@@ -20,6 +21,7 @@ const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...TRIVIA_PATHS, .
 export default function Header() {
   const { pathname } = useLocation()
   const reduced = useReducedMotion()
+  const { isAuthenticated, user, openLoginModal, logout } = useAuthStore()
 
   const isHome        = pathname === '/'
   const isFeatures    = pathname === '/page2'
@@ -119,8 +121,46 @@ export default function Header() {
           )}
         </nav>
 
-        {isHome && (
+        {/* Authenticated: show username + logout on all pages */}
+        {isAuthenticated && user && (
           <motion.div
+            className="absolute right-[89px] top-1/2 -translate-y-1/2 flex items-center gap-[12px]"
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <span className="font-beaufort font-medium text-[13px] text-[#E8EDF5] leading-none">
+              {user.username}
+            </span>
+            <motion.button
+              onClick={logout}
+              className="font-beaufort font-bold text-[11px] leading-none"
+              style={{
+                background: 'none',
+                border: '1px solid #1E3A5F',
+                color: '#8FA3C0',
+                cursor: 'pointer',
+                padding: '5px 10px',
+                letterSpacing: '0.1em',
+                borderRadius: 3,
+              }}
+              animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
+              transition={{ filter: { duration: 0.15 } }}
+              whileHover={reduced ? {} : {
+                color: '#E8EDF5',
+                borderColor: '#00C9A7',
+                filter: 'brightness(1.1) drop-shadow(0 0 6px #00C9A740)',
+              }}
+            >
+              LOGOUT
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Not authenticated: LOGIN button on home page only */}
+        {!isAuthenticated && isHome && (
+          <motion.div
+            onClick={openLoginModal}
             className="absolute right-[89px] top-1/2 -translate-y-1/2 w-[103px] h-[34px] p-[2px] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity duration-200"
             initial={reduced ? false : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

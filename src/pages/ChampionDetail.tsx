@@ -46,7 +46,7 @@ export default function ChampionDetail() {
   const { id }    = useParams<{ id: string }>()
   const navigate  = useNavigate()
   const reduced   = useReducedMotion()
-  const { champions, loading } = useChampions()
+  const { champions, loading, error } = useChampions()
 
   /* ── loading ── */
   if (loading) {
@@ -64,6 +64,29 @@ export default function ChampionDetail() {
   }
 
   const champion = id ? champions.find(c => c.id === id) : undefined
+
+  /* ── error ── */
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24, background: '#060F1E' }}>
+        <div style={{ color: '#ef4444', fontSize: 18, fontFamily: BARLOW_COND, fontWeight: 700, letterSpacing: '0.1em' }}>
+          FAILED TO LOAD CHAMPION DATA
+        </div>
+        <div style={{ color: '#8FA3C0', fontSize: 13, fontFamily: BARLOW }}>
+          Check your connection and try again.
+        </div>
+        <motion.button
+          onClick={() => navigate('/page5')}
+          style={{ background: 'none', border: '1px solid #00C9A7', color: '#00C9A7', padding: '12px 32px', cursor: 'pointer', fontFamily: BARLOW_COND, fontWeight: 700, fontSize: 14, letterSpacing: 2, borderRadius: 6 }}
+          animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
+          transition={{ filter: { duration: 0.15 } }}
+          whileHover={reduced ? {} : { filter: 'brightness(1.2) drop-shadow(0 0 10px #00C9A7)', backgroundColor: 'rgba(0,201,167,0.08)' }}
+        >
+          ← KNOWLEDGE HUB
+        </motion.button>
+      </div>
+    )
+  }
 
   /* ── not found ── */
   if (!champion) {

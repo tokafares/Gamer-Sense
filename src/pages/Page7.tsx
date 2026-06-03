@@ -1,11 +1,14 @@
+import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import PlayerBg  from '../assets/Player Profile Bg.svg'
-import Player1   from '../assets/player 1.png'
-import Player2   from '../assets/player 2.png'
-import InviteBtn from '../assets/Group 317.svg'
+import PlayerBg    from '../assets/Player Profile Bg.svg'
+import GrayProfile from '../assets/gray profile.png'
+import InviteBtn   from '../assets/Group 317.svg'
+import { useAuthStore } from '../store/authStore'
+import { apiPost } from '../lib/api'
+import { connectSocket, disconnectSocket } from '../lib/socket'
 
 const CARD_W  = 360
 const CARD_H  = Math.round(CARD_W * 504 / 441)  // 411 px
@@ -94,6 +97,46 @@ function PlayerCard({
 
 export default function Page7() {
   const reduced = useReducedMotion()
+  const { user } = useAuthStore()
+  const [_matchId,   setMatchId]    = useState<string | null>(null)
+  const [inviteUrl,  setInviteUrl]  = useState<string | null>(null)
+  const [copied,     setCopied]     = useState(false)
+  const [matchError, setMatchError] = useState<string | null>(null)
+  const [status,     setStatus]     = useState<'idle' | 'waiting' | 'ready'>('idle')
+
+  // Create match and connect socket on mount
+  useEffect(() => {
+    if (!import.meta.env.VITE_API_URL || !user) return
+    let cancelled = false
+
+    apiPost<{ matchId: string; inviteToken: string; inviteUrl: string }>('/matches/create', {})
+      .then(res => {
+        if (cancelled) return
+        setMatchId(res.matchId)
+        setInviteUrl(res.inviteUrl)
+
+        const socket = connectSocket()
+        socket.emit('match:join', { token: res.inviteToken, userId: user.id })
+        socket.on('match:waiting',  () => { if (!cancelled) setStatus('waiting') })
+        socket.on('match:start',    () => { if (!cancelled) setStatus('ready') })
+        socket.on('match:error',    (d: { message: string }) => { if (!cancelled) setMatchError(d.message) })
+      })
+      .catch(() => { if (!cancelled) setMatchError('Failed to create match') })
+
+    return () => {
+      cancelled = true
+      disconnectSocket()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  function copyInvite() {
+    if (!inviteUrl) return
+    void navigator.clipboard.writeText(inviteUrl).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   return (
     <>
@@ -134,10 +177,10 @@ export default function Page7() {
 
             {/* Left: Host Player Profile */}
             <PlayerCard
-              img={Player1}
+              img={user?.avatarUrl ?? GrayProfile}
               reduced={reduced}
               delay={0.1}
-              label="Host Player Profile"
+              label={user?.username ?? 'Host Player Profile'}
             />
 
             {/* VS — centred within panel height so the button below doesn't shift it */}
@@ -171,22 +214,45 @@ export default function Page7() {
             {/* Right: Invited Player Profile + Invite button */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
               <PlayerCard
-                img={Player2}
+                img={GrayProfile}
                 reduced={reduced}
                 delay={0.3}
                 label="Invited Player Profile"
                 labelFrom="#FFFFFF"
                 labelTo="#D0D8E4"
               />
-              <motion.img
-                src={InviteBtn}
-                alt="Invite Link"
-                style={{ width: 242, height: 45, display: 'block', cursor: 'pointer' }}
+              <motion.div
                 initial={reduced ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
-                whileHover={reduced ? {} : { scale: 1.05, transition: { duration: 0.2 } }}
-              />
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
+              >
+                <motion.img
+                  src={InviteBtn}
+                  alt="Copy Invite Link"
+                  onClick={copyInvite}
+                  style={{ width: 242, height: 45, display: 'block', cursor: inviteUrl ? 'pointer' : 'default', opacity: inviteUrl ? 1 : 0.5 }}
+                  whileHover={reduced || !inviteUrl ? {} : { scale: 1.05, transition: { duration: 0.2 } }}
+                />
+                {copied && (
+                  <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                    LINK COPIED!
+                  </span>
+                )}
+                {status === 'waiting' && !copied && (
+                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                    WAITING FOR OPPONENT…
+                  </span>
+                )}
+                {status === 'ready' && (
+                  <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                    OPPONENT JOINED — STARTING!
+                  </span>
+                )}
+                {matchError && (
+                  <span style={{ color: '#ef4444', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12 }}>{matchError}</span>
+                )}
+              </motion.div>
             </div>
 
           </div>

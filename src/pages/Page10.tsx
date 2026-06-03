@@ -1,9 +1,14 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 import PlayerCard   from '../assets/Group 367.svg'
 import UpgradeBtn   from '../assets/Group 321 upgrade button.svg'
+import GrayProfile  from '../assets/gray profile.png'
+import { useAuthStore } from '../store/authStore'
+import { useProfile }   from '../hooks/useProfile'
+import { getSocket } from '../lib/socket'
 import StatsBg      from '../assets/Group 336.svg'
 import RanksBg      from '../assets/Group 345.svg'
 import StatFrame1   from '../assets/Group 347.svg'
@@ -37,15 +42,69 @@ const RANKS_RATIO  = 280 / 1085
 const STATS_SEP_PCT = 93  / 399   // 23.31%
 const RANKS_SEP_PCT = 87  / 280   // 31.07%
 
-const STAT_FRAMES = [StatFrame1, StatFrame2, StatFrame3]
 const RANK_CARDS  = [Rank1, Rank2, Rank3, Rank4, Rank5, Rank6]
+
+const LABEL_GRADIENT: React.CSSProperties = {
+  background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
+  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+}
+const VALUE_GRADIENT: React.CSSProperties = {
+  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+}
 
 export default function Page10() {
   const reduced = useReducedMotion()
+  const { user } = useAuthStore()
+  const { profile } = useProfile(user?.id ?? null)
+  const avatarSrc = profile?.avatarUrl ?? user?.avatarUrl ?? GrayProfile
+  const displayName = profile?.username ?? user?.username ?? 'PLAYER'
+  const displayLevel = profile?.level ?? user?.level ?? 0
+
+  const STATS = [
+    { src: StatFrame1, label: 'GTR Completed',  value: profile?.gtrCompleted  != null ? String(profile.gtrCompleted)  : '—' },
+    { src: StatFrame2, label: 'Trivia Played',   value: profile?.triviaPlayed   != null ? String(profile.triviaPlayed)   : '—' },
+    { src: StatFrame3, label: 'Quiz Completed',  value: profile?.quizCompleted  != null
+        ? `${profile.quizCompleted}${profile.quizTotal != null ? '/' + profile.quizTotal : ''}`
+        : '—' },
+  ]
+
+  const [matchResult, setMatchResult] = useState<{ winnerId: string; hostScore: number; invitedScore: number } | null>(null)
+
+  useEffect(() => {
+    const socket = getSocket()
+    socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
+      setMatchResult(d)
+    })
+    return () => { socket.off('match:end') }
+  }, [])
 
   return (
     <>
       <Header />
+      <AnimatePresence>
+        {matchResult && (
+          <motion.div
+            key="match-end-banner"
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            style={{
+              position: 'fixed', top: 90, left: '50%', transform: 'translateX(-50%)', zIndex: 200,
+              background: matchResult.winnerId === user?.id ? 'rgba(0,201,167,0.15)' : 'rgba(201,162,39,0.15)',
+              border: `1px solid ${matchResult.winnerId === user?.id ? '#00C9A7' : '#C9A227'}`,
+              borderRadius: 8, padding: '12px 28px', textAlign: 'center',
+              fontFamily: "'Barlow Condensed', sans-serif",
+            }}
+          >
+            <p style={{ color: matchResult.winnerId === user?.id ? '#00C9A7' : '#C9A227', fontSize: 16, fontWeight: 700, letterSpacing: '0.15em', margin: '0 0 4px' }}>
+              {matchResult.winnerId === user?.id ? '🏆 YOU WON!' : 'MATCH COMPLETE'}
+            </p>
+            <p style={{ color: '#8FA3C0', fontSize: 12, margin: 0 }}>
+              {matchResult.hostScore} — {matchResult.invitedScore}
+            </p>
+            <button onClick={() => setMatchResult(null)} style={{ marginTop: 8, background: 'none', border: 'none', color: '#8FA3C0', cursor: 'pointer', fontSize: 11, fontFamily: "'Barlow Condensed', sans-serif" }}>DISMISS</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <main style={{ paddingTop: '85.2px', background: 'transparent', position: 'relative' }}>
         <div style={{
@@ -96,17 +155,56 @@ export default function Page10() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {/* Group 367: complete player card (portrait + name + level embedded) */}
-              <img
-                src={PlayerCard}
-                alt="Player card"
-                style={{
-                  display: 'block',
-                  width: `${CARD_W}px`,
-                  height: `${CARD_H}px`,
-                  objectFit: 'fill',
-                }}
-              />
+              {/* Player card — SVG frame with avatar + username overlaid */}
+              <div style={{ position: 'relative', width: `${CARD_W}px`, height: `${CARD_H}px` }}>
+                {/* SVG frame */}
+                <img
+                  src={PlayerCard}
+                  alt="Player card"
+                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'fill' }}
+                />
+                {/* Avatar in the portrait area (~top 62% of the card) */}
+                <img
+                  src={avatarSrc}
+                  alt=""
+                  style={{
+                    position: 'absolute',
+                    top: '6%',
+                    left: '9%',
+                    width: '82%',
+                    height: '62%',
+                    objectFit: 'cover',
+                    objectPosition: 'top center',
+                  }}
+                />
+                {/* Cover static PNG text ("PLAYER NAME" + "LEVEL 25") and overlay dynamic values */}
+                <div style={{
+                  position: 'absolute',
+                  top: '70%',
+                  left: '4%',
+                  right: '4%',
+                  bottom: '8%',
+                  background: '#0D1F3C',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                }}>
+                  <span
+                    className="font-beaufort font-bold"
+                    style={{ fontSize: 13, color: '#E8EDF5', letterSpacing: '0.05em', lineHeight: 1 }}
+                  >
+                    {displayName.toUpperCase()}
+                  </span>
+                  <span
+                    className="font-beaufort font-bold"
+                    style={{ fontSize: 11, color: '#00C9A7', letterSpacing: '0.12em', lineHeight: 1 }}
+                  >
+                    LEVEL {displayLevel}
+                  </span>
+                </div>
+              </div>
 
               {/* Group 321: Upgrade Membership button */}
               <motion.div
@@ -165,16 +263,30 @@ export default function Page10() {
                   justifyContent: 'space-evenly',
                   padding: '1% 5%',
                 }}>
-                  {STAT_FRAMES.map((src, i) => (
-                    <motion.img
+                  {STATS.map(({ src, label, value }, i) => (
+                    <motion.div
                       key={i}
-                      src={src}
-                      alt=""
-                      style={{ height: '87%', width: 'auto', display: 'block' }}
+                      style={{ height: '87%', width: 'auto', position: 'relative', display: 'flex', alignItems: 'stretch' }}
                       initial={reduced ? false : { opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: 0.35 + i * 0.08 }}
-                    />
+                    >
+                      <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block' }} />
+                      {/* Text overlay */}
+                      <div style={{
+                        position: 'absolute', inset: 0,
+                        display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'flex-end',
+                        paddingBottom: '10%', gap: 4, pointerEvents: 'none',
+                      }}>
+                        <span className="font-beaufort font-bold" style={{ fontSize: 17.75, lineHeight: 1, ...LABEL_GRADIENT }}>
+                          {label}
+                        </span>
+                        <span className="font-beaufort font-bold" style={{ fontSize: 33.73, lineHeight: 1, ...VALUE_GRADIENT }}>
+                          {value}
+                        </span>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>
