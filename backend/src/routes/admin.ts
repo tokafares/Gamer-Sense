@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify'
+import bcrypt from 'bcrypt'
 import { adminGuard } from '../middleware/adminGuard'
 import prisma from '../lib/prisma'
 
@@ -16,6 +17,7 @@ interface QuestionBody {
 interface QuestionParams { id: string }
 interface UserParams { id: string }
 interface RoleBody { role: string }
+interface PasswordBody { password: string }
 
 interface GTRRoundBody {
   imageUrl: string
@@ -148,6 +150,33 @@ export async function adminRoutes(app: FastifyInstance) {
           select: { id: true, username: true, email: true, role: true },
         })
         return reply.send(user)
+      } catch {
+        return reply.status(404).send({ error: 'User not found' })
+      }
+    },
+  )
+
+  app.put<{ Params: UserParams; Body: PasswordBody }>(
+    '/admin/users/:id/password',
+    {
+      preHandler: adminGuard,
+      schema: {
+        body: {
+          type: 'object',
+          required: ['password'],
+          properties: { password: { type: 'string', minLength: 8 } },
+        },
+      },
+    },
+    async (request, reply) => {
+      try {
+        const passwordHash = await bcrypt.hash(request.body.password, 12)
+        const user = await prisma.user.update({
+          where: { id: request.params.id },
+          data: { passwordHash },
+          select: { id: true, username: true, email: true },
+        })
+        return reply.send({ ...user, message: 'Password updated' })
       } catch {
         return reply.status(404).send({ error: 'User not found' })
       }
