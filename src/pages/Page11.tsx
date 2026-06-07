@@ -222,8 +222,8 @@ export default function Page11() {
 
             <div style={{
               position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'space-evenly',
-              padding: '7px 14px', boxSizing: 'border-box',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '4% 1%', boxSizing: 'border-box', gap: '0.5%',
             }}>
               {RANK_TILES.map((src, i) => {
                 const rankName  = RANKS_ORDER[i]
@@ -232,7 +232,7 @@ export default function Page11() {
                 return (
                   <motion.div
                     key={i}
-                    style={{ position: 'relative', flexShrink: 0 }}
+                    style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     initial={reduced ? false : { opacity: 0, scale: 0.82 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.32, delay: 0.42 + i * 0.045 }}
@@ -244,10 +244,10 @@ export default function Page11() {
                       aria-pressed={selected === i}
                       onClick={() => toggle(i)}
                       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggle(i) }}
-                      style={{ cursor: voted ? 'default' : 'pointer', outline: 'none', position: 'relative', display: 'block' }}
-                      whileHover={reduced || voted ? {} : { scale: 1.1, y: -5, transition: { duration: 0.2, ease: 'easeOut' } }}
+                      style={{ cursor: voted ? 'default' : 'pointer', outline: 'none', position: 'relative', display: 'block', width: '100%' }}
+                      whileHover={reduced || voted ? {} : { scale: 1.08, y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
                     >
-                      <img src={src} alt={rankName} style={{ display: 'block', height: '120px', width: 'auto' }} />
+                      <img src={src} alt={rankName} style={{ display: 'block', width: '100%', height: 'auto' }} />
 
                       {/* Selection highlight (pre-vote) */}
                       {!voted && selected === i && (
