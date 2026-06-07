@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { fadeUp, staggerContainer, slideFromLeft } from '../lib/animations'
 import { useLeaderboard } from '../hooks/useLeaderboard'
-import { getSocket } from '../lib/socket'
+import { useGameStore } from '../store/gameStore'
+import type { MatchQuestion } from '../store/gameStore'
+import { connectSocket, disconnectSocket } from '../lib/socket'
 
 /* ─── data ────────────────────────────────────────────── */
 
@@ -48,38 +51,42 @@ const PlayIcon = ({ size = 14 }: { size?: number }) => (
 
 /* ─── page ────────────────────────────────────────────── */
 
-interface SocketQuestion {
-  id: string
-  text: string
-  options: { id: string; text: string }[]
-}
-
 interface RoundResult {
   roundIndex: number
   correctAnswer: string
+  explanation: string
   hostScore: number
   invitedScore: number
 }
 
 const Home = () => {
   const rm = useReducedMotion()
+  const navigate = useNavigate()
   const { entries, loading, error } = useLeaderboard()
-  // Live trivia socket state — only active when a match is in progress
-  const [activeMatchId,   setActiveMatchId]   = useState<string | null>(null)
-  const [currentQuestion, setCurrentQuestion] = useState<SocketQuestion | null>(null)
-  const [roundIndex,      setRoundIndex]       = useState(0)
-  const [selectedAnswer,  setSelectedAnswer]   = useState<string | null>(null)
-  const [lastResult,      setLastResult]       = useState<RoundResult | null>(null)
-  const [matchEnded,      setMatchEnded]       = useState(false)
+  const { matchId: storedMatchId, matchQuestions, clearMatch } = useGameStore()
+
+  // Initialise from game store so first question is available immediately
+  const [activeMatchId,   setActiveMatchId]   = useState<string | null>(storedMatchId)
+  const [currentQuestion, setCurrentQuestion] = useState<MatchQuestion | null>(
+    matchQuestions.length > 0 ? matchQuestions[0] : null
+  )
+  const [roundIndex,    setRoundIndex]    = useState(0)
+  const [totalRounds,   setTotalRounds]   = useState(matchQuestions.length || 10)
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+  const [lastResult,    setLastResult]    = useState<RoundResult | null>(null)
+  const [hostScore,     setHostScore]     = useState(0)
+  const [invitedScore,  setInvitedScore]  = useState(0)
 
   useEffect(() => {
-    const socket = getSocket()
+    // Connect when entering an active match; use passive getSocket otherwise
+    const socket = activeMatchId ? connectSocket() : connectSocket()
 
-    socket.on('match:start', (d: { matchId: string; questions: SocketQuestion[] }) => {
+    socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
       setActiveMatchId(d.matchId)
-      setMatchEnded(false)
+      setTotalRounds(d.questions.length)
+      if (d.questions.length > 0) setCurrentQuestion(d.questions[0])
     })
-    socket.on('round:question', (d: { roundIndex: number; question: SocketQuestion }) => {
+    socket.on('round:question', (d: { roundIndex: number; question: MatchQuestion }) => {
       setCurrentQuestion(d.question)
       setRoundIndex(d.roundIndex)
       setSelectedAnswer(null)
@@ -87,11 +94,19 @@ const Home = () => {
     })
     socket.on('round:result', (d: RoundResult) => {
       setLastResult(d)
+      setHostScore(d.hostScore)
+      setInvitedScore(d.invitedScore)
     })
-    socket.on('match:end', () => {
-      setMatchEnded(true)
-      setActiveMatchId(null)
-      setCurrentQuestion(null)
+    socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
+      clearMatch()
+      disconnectSocket()
+      navigate('/page10', {
+        state: {
+          winnerId: d.winnerId,
+          hostScore: d.hostScore,
+          invitedScore: d.invitedScore,
+        },
+      })
     })
 
     return () => {
@@ -100,12 +115,13 @@ const Home = () => {
       socket.off('round:result')
       socket.off('match:end')
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function submitAnswer(answer: string) {
     if (!activeMatchId || selectedAnswer) return
     setSelectedAnswer(answer)
-    getSocket().emit('round:answer', { matchId: activeMatchId, roundIndex, answer })
+    connectSocket().emit('round:answer', { matchId: activeMatchId, roundIndex, answer })
   }
 
   return (
@@ -122,58 +138,82 @@ const Home = () => {
             exit={{ opacity: 0 }}
             style={{
               position: 'fixed', inset: 0, zIndex: 200,
-              background: 'rgba(4,10,22,0.92)', backdropFilter: 'blur(6px)',
+              background: 'rgba(4,10,22,0.94)', backdropFilter: 'blur(6px)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               padding: '40px 24px',
             }}
           >
-            <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.15em', marginBottom: 12 }}>
-              ROUND {roundIndex + 1}
-            </p>
+            {/* Round counter + scores */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 16 }}>
+              <span style={{
+                color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 13, letterSpacing: '0.15em',
+              }}>
+                ROUND {roundIndex + 1}/{totalRounds}
+              </span>
+              <div style={{ width: 1, height: 16, background: '#1E3A5F' }} />
+              <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.1em' }}>
+                YOU {hostScore}
+              </span>
+              <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13 }}>—</span>
+              <span style={{ color: '#C9A227', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.1em' }}>
+                {invitedScore} OPP
+              </span>
+            </div>
+
             <p style={{ color: '#E8EDF5', fontFamily: "'Beaufort for LOL', serif", fontWeight: 700, fontSize: 22, textAlign: 'center', maxWidth: 600, marginBottom: 32 }}>
               {currentQuestion.text}
             </p>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', maxWidth: 480 }}>
-              {currentQuestion.options.map(opt => (
-                <button
-                  key={opt.id}
-                  onClick={() => submitAnswer(opt.id)}
-                  disabled={!!selectedAnswer}
-                  style={{
-                    padding: '14px 20px', textAlign: 'left', cursor: selectedAnswer ? 'default' : 'pointer',
-                    background: selectedAnswer === opt.id ? 'rgba(0,201,167,0.15)' : lastResult && opt.id === lastResult.correctAnswer ? 'rgba(0,201,167,0.1)' : '#0D1F3C',
-                    border: `1px solid ${selectedAnswer === opt.id ? '#00C9A7' : lastResult && opt.id === lastResult.correctAnswer ? '#00C9A7' : '#1E3A5F'}`,
-                    borderRadius: 6, color: '#E8EDF5',
-                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15,
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <span style={{ color: '#00C9A7', marginRight: 10 }}>{opt.id}.</span>{opt.text}
-                </button>
-              ))}
+              {currentQuestion.options.map(opt => {
+                const isSelected = selectedAnswer === opt.id
+                const isCorrect  = lastResult?.correctAnswer === opt.id
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => submitAnswer(opt.id)}
+                    disabled={!!selectedAnswer}
+                    style={{
+                      padding: '14px 20px', textAlign: 'left',
+                      cursor: selectedAnswer ? 'default' : 'pointer',
+                      background: isSelected
+                        ? (isCorrect ? 'rgba(0,201,167,0.2)' : 'rgba(201,50,50,0.15)')
+                        : isCorrect && lastResult
+                          ? 'rgba(0,201,167,0.1)'
+                          : '#0D1F3C',
+                      border: `1px solid ${isSelected
+                        ? (isCorrect ? '#00C9A7' : '#ef4444')
+                        : isCorrect && lastResult ? '#00C9A7' : '#1E3A5F'}`,
+                      borderRadius: 6, color: '#E8EDF5',
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15,
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <span style={{ color: '#00C9A7', marginRight: 10 }}>{opt.id}.</span>{opt.text}
+                  </button>
+                )
+              })}
             </div>
+
             {lastResult && (
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                style={{ marginTop: 20, color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14 }}
+                style={{ marginTop: 20, textAlign: 'center', fontFamily: "'Barlow Condensed', sans-serif" }}
               >
-                Correct: {lastResult.correctAnswer} — You: {lastResult.hostScore} | Opponent: {lastResult.invitedScore}
-              </motion.p>
+                <p style={{ color: '#00C9A7', fontSize: 14, margin: '0 0 4px' }}>
+                  Correct: <strong>{lastResult.correctAnswer}</strong>
+                </p>
+                {lastResult.explanation && (
+                  <p style={{ color: '#8FA3C0', fontSize: 12, maxWidth: 480, margin: 0 }}>
+                    {lastResult.explanation}
+                  </p>
+                )}
+              </motion.div>
             )}
           </motion.div>
         )}
       </AnimatePresence>
-
-      {matchEnded && (
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          style={{ position: 'fixed', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 200,
-            background: '#0D1F3C', border: '1px solid #00C9A7', borderRadius: 8, padding: '16px 32px',
-            color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, letterSpacing: '0.1em' }}
-        >
-          MATCH COMPLETE!
-        </motion.div>
-      )}
 
       <div className="w-full">
 

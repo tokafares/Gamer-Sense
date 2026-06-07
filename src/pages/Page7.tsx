@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -7,11 +8,13 @@ import PlayerBg    from '../assets/Player Profile Bg.svg'
 import GrayProfile from '../assets/gray profile.png'
 import InviteBtn   from '../assets/Group 317.svg'
 import { useAuthStore } from '../store/authStore'
+import { useGameStore } from '../store/gameStore'
+import type { MatchQuestion } from '../store/gameStore'
 import { apiPost } from '../lib/api'
 import { connectSocket, disconnectSocket } from '../lib/socket'
 
 const CARD_W  = 360
-const CARD_H  = Math.round(CARD_W * 504 / 441)  // 411 px
+const CARD_H  = Math.round(CARD_W * 504 / 441)
 const LABEL_H = 56
 
 function PlayerCard({
@@ -40,14 +43,11 @@ function PlayerCard({
         style={{ position: 'relative', width: CARD_W, height: CARD_H, cursor: 'pointer' }}
         whileHover={reduced ? {} : { scale: 1.04, y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
       >
-        {/* Decorative frame */}
         <img
           src={PlayerBg}
           alt=""
           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'block' }}
         />
-
-        {/* Player image — inset so frame border is visible */}
         <img
           src={img}
           alt=""
@@ -62,8 +62,6 @@ function PlayerCard({
             display: 'block',
           }}
         />
-
-        {/* Label */}
         <div
           style={{
             position: 'absolute',
@@ -97,35 +95,51 @@ function PlayerCard({
 
 export default function Page7() {
   const reduced = useReducedMotion()
+  const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { setMatchStart } = useGameStore()
+
   const [_matchId,   setMatchId]    = useState<string | null>(null)
   const [inviteUrl,  setInviteUrl]  = useState<string | null>(null)
   const [copied,     setCopied]     = useState(false)
   const [matchError, setMatchError] = useState<string | null>(null)
   const [status,     setStatus]     = useState<'idle' | 'waiting' | 'ready'>('idle')
 
-  // Create match and connect socket on mount
   useEffect(() => {
     if (!import.meta.env.VITE_API_URL || !user) return
     let cancelled = false
+    let navigating = false
 
     apiPost<{ matchId: string; inviteToken: string; inviteUrl: string }>('/matches/create', {})
       .then(res => {
         if (cancelled) return
         setMatchId(res.matchId)
         setInviteUrl(res.inviteUrl)
+        setStatus('waiting')
 
         const socket = connectSocket()
         socket.emit('match:join', { token: res.inviteToken, userId: user.id })
-        socket.on('match:waiting',  () => { if (!cancelled) setStatus('waiting') })
-        socket.on('match:start',    () => { if (!cancelled) setStatus('ready') })
-        socket.on('match:error',    (d: { message: string }) => { if (!cancelled) setMatchError(d.message) })
+
+        socket.on('match:waiting', () => {
+          if (!cancelled) setStatus('waiting')
+        })
+        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
+          if (cancelled) return
+          navigating = true
+          setMatchStart(d.matchId, d.questions)
+          setStatus('ready')
+          navigate('/page1')
+        })
+        socket.on('match:error', (d: { message: string }) => {
+          if (!cancelled) setMatchError(d.message)
+        })
       })
       .catch(() => { if (!cancelled) setMatchError('Failed to create match') })
 
     return () => {
       cancelled = true
-      disconnectSocket()
+      // Keep socket connected when navigating into the match
+      if (!navigating) disconnectSocket()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -152,7 +166,6 @@ export default function Page7() {
             paddingBottom: '80px',
           }}
         >
-          {/* Title */}
           <motion.h1
             className="font-beaufort font-bold"
             style={{
@@ -172,10 +185,8 @@ export default function Page7() {
             Pre Trivia Matchmaking
           </motion.h1>
 
-          {/* Cards + VS row — align top so VS wrapper controls its own centering */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '64px' }}>
 
-            {/* Left: Host Player Profile */}
             <PlayerCard
               img={user?.avatarUrl ?? GrayProfile}
               reduced={reduced}
@@ -183,7 +194,6 @@ export default function Page7() {
               label={user?.username ?? 'Host Player Profile'}
             />
 
-            {/* VS — centred within panel height so the button below doesn't shift it */}
             <motion.div
               style={{
                 height: CARD_H,
@@ -211,13 +221,12 @@ export default function Page7() {
               </span>
             </motion.div>
 
-            {/* Right: Invited Player Profile + Invite button */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
               <PlayerCard
                 img={GrayProfile}
                 reduced={reduced}
                 delay={0.3}
-                label="Invited Player Profile"
+                label="Invited Player"
                 labelFrom="#FFFFFF"
                 labelTo="#D0D8E4"
               />
@@ -225,8 +234,28 @@ export default function Page7() {
                 initial={reduced ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, maxWidth: CARD_W }}
               >
+                {/* Invite link display */}
+                {inviteUrl && (
+                  <a
+                    href={inviteUrl}
+                    onClick={e => { e.preventDefault(); copyInvite() }}
+                    style={{
+                      color: '#00C9A7',
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      fontSize: 11,
+                      letterSpacing: '0.06em',
+                      wordBreak: 'break-all',
+                      textAlign: 'center',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {inviteUrl}
+                  </a>
+                )}
+
                 <motion.img
                   src={InviteBtn}
                   alt="Copy Invite Link"
@@ -234,13 +263,15 @@ export default function Page7() {
                   style={{ width: 242, height: 45, display: 'block', cursor: inviteUrl ? 'pointer' : 'default', opacity: inviteUrl ? 1 : 0.5 }}
                   whileHover={reduced || !inviteUrl ? {} : { scale: 1.05, transition: { duration: 0.2 } }}
                 />
+
                 {copied && (
                   <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
                     LINK COPIED!
                   </span>
                 )}
                 {status === 'waiting' && !copied && (
-                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#8FA3C0', animation: 'pulse 1.4s ease-in-out infinite' }} />
                     WAITING FOR OPPONENT…
                   </span>
                 )}
