@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../store/authStore'
-import { apiGet, apiPost, apiPut, ApiError } from '../lib/api'
+import { apiGet, apiPost, apiPut, ApiError, getToken, clearToken } from '../lib/api'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -239,7 +238,7 @@ function QuestionsTab() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/admin/questions/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('gs_token') ?? ''}` },
+        headers: { Authorization: `Bearer ${getToken() ?? ''}` },
       })
       if (!res.ok && res.status !== 204) throw new Error('Failed to delete')
       await load()
@@ -526,23 +525,20 @@ function UsersTab() {
 type Tab = 'questions' | 'gtr' | 'users'
 
 export default function AdminPanel() {
-  const { user, isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const [tab, setTab] = useState<Tab>('questions')
 
-  useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'admin') {
-      navigate('/', { replace: true })
-    }
-  }, [isAuthenticated, user, navigate])
-
-  if (!isAuthenticated || user?.role !== 'admin') return null
+  function handleLogout() {
+    clearToken()
+    localStorage.removeItem('gs_admin_role')
+    navigate('/login')
+  }
 
   return (
     <div style={S.page}>
       <div style={S.header}>
         <span style={S.title}>GAMERSENSE ADMIN</span>
-        <button style={S.btn('ghost')} onClick={() => navigate('/')}>← Back to App</button>
+        <button style={S.btn('ghost')} onClick={handleLogout}>Logout</button>
       </div>
 
       <div style={S.tabs}>

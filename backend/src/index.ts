@@ -23,8 +23,15 @@ async function main() {
   // Allow POST routes to be called without a Content-Type header (empty body)
   app.addContentTypeParser('application/x-www-form-urlencoded', { parseAs: 'string' }, (_req, _body, done) => done(null, {}))
 
+  const allowedOrigins: string[] = [
+    process.env['FRONTEND_URL'] ?? 'https://gamer-sense.railway.app',
+    process.env['ADMIN_URL'] ?? 'https://gamersense-admin.railway.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+  ]
+
   await app.register(cors, {
-    origin: ['https://gamer-sense.vercel.app', 'http://localhost:5173'],
+    origin: allowedOrigins,
     credentials: true,
   })
 
