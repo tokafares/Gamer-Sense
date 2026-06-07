@@ -1,40 +1,25 @@
-import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import { useGameStore } from '../store/gameStore'
+import GrayProfile from '../assets/gray profile.png'
+import { useAuthStore } from '../store/authStore'
 
-const RANKS_ORDER = [
-  'iron', 'bronze', 'silver', 'gold', 'platinum',
-  'emerald', 'diamond', 'master', 'grandmaster', 'challenger',
-]
-const BAR_MAX_H = 160   // px — tallest bar
+interface MatchResultState {
+  winnerId: string
+  hostScore: number
+  invitedScore: number
+}
 
 export default function Page9() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
-  const { gtrResult } = useGameStore()
+  const location = useLocation()
+  const { user } = useAuthStore()
 
-  const bars = useMemo(() => {
-    if (!gtrResult) return null
-    const { percentages, votedRank, correctRank } = gtrResult
-    const maxPct = Math.max(...RANKS_ORDER.map(r => percentages[r] ?? 0), 1)
-    return RANKS_ORDER.map(rank => ({
-      rank,
-      pct:       Math.round(percentages[rank] ?? 0),
-      height:    Math.round(((percentages[rank] ?? 0) / maxPct) * BAR_MAX_H),
-      isVoted:   rank === votedRank,
-      isCorrect: rank === correctRank,
-    }))
-  }, [gtrResult])
-
-  const correctPct = gtrResult
-    ? Math.round(gtrResult.percentages[gtrResult.correctRank] ?? 0)
-    : null
-
-  const isYouTube = gtrResult?.imageUrl.startsWith('https://www.youtube.com/embed/')
+  const result   = (location.state as MatchResultState | null)
+  const isWinner = result?.winnerId === user?.id
 
   return (
     <>
@@ -42,20 +27,19 @@ export default function Page9() {
 
       <main style={{ paddingTop: '85.2px', background: 'transparent' }}>
         <div style={{
-          maxWidth: 900,
+          maxWidth: 860,
           marginLeft: 'auto',
           marginRight: 'auto',
           padding: '48px 24px 80px',
+          textAlign: 'center',
         }}>
 
-          {/* ── Heading ── */}
+          {/* Heading */}
           <motion.h1
             className="font-beaufort font-bold"
             style={{
-              fontSize: 48,
-              lineHeight: 1.1,
-              marginTop: 0,
-              marginBottom: 32,
+              fontSize: 48, lineHeight: 1.1,
+              marginTop: 0, marginBottom: 40,
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -65,24 +49,24 @@ export default function Page9() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Guess The Rank — Results
+            Winner of the Trivia Match
           </motion.h1>
 
-          {!gtrResult ? (
-            /* No result yet — user hasn't voted */
+          {!result ? (
+            /* No result — user navigated directly */
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               style={{
                 background: '#0D1F3C', border: '1px solid #1E3A5F',
-                borderRadius: 10, padding: '48px 32px', textAlign: 'center',
+                borderRadius: 10, padding: '48px 32px',
               }}
             >
               <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, marginBottom: 24 }}>
-                You haven&apos;t voted on a round yet.
+                No match result available.
               </p>
               <button
-                onClick={() => navigate('/page11')}
+                onClick={() => navigate('/page7')}
                 style={{
                   padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                   border: 'none', borderRadius: 6, cursor: 'pointer',
@@ -90,7 +74,7 @@ export default function Page9() {
                   fontSize: 15, letterSpacing: '0.1em',
                 }}
               >
-                PLAY GTR
+                PLAY 1v1
               </button>
             </motion.div>
           ) : (
@@ -99,136 +83,142 @@ export default function Page9() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.1 }}
             >
-              {/* ── Video / Image ── */}
-              <div style={{ marginBottom: 24 }}>
-                {isYouTube ? (
-                  <iframe
-                    src={gtrResult.imageUrl}
-                    title="GTR Round"
-                    width="100%"
-                    height="460"
-                    style={{ display: 'block', border: 'none', borderRadius: 8 }}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <img
-                    src={gtrResult.imageUrl}
-                    alt="GTR Round"
-                    style={{ display: 'block', width: '100%', borderRadius: 8, objectFit: 'cover' }}
-                  />
-                )}
-              </div>
+              {/* Player cards */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, marginBottom: 40, flexWrap: 'wrap' }}>
 
-              {/* ── Summary row ── */}
-              <div style={{
-                display: 'flex', gap: 32, marginBottom: 24,
-                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15,
-                flexWrap: 'wrap',
-              }}>
-                <span style={{ color: '#8FA3C0' }}>
-                  Correct Rank:{' '}
-                  <span style={{ color: '#C9A227', fontWeight: 700, textTransform: 'capitalize', fontSize: 18 }}>
-                    {gtrResult.correctRank}
-                  </span>
-                </span>
-                <span style={{ color: '#8FA3C0' }}>
-                  Your pick:{' '}
+                {/* Winner card */}
+                <motion.div
+                  initial={reduced ? false : { opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, delay: 0.2 }}
+                  style={{
+                    background: '#0D1F3C',
+                    border: '2px solid #00C9A7',
+                    borderRadius: 12,
+                    padding: '28px 32px',
+                    minWidth: 220,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 12,
+                    boxShadow: '0 0 24px rgba(0,201,167,0.18)',
+                  }}
+                >
                   <span style={{
-                    color: gtrResult.votedRank === gtrResult.correctRank ? '#00C9A7' : '#ef4444',
-                    fontWeight: 700, textTransform: 'capitalize', fontSize: 18,
+                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+                    fontSize: 12, letterSpacing: '0.2em', color: '#00C9A7',
                   }}>
-                    {gtrResult.votedRank}
+                    WINNER
                   </span>
-                </span>
-                <span style={{ color: '#8FA3C0' }}>
-                  % Correct:{' '}
-                  <span style={{ color: '#00C9A7', fontWeight: 700, fontSize: 18 }}>{correctPct}%</span>
-                </span>
-                <span style={{ color: '#8FA3C0' }}>
-                  Total Votes:{' '}
-                  <span style={{ color: '#E8EDF5', fontWeight: 700, fontSize: 18 }}>{gtrResult.totalVotes}</span>
-                </span>
-              </div>
-
-              {/* ── Bar chart ── */}
-              {bars && (
-                <div style={{
-                  background: '#0D1F3C', border: '1px solid #1E3A5F',
-                  borderRadius: 10, padding: '20px 20px 16px',
-                  marginBottom: 28,
-                }}>
-                  <span className="font-beaufort font-bold" style={{
-                    fontSize: 18, display: 'block', marginBottom: 16,
+                  <div style={{ fontSize: 48, lineHeight: 1 }}>🏆</div>
+                  <img
+                    src={isWinner ? (user?.avatarUrl ?? GrayProfile) : GrayProfile}
+                    alt=""
+                    style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #00C9A7' }}
+                  />
+                  <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#E8EDF5', letterSpacing: '0.05em' }}>
+                    {isWinner ? (user?.username ?? 'YOU') : 'OPPONENT'}
+                  </span>
+                  <span style={{
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, fontWeight: 700,
                     background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                   }}>
-                    Voting Statistics
+                    {isWinner ? result.hostScore : result.invitedScore}
                   </span>
+                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                    CORRECT
+                  </span>
+                </motion.div>
 
-                  <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', height: BAR_MAX_H + 40 }}>
-                    {bars.map((bar, i) => (
-                      <motion.div
-                        key={bar.rank}
-                        style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}
-                        initial={reduced ? false : { opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.05 * i }}
-                      >
-                        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: '#E8EDF5', marginBottom: 3, lineHeight: 1 }}>
-                          {bar.pct > 0 ? `${bar.pct}%` : ''}
-                        </span>
-                        <motion.div
-                          style={{
-                            width: '100%',
-                            height: `${Math.max(bar.height, bar.pct > 0 ? 4 : 0)}px`,
-                            background: bar.isCorrect
-                              ? 'linear-gradient(to top, #8B6F1A, #C9A227)'
-                              : bar.isVoted
-                                ? 'linear-gradient(to top, #007A67, #00C9A7)'
-                                : 'linear-gradient(to top, #0D1F3C, #1E3A5F)',
-                            borderRadius: '3px 3px 0 0',
-                            borderTop: `3px solid ${bar.isCorrect ? '#C9A227' : bar.isVoted ? '#00C9A7' : '#1E3A5F'}`,
-                          }}
-                          initial={reduced ? false : { scaleY: 0, originY: 1 }}
-                          animate={{ scaleY: 1 }}
-                          transition={{ duration: 0.5, delay: 0.1 + i * 0.04, ease: 'easeOut' }}
-                        />
-                        <span style={{
-                          fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, marginTop: 5,
-                          textTransform: 'capitalize', letterSpacing: '0.02em',
-                          color: bar.isCorrect ? '#C9A227' : bar.isVoted ? '#00C9A7' : '#8FA3C0',
-                        }}>
-                          {bar.rank.slice(0, 3)}
-                        </span>
-                      </motion.div>
-                    ))}
-                  </div>
+                {/* VS */}
+                <motion.span
+                  className="font-beaufort font-bold"
+                  style={{ fontSize: 40, color: '#1E3A5F' }}
+                  initial={reduced ? false : { opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.35, delay: 0.3 }}
+                >
+                  VS
+                </motion.span>
 
-                  <div style={{ display: 'flex', gap: 20, marginTop: 12, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12 }}>
-                    <span style={{ color: '#C9A227' }}>■ Correct rank</span>
-                    <span style={{ color: '#00C9A7' }}>■ Your pick</span>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Play Again ── */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <motion.button
-                  onClick={() => navigate('/page11')}
-                  whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
+                {/* Loser card */}
+                <motion.div
+                  initial={reduced ? false : { opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, delay: 0.2 }}
                   style={{
-                    padding: '14px 48px',
-                    background: 'linear-gradient(to right, #00C9A7, #0090A7)',
-                    color: '#060F1E', border: 'none', borderRadius: 7,
-                    cursor: 'pointer',
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 700, fontSize: 16, letterSpacing: '0.12em',
+                    background: '#0D1F3C',
+                    border: '1px solid #1E3A5F',
+                    borderRadius: 12,
+                    padding: '28px 32px',
+                    minWidth: 220,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 12,
                   }}
                 >
-                  PLAY AGAIN
-                </motion.button>
+                  <span style={{
+                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+                    fontSize: 12, letterSpacing: '0.2em', color: '#8FA3C0',
+                  }}>
+                    DEFEATED
+                  </span>
+                  <div style={{ fontSize: 48, lineHeight: 1, opacity: 0.35 }}>🏆</div>
+                  <img
+                    src={isWinner ? GrayProfile : (user?.avatarUrl ?? GrayProfile)}
+                    alt=""
+                    style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #1E3A5F', opacity: 0.7 }}
+                  />
+                  <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#8FA3C0', letterSpacing: '0.05em' }}>
+                    {isWinner ? 'OPPONENT' : (user?.username ?? 'YOU')}
+                  </span>
+                  <span style={{
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, fontWeight: 700, color: '#8FA3C0',
+                  }}>
+                    {isWinner ? result.invitedScore : result.hostScore}
+                  </span>
+                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                    CORRECT
+                  </span>
+                </motion.div>
+
               </div>
+
+              {/* Result message */}
+              <motion.p
+                initial={reduced ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.45 }}
+                style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 22, letterSpacing: '0.08em', marginBottom: 36,
+                  color: isWinner ? '#00C9A7' : '#C9A227',
+                }}
+              >
+                {isWinner ? 'Great game! You outplayed your opponent.' : 'Good effort! Better luck next time.'}
+              </motion.p>
+
+              {/* Rematch button */}
+              <motion.button
+                onClick={() => navigate('/page7')}
+                whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
+                initial={reduced ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.55 }}
+                style={{
+                  padding: '14px 48px',
+                  background: 'linear-gradient(to right, #00C9A7, #0090A7)',
+                  color: '#060F1E', border: 'none', borderRadius: 7,
+                  cursor: 'pointer',
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontWeight: 700, fontSize: 16, letterSpacing: '0.12em',
+                }}
+              >
+                REMATCH
+              </motion.button>
+
             </motion.div>
           )}
 

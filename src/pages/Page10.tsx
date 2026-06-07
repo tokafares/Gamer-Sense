@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
@@ -9,7 +7,6 @@ import UpgradeBtn   from '../assets/Group 321 upgrade button.svg'
 import GrayProfile  from '../assets/gray profile.png'
 import { useAuthStore } from '../store/authStore'
 import { useProfile }   from '../hooks/useProfile'
-import { getSocket, disconnectSocket } from '../lib/socket'
 import StatsBg      from '../assets/Group 336.svg'
 import RanksBg      from '../assets/Group 345.svg'
 import StatFrame1   from '../assets/Group 347.svg'
@@ -54,24 +51,13 @@ const VALUE_GRADIENT: React.CSSProperties = {
   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
 }
 
-interface MatchResultState {
-  winnerId: string
-  hostScore: number
-  invitedScore: number
-}
-
 export default function Page10() {
   const reduced = useReducedMotion()
-  const navigate = useNavigate()
-  const location = useLocation()
   const { user } = useAuthStore()
   const { profile } = useProfile(user?.id ?? null)
   const avatarSrc = profile?.avatarUrl ?? user?.avatarUrl ?? GrayProfile
   const displayName = profile?.username ?? user?.username ?? 'PLAYER'
   const displayLevel = profile?.level ?? user?.level ?? 0
-
-  // Match result — from navigate state (post-match) or socket fallback
-  const navResult = (location.state as MatchResultState | null)
 
   const STATS = [
     { src: StatFrame1, label: 'GTR Completed',  value: profile?.gtrCompleted  != null ? String(profile.gtrCompleted)  : '—' },
@@ -81,70 +67,9 @@ export default function Page10() {
         : '—' },
   ]
 
-  const [matchResult, setMatchResult] = useState<MatchResultState | null>(navResult ?? null)
-
-  useEffect(() => {
-    const socket = getSocket()
-    // Fallback: catch match:end if user is already on this page
-    socket.on('match:end', (d: MatchResultState) => { setMatchResult(d) })
-    return () => {
-      socket.off('match:end')
-      disconnectSocket()
-    }
-  }, [])
-
   return (
     <>
       <Header />
-      <AnimatePresence>
-        {matchResult && (
-          <motion.div
-            key="match-end-banner"
-            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-            style={{
-              position: 'fixed', top: 90, left: '50%', transform: 'translateX(-50%)', zIndex: 200,
-              background: matchResult.winnerId === user?.id ? 'rgba(0,201,167,0.15)' : 'rgba(201,162,39,0.12)',
-              border: `1px solid ${matchResult.winnerId === user?.id ? '#00C9A7' : '#C9A227'}`,
-              borderRadius: 10, padding: '16px 32px', textAlign: 'center',
-              fontFamily: "'Barlow Condensed', sans-serif",
-              minWidth: 280,
-            }}
-          >
-            <p style={{
-              color: matchResult.winnerId === user?.id ? '#00C9A7' : '#C9A227',
-              fontSize: 22, fontWeight: 700, letterSpacing: '0.15em', margin: '0 0 6px',
-            }}>
-              {matchResult.winnerId === user?.id ? '🏆 YOU WON!' : 'YOU LOST'}
-            </p>
-            <p style={{ color: '#8FA3C0', fontSize: 14, margin: '0 0 14px', letterSpacing: '0.08em' }}>
-              {matchResult.hostScore} — {matchResult.invitedScore}
-            </p>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-              <button
-                onClick={() => { void navigate('/page7') }}
-                style={{
-                  padding: '7px 18px', background: '#00C9A7', color: '#060F1E',
-                  border: 'none', borderRadius: 5, cursor: 'pointer',
-                  fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
-                  fontSize: 13, letterSpacing: '0.1em',
-                }}
-              >
-                REMATCH
-              </button>
-              <button
-                onClick={() => setMatchResult(null)}
-                style={{
-                  padding: '7px 18px', background: 'transparent', color: '#8FA3C0',
-                  border: '1px solid #1E3A5F', borderRadius: 5, cursor: 'pointer',
-                  fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.1em',
-                }}
-              >
-                DISMISS
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <main style={{ paddingTop: '85.2px', background: 'transparent', position: 'relative' }}>
         <div style={{
