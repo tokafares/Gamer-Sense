@@ -23,15 +23,20 @@ async function main() {
   // Allow POST routes to be called without a Content-Type header (empty body)
   app.addContentTypeParser('application/x-www-form-urlencoded', { parseAs: 'string' }, (_req, _body, done) => done(null, {}))
 
-  const allowedOrigins: string[] = [
-    process.env['FRONTEND_URL'] ?? 'https://gamer-sense.railway.app',
-    process.env['ADMIN_URL'] ?? 'https://gamersense-admin.railway.app',
+  const allowedOrigins = [
     'http://localhost:5173',
-    'http://localhost:5174',
-  ]
+    'http://localhost:4173',
+    process.env['FRONTEND_URL'],
+    process.env['ADMIN_URL'],
+  ].filter(Boolean) as string[]
 
   await app.register(cors, {
-    origin: allowedOrigins,
+    origin: (origin, cb) => {
+      // allow requests with no origin (curl, Postman, server-to-server)
+      if (!origin) return cb(null, true)
+      if (allowedOrigins.includes(origin)) return cb(null, true)
+      cb(new Error('Not allowed by CORS'), false)
+    },
     credentials: true,
   })
 
