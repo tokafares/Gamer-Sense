@@ -7,14 +7,14 @@ import SeparatorLine from '../assets/Rectangle 6.svg'
 import RoundBg       from '../assets/RoundBg.svg'
 import FlagIcon      from '../assets/Flag Group171.svg'
 import RankContainer from '../assets/Group 365.svg'
-import RankTile1     from '../assets/Group _337.svg'
-import RankTile2     from '../assets/Group _338.svg'
-import RankTile3     from '../assets/Group _339.svg'
-import RankTile4     from '../assets/Group _340.svg'
-import RankTile5     from '../assets/Group _341.svg'
-import RankTile6     from '../assets/Group _342.svg'
-import RankTile7     from '../assets/Group 354.svg'
-import RankTile8     from '../assets/Group 355.svg'
+import RankTile1     from '../assets/Group 342.svg'
+import RankTile2     from '../assets/Group 341.svg'
+import RankTile3     from '../assets/Group 340.svg'
+import RankTile4     from '../assets/Group 339.svg'
+import RankTile5     from '../assets/Group 354.svg'
+import RankTile6     from '../assets/Group 338.svg'
+import RankTile7     from '../assets/Group 355.svg'
+import RankTile8     from '../assets/Group 337.svg'
 import RankTile9     from '../assets/Group 356.svg'
 import SubmitBtn     from '../assets/submit button 359.svg'
 import { useGameStore } from '../store/gameStore'
@@ -25,10 +25,10 @@ const RANK_TILES = [
   RankTile6, RankTile7, RankTile8, RankTile9,
 ]
 
-// Rank names in the same order as the tile SVGs
+// Rank names matching tile order: 342,341,340,339,354,338,355,337,356
 const RANKS_ORDER = [
-  'iron', 'bronze', 'silver', 'gold', 'platinum',
-  'emerald', 'diamond', 'master', 'grandmaster',
+  'iron', 'bronze', 'silver', 'gold', 'emerald',
+  'platinum', 'diamond', 'master', 'challenger',
 ]
 
 const RANK_RATIO = 198 / 1361   // Group 365 aspect ratio
