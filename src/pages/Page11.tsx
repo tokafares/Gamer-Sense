@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -29,10 +29,31 @@ const GAME_RATIO = 786  / 1350   // Group 353 — ≈ 0.582
 const RANK_RATIO = 198  / 1361   // Group 365 — ≈ 0.145
 const ROUND_H    = 65            // RoundBg native height (px)
 
+const RANKS_ORDER = ['iron','bronze','silver','gold','platinum','emerald','diamond','master','grandmaster','challenger']
+const BAR_MAX_H = 100  // px
+
 export default function Page11() {
   const reduced  = useReducedMotion()
   const [selected, setSelected] = useState<number | null>(null)
-  const { currentRound, totalRounds, points } = useGameStore()
+  const { currentRound, totalRounds, points, gtrResult } = useGameStore()
+
+  // Voting statistics derived from gtrResult
+  const bars = useMemo(() => {
+    if (!gtrResult) return null
+    const { percentages, votedRank, correctRank } = gtrResult
+    const maxPct = Math.max(...RANKS_ORDER.map(r => percentages[r] ?? 0), 1)
+    return RANKS_ORDER.map(rank => ({
+      rank,
+      pct: percentages[rank] ?? 0,
+      height: Math.round(((percentages[rank] ?? 0) / maxPct) * BAR_MAX_H),
+      isVoted:   rank === votedRank,
+      isCorrect: rank === correctRank,
+    }))
+  }, [gtrResult])
+
+  const correctPct = gtrResult
+    ? (gtrResult.percentages[gtrResult.correctRank] ?? 0)
+    : null
 
   function toggle(i: number) {
     setSelected(prev => (prev === i ? null : i))
@@ -185,6 +206,83 @@ export default function Page11() {
               ))}
             </div>
           </motion.div>
+
+          {/* ── Voting statistics — shown after user has voted (gtrResult populated) ── */}
+          {bars && gtrResult && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              style={{ marginTop: 16, background: '#0D1F3C', border: '1px solid #1E3A5F', borderRadius: 8, padding: '20px 24px' }}
+            >
+              {/* Header row */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <span className="font-beaufort font-bold" style={{
+                  fontSize: 18,
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>
+                  Voting Statistics
+                </span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#8FA3C0', letterSpacing: '0.08em' }}>
+                  {gtrResult.totalVotes} TOTAL ATTEMPTS
+                </span>
+              </div>
+
+              {/* Summary row */}
+              <div style={{ display: 'flex', gap: 24, marginBottom: 16, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13 }}>
+                <span style={{ color: '#8FA3C0' }}>
+                  Correct Rank: <span style={{ color: '#C9A227', fontWeight: 700, textTransform: 'capitalize' }}>{gtrResult.correctRank}</span>
+                </span>
+                <span style={{ color: '#8FA3C0' }}>
+                  % Correct: <span style={{ color: '#00C9A7', fontWeight: 700 }}>{correctPct}%</span>
+                </span>
+              </div>
+
+              {/* Bar chart */}
+              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', height: BAR_MAX_H + 36 }}>
+                {bars.map(bar => (
+                  <div key={bar.rank} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}>
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: '#E8EDF5',
+                      marginBottom: 3, lineHeight: 1,
+                    }}>
+                      {bar.pct > 0 ? `${bar.pct}%` : ''}
+                    </span>
+                    <motion.div
+                      style={{
+                        width: '100%',
+                        height: `${Math.max(bar.height, bar.pct > 0 ? 4 : 0)}px`,
+                        background: bar.isVoted
+                          ? 'linear-gradient(to top, #007A67, #00C9A7)'
+                          : bar.isCorrect
+                            ? 'linear-gradient(to top, #8B6F1A, #C9A227)'
+                            : 'linear-gradient(to top, #0D1F3C, #1E3A5F)',
+                        borderRadius: '2px 2px 0 0',
+                        borderTop: `3px solid ${bar.isVoted ? '#00C9A7' : bar.isCorrect ? '#C9A227' : '#1E3A5F'}`,
+                      }}
+                      initial={reduced ? false : { scaleY: 0, originY: 1 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    />
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9,
+                      color: bar.isVoted ? '#00C9A7' : bar.isCorrect ? '#C9A227' : '#8FA3C0',
+                      marginTop: 4, textTransform: 'capitalize', letterSpacing: '0.03em',
+                    }}>
+                      {bar.rank.slice(0, 3)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Legend */}
+              <div style={{ display: 'flex', gap: 16, marginTop: 8, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11 }}>
+                <span style={{ color: '#00C9A7' }}>■ Your pick</span>
+                <span style={{ color: '#C9A227' }}>■ Correct rank</span>
+              </div>
+            </motion.div>
+          )}
 
           {/* ── Submit button ── */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>

@@ -377,7 +377,7 @@ function GTRTab() {
   useEffect(() => { void load() }, [load])
 
   async function handleAdd() {
-    if (!imageUrl.trim()) { setMsg({ type: 'err', text: 'Image URL is required' }); return }
+    if (!imageUrl.trim()) { setMsg({ type: 'err', text: 'Video URL is required' }); return }
     try {
       await apiPost('/admin/gtr/rounds', { imageUrl, correctRank })
       setImageUrl('')
@@ -396,8 +396,16 @@ function GTRTab() {
       <div style={{ ...S.card, marginBottom: 24 }}>
         <h3 style={{ marginBottom: 12, color: '#00C9A7' }}>Add New Round</h3>
         {msg && <div style={msg.type === 'ok' ? S.success : S.error}>{msg.text}</div>}
-        <label style={S.label}>IMAGE URL</label>
-        <input style={S.input} placeholder="https://…" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+        <label style={S.label}>VIDEO URL</label>
+        <input
+          style={S.input}
+          placeholder="https://www.youtube.com/embed/VIDEO_ID"
+          value={imageUrl}
+          onChange={e => setImageUrl(e.target.value)}
+        />
+        <div style={{ fontSize: 11, color: '#8FA3C0', marginTop: -8, marginBottom: 12, fontFamily: "'Barlow Condensed', sans-serif" }}>
+          Use YouTube embed URL format: https://www.youtube.com/embed/VIDEO_ID
+        </div>
         <label style={S.label}>CORRECT RANK</label>
         <select style={S.select} value={correctRank} onChange={e => setCorrectRank(e.target.value)}>
           {RANKS.map(r => <option key={r} value={r}>{r}</option>)}
@@ -410,12 +418,21 @@ function GTRTab() {
       ) : (
         rounds.map((r, i) => (
           <div key={r.id} style={{ ...S.card, display: 'flex', gap: 16, alignItems: 'center' }}>
-            <img
-              src={r.imageUrl}
-              alt={`GTR Round ${i + 1}`}
-              style={{ width: 120, height: 68, objectFit: 'cover', borderRadius: 4, border: '1px solid #1E3A5F' }}
-            />
-            <div style={{ flex: 1 }}>
+            {r.imageUrl.startsWith('https://www.youtube.com/embed/') ? (
+              <iframe
+                src={r.imageUrl}
+                title={`GTR Round ${i + 1}`}
+                style={{ width: 120, height: 68, borderRadius: 4, border: '1px solid #1E3A5F', flexShrink: 0 }}
+                allowFullScreen
+              />
+            ) : (
+              <img
+                src={r.imageUrl}
+                alt={`GTR Round ${i + 1}`}
+                style={{ width: 120, height: 68, objectFit: 'cover', borderRadius: 4, border: '1px solid #1E3A5F', flexShrink: 0 }}
+              />
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 600, marginBottom: 4 }}>Round #{rounds.length - i}</div>
               <div style={{ fontSize: 12, color: '#8FA3C0', wordBreak: 'break-all' }}>{r.imageUrl}</div>
             </div>

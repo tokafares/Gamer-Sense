@@ -728,14 +728,17 @@ async function main() {
   }
   console.log(`✅  ${champions.length} champions seeded`)
 
-  // Seed GTR rounds — placeholder images until real replay screenshots are added
+  // Seed GTR rounds — first 3 use real YouTube LoL gameplay videos
   const gtrRounds = [
-    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+1', correctRank: 'gold' },
-    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+2', correctRank: 'silver' },
-    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+3', correctRank: 'platinum' },
+    // Gold: "Actions in gold rank game League of Legends" (youtube.com/watch?v=kad6Sj6Bnew)
+    { imageUrl: 'https://www.youtube.com/embed/kad6Sj6Bnew', correctRank: 'gold' },
+    // Platinum: "League of legends intense ranked match gameplay" (youtube.com/watch?v=ErLO-Y_4BWY)
+    { imageUrl: 'https://www.youtube.com/embed/ErLO-Y_4BWY', correctRank: 'platinum' },
+    // Diamond: "RANKING UP TO DIAMOND WITH GNAR IN SEASON 14" (youtube.com/watch?v=p9unqZmDVxw)
+    { imageUrl: 'https://www.youtube.com/embed/p9unqZmDVxw', correctRank: 'diamond' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+4', correctRank: 'iron' },
-    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+5', correctRank: 'diamond' },
-    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+6', correctRank: 'bronze' },
+    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+5', correctRank: 'bronze' },
+    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+6', correctRank: 'silver' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+7', correctRank: 'emerald' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+8', correctRank: 'master' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+9', correctRank: 'grandmaster' },

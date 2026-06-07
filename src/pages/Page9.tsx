@@ -280,7 +280,19 @@ export default function Page9() {
               <p className="font-beaufort font-bold" style={{ fontSize: 18, color: '#E8EDF5', margin: '0 0 16px' }}>
                 Guess The Rank
               </p>
-              <img src={gtrRound.imageUrl} alt="GTR Round" style={{ width: '100%', borderRadius: 4, marginBottom: 16 }} />
+              {gtrRound.imageUrl.startsWith('https://www.youtube.com/embed/') ? (
+                <iframe
+                  src={gtrRound.imageUrl}
+                  title="GTR Round"
+                  width="100%"
+                  height="400"
+                  style={{ borderRadius: 4, marginBottom: 16, border: 'none', display: 'block' }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <img src={gtrRound.imageUrl} alt="GTR Round" style={{ width: '100%', borderRadius: 4, marginBottom: 16 }} />
+              )}
               {gtrStats ? (
                 <div>
                   <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, letterSpacing: '0.1em', marginBottom: 8 }}>
