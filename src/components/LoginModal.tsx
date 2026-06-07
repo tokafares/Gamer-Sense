@@ -47,6 +47,15 @@ export default function LoginModal() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (loading) return
+
+    // Client-side validation
+    if (mode === 'register') {
+      if (username.trim().length < 3) { setError('Username must be at least 3 characters'); return }
+      if (username.trim().length > 32) { setError('Username must be 32 characters or fewer'); return }
+      if (password.length < 8) { setError('Password must be at least 8 characters'); return }
+    }
+    if (!email.includes('@')) { setError('Enter a valid email address'); return }
+
     setError(null)
     setLoading(true)
     try {
@@ -54,7 +63,7 @@ export default function LoginModal() {
         const { token, user } = await apiPost<LoginResponse>('/auth/login', { email, password })
         login(token, user)
       } else {
-        const { token, user } = await apiPost<LoginResponse>('/auth/register', { username, email, password })
+        const { token, user } = await apiPost<LoginResponse>('/auth/register', { username: username.trim(), email, password })
         login(token, user)
       }
     } catch (err) {
@@ -62,6 +71,7 @@ export default function LoginModal() {
         err instanceof ApiError
           ? err.status === 401 ? 'Invalid email or password'
           : err.status === 409 ? 'Email or username already in use'
+          : err.status === 400 ? 'Check your details: username 3–32 chars, password 8+ chars'
           : `Server error (${err.status}) — try again`
           : 'Network error — check your connection'
       setError(message)
