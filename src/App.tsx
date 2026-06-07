@@ -95,6 +95,7 @@ function App() {
       <Route path="/page11" element={<RequireAuth><Page11 /></RequireAuth>} />
       <Route path="/page12" element={<RequireAuth><Page12 /></RequireAuth>} />
       <Route path="/champion/:id" element={<ChampionDetail />} />
+      <Route path="/match/join/:token" element={<RequireAuth><Page12 /></RequireAuth>} />
       <Route path="*" element={<NotFound />} />
       </Routes>
       <LoginModal />

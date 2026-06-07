@@ -6,7 +6,7 @@ import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import PlayerBg    from '../assets/Player Profile Bg.svg'
 import GrayProfile from '../assets/gray profile.png'
-import InviteBtn   from '../assets/Group 317.svg'
+
 import { useAuthStore } from '../store/authStore'
 import { useGameStore } from '../store/gameStore'
 import type { MatchQuestion } from '../store/gameStore'
@@ -234,54 +234,65 @@ export default function Page7() {
                 initial={reduced ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, maxWidth: CARD_W }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 10, width: CARD_W }}
               >
-                {/* Invite link display */}
-                {inviteUrl && (
-                  <a
-                    href={inviteUrl}
-                    onClick={e => { e.preventDefault(); copyInvite() }}
-                    style={{
-                      color: '#00C9A7',
+                {/* ── Invite link box ── */}
+                {inviteUrl ? (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    border: '1px solid #00C9A7', borderRadius: 7,
+                    background: '#0D1F3C', padding: '8px 12px',
+                  }}>
+                    <span style={{
+                      flex: 1, minWidth: 0,
                       fontFamily: "'Barlow Condensed', sans-serif",
-                      fontSize: 11,
-                      letterSpacing: '0.06em',
-                      wordBreak: 'break-all',
-                      textAlign: 'center',
-                      textDecoration: 'underline',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {inviteUrl}
-                  </a>
+                      fontSize: 11, color: '#8FA3C0', letterSpacing: '0.04em',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {inviteUrl}
+                    </span>
+                    <button
+                      onClick={copyInvite}
+                      style={{
+                        flexShrink: 0, padding: '5px 12px',
+                        background: copied ? '#007A67' : '#00C9A7',
+                        color: '#060F1E', border: 'none', borderRadius: 5,
+                        cursor: 'pointer',
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        fontWeight: 700, fontSize: 12, letterSpacing: '0.08em',
+                        transition: 'background 0.2s',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {copied ? '✓ Copied!' : '📋 Copy Link'}
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{
+                    height: 42, border: '1px solid #1E3A5F', borderRadius: 7,
+                    background: '#0D1F3C', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12 }}>
+                      Generating link…
+                    </span>
+                  </div>
                 )}
 
-                <motion.img
-                  src={InviteBtn}
-                  alt="Copy Invite Link"
-                  onClick={copyInvite}
-                  style={{ width: 242, height: 45, display: 'block', cursor: inviteUrl ? 'pointer' : 'default', opacity: inviteUrl ? 1 : 0.5 }}
-                  whileHover={reduced || !inviteUrl ? {} : { scale: 1.05, transition: { duration: 0.2 } }}
-                />
-
-                {copied && (
-                  <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
-                    LINK COPIED!
-                  </span>
-                )}
-                {status === 'waiting' && !copied && (
-                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6 }}>
+                {/* ── Status line ── */}
+                {status === 'waiting' && (
+                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
                     <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#8FA3C0', animation: 'pulse 1.4s ease-in-out infinite' }} />
                     WAITING FOR OPPONENT…
                   </span>
                 )}
                 {status === 'ready' && (
-                  <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
+                  <span style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em', textAlign: 'center' }}>
                     OPPONENT JOINED — STARTING!
                   </span>
                 )}
                 {matchError && (
-                  <span style={{ color: '#ef4444', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12 }}>{matchError}</span>
+                  <span style={{ color: '#ef4444', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, textAlign: 'center' }}>{matchError}</span>
                 )}
               </motion.div>
             </div>

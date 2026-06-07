@@ -10,6 +10,7 @@ export interface AnswerRecord {
 
 export interface GTRResultData {
   roundId: string
+  imageUrl: string
   votedRank: string
   correctRank: string
   totalVotes: number

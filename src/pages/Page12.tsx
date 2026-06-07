@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -426,7 +426,10 @@ function GTRResults() {
 // ── Page12 ──────────────────────────────────────────────────────────────────
 
 export default function Page12() {
-  const token = new URLSearchParams(window.location.search).get('token')
+  // Support both /match/join/:token (path param) and ?token=xxx (query param)
+  const { token: pathToken } = useParams<{ token?: string }>()
+  const [searchParams] = useSearchParams()
+  const token = pathToken ?? searchParams.get('token')
 
   return (
     <>
