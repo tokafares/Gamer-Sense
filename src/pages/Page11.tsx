@@ -39,6 +39,7 @@ export default function Page11() {
   const navigate = useNavigate()
   const [selected, setSelected] = useState<number | null>(null)
   const { currentRound, totalRounds, points, gtrResult, setGTRResult } = useGameStore()
+  const [imgError, setImgError] = useState(false)
 
   const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound()
 
@@ -46,6 +47,9 @@ export default function Page11() {
     if (selected === null || !round || voted) return
     void submitVote(RANKS_ORDER[selected])
   }
+
+  // Reset image error state when a new round loads
+  useEffect(() => { setImgError(false) }, [round?.id])
 
   // When vote + stats both arrive: store result then navigate to results page
   useEffect(() => {
@@ -141,13 +145,8 @@ export default function Page11() {
                 <span style={{ color: '#ef4444', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13 }}>{error}</span>
               </div>
             )}
-            {!loading && !error && round && (() => {
-              const isPlaceholder = !isYouTube && (
-                !round.imageUrl ||
-                round.imageUrl.startsWith('placeholder') ||
-                round.imageUrl.startsWith('http://') === false && !round.imageUrl.startsWith('https://')
-              )
-              if (isYouTube) return (
+            {!loading && !error && round && (
+              isYouTube ? (
                 <iframe
                   key={round.id}
                   src={round.imageUrl}
@@ -158,8 +157,7 @@ export default function Page11() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
-              )
-              if (isPlaceholder) return (
+              ) : imgError || !round.imageUrl || !round.imageUrl.startsWith('http') ? (
                 <div style={{
                   width: '100%', height: 400,
                   background: '#060F1E', border: '1px solid #1E3A5F',
@@ -168,19 +166,19 @@ export default function Page11() {
                   <span className="font-beaufort font-bold" style={{
                     fontSize: 22, color: '#8FA3C0', letterSpacing: '0.08em',
                   }}>
-                    Round — Video Coming Soon
+                    Video Coming Soon
                   </span>
                 </div>
-              )
-              return (
+              ) : (
                 <img
                   key={round.id}
                   src={round.imageUrl}
-                  alt="Guess The Rank"
+                  alt=""
+                  onError={() => setImgError(true)}
                   style={{ display: 'block', width: '100%', borderRadius: 6, objectFit: 'cover' }}
                 />
               )
-            })()}
+            )}
           </motion.div>
 
           {/* ── Rank picker container + tiles ── */}

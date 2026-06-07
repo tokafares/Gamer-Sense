@@ -56,11 +56,27 @@ export function useGTRRound() {
       const res = await apiPost<VoteResult>(`/gtr/${round.id}/vote`, { votedRank })
       setResult(res)
       setVoted(true)
-      // Fetch stats after voting
       const s = await apiGet<GTRStats>(`/gtr/${round.id}/stats`)
       setStats(s)
     } catch (err) {
-      setError(err instanceof ApiError ? `Server error (${err.status})` : 'Network error')
+      if (err instanceof ApiError && err.status === 409) {
+        // Already voted this round — fetch stats and proceed to results
+        setVoted(true)
+        setResult({
+          correct: false,
+          correctRank: round.correctRank,
+          votedRank,
+          pointsEarned: 0,
+          totalPoints: 0,
+          tier: '',
+        })
+        try {
+          const s = await apiGet<GTRStats>(`/gtr/${round.id}/stats`)
+          setStats(s)
+        } catch { /* silent */ }
+      } else {
+        setError(err instanceof ApiError ? `Server error (${err.status})` : 'Network error')
+      }
     }
   }, [round, voted])
 
