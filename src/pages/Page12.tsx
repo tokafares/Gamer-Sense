@@ -42,7 +42,7 @@ const RANK_TILES = [
   RankTile6, RankTile7, RankTile8, RankTile9,
 ]
 
-const RANKS = ['iron', 'bronze', 'silver', 'gold', 'platinum', 'diamond', 'master', 'grandmaster', 'challenger']
+const RANKS = ['iron', 'bronze', 'silver', 'gold', 'emerald', 'platinum', 'diamond', 'master', 'challenger']
 
 const BAR_RENDER_MAX = 290
 
@@ -364,7 +364,7 @@ function GTRResults() {
               const bar = bars[i]
               return (
                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
-                  {bar && bar.height > 0 && (
+                  {bar && (
                     <>
                       <span className="font-beaufort font-bold" style={{ fontSize: '11px', lineHeight: 1, marginBottom: '3px', color: '#E8EDF5', letterSpacing: '0.02em' }}>
                         {bar.pct}%
@@ -375,7 +375,7 @@ function GTRResults() {
                       }} />
                       <motion.div
                         style={{
-                          width: '82%', height: `${bar.height}px`,
+                          width: '82%', height: `${Math.max(bar.height, 4)}px`,
                           background: bar.isVoted
                             ? 'linear-gradient(to top, #007A67, #00C9A7)'
                             : bar.isCorrect
