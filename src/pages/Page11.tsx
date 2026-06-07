@@ -74,7 +74,11 @@ export default function Page11() {
     setSelected(prev => (prev === i ? null : i))
   }
 
-  const isYouTube = round?.imageUrl.startsWith('https://www.youtube.com/embed/')
+  const isYouTube = round?.imageUrl?.startsWith('https://www.youtube.com/embed/') ?? false
+  const isPlaceholderUrl = !round?.imageUrl ||
+    round.imageUrl.includes('placehold.co') ||
+    round.imageUrl.includes('placeholder') ||
+    !round.imageUrl.startsWith('http')
 
   return (
     <>
@@ -146,10 +150,27 @@ export default function Page11() {
               </div>
             )}
             {!loading && !error && round && (
-              isYouTube ? (
+              isPlaceholderUrl ? (
+                <div style={{
+                  width: '100%', height: 400,
+                  background: '#060F1E', border: '1px solid #1E3A5F',
+                  borderRadius: 6, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 12,
+                }}>
+                  <span style={{ fontSize: 40, lineHeight: 1 }}>🎮</span>
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 22, color: '#8FA3C0', letterSpacing: '0.08em',
+                  }}>
+                    Video Coming Soon
+                  </span>
+                  <span style={{ color: '#1E3A5F', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13 }}>
+                    Select your rank guess below
+                  </span>
+                </div>
+              ) : isYouTube ? (
                 <iframe
                   key={round.id}
-                  src={round.imageUrl}
+                  src={`${round.imageUrl}?rel=0&modestbranding=1`}
                   title="Guess The Rank"
                   width="100%"
                   height="460"
@@ -157,15 +178,15 @@ export default function Page11() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
-              ) : imgError || !round.imageUrl || !round.imageUrl.startsWith('http') ? (
+              ) : imgError ? (
                 <div style={{
                   width: '100%', height: 400,
                   background: '#060F1E', border: '1px solid #1E3A5F',
-                  borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 6, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 12,
                 }}>
-                  <span className="font-beaufort font-bold" style={{
-                    fontSize: 22, color: '#8FA3C0', letterSpacing: '0.08em',
-                  }}>
+                  <span style={{ fontSize: 40, lineHeight: 1 }}>🎮</span>
+                  <span className="font-beaufort font-bold" style={{ fontSize: 22, color: '#8FA3C0', letterSpacing: '0.08em' }}>
                     Video Coming Soon
                   </span>
                 </div>

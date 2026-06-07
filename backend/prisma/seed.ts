@@ -730,15 +730,16 @@ async function main() {
 
   // Seed GTR rounds — first 3 use real YouTube LoL gameplay videos
   const gtrRounds = [
-    // Gold: "Actions in gold rank game League of Legends" (youtube.com/watch?v=kad6Sj6Bnew)
-    { imageUrl: 'https://www.youtube.com/embed/kad6Sj6Bnew', correctRank: 'gold' },
-    // Platinum: "League of legends intense ranked match gameplay" (youtube.com/watch?v=ErLO-Y_4BWY)
-    { imageUrl: 'https://www.youtube.com/embed/ErLO-Y_4BWY', correctRank: 'platinum' },
-    // Diamond: "RANKING UP TO DIAMOND WITH GNAR IN SEASON 14" (youtube.com/watch?v=p9unqZmDVxw)
-    { imageUrl: 'https://www.youtube.com/embed/p9unqZmDVxw', correctRank: 'diamond' },
+    // Silver: Skill Capped — "Silver vs Gold Difference" (embedding allowed)
+    { imageUrl: 'https://www.youtube.com/embed/ij41FI_Gmh0', correctRank: 'silver' },
+    // Gold: ProGuides — ranked gameplay showcase (embedding allowed)
+    { imageUrl: 'https://www.youtube.com/embed/5XptIJl2oic', correctRank: 'gold' },
+    // Platinum: ranked gameplay — embedding allowed
+    { imageUrl: 'https://www.youtube.com/embed/G_OzngK7hik', correctRank: 'platinum' },
+    // Rounds below are placeholders — add real YouTube embed URLs as content is created
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+4', correctRank: 'iron' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+5', correctRank: 'bronze' },
-    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+6', correctRank: 'silver' },
+    { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+6', correctRank: 'diamond' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+7', correctRank: 'emerald' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+8', correctRank: 'master' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+9', correctRank: 'grandmaster' },

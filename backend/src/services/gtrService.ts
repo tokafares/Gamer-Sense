@@ -8,15 +8,17 @@ const ALL_RANKS = [
 ]
 
 export async function getRandomRound() {
-  const count = await prisma.gTRRound.count()
-  if (count === 0) {
+  // Prefer rounds that have a real YouTube embed URL; fall back to all rounds
+  const videoRounds = await prisma.gTRRound.findMany({
+    where: { imageUrl: { startsWith: 'https://www.youtube.com/embed/' } },
+  })
+  const pool = videoRounds.length > 0 ? videoRounds : await prisma.gTRRound.findMany()
+  if (pool.length === 0) {
     const err = new Error('No GTR rounds available') as Error & { statusCode: number }
     err.statusCode = 404
     throw err
   }
-  const skip = Math.floor(Math.random() * count)
-  const rounds = await prisma.gTRRound.findMany({ take: 1, skip })
-  return rounds[0]
+  return pool[Math.floor(Math.random() * pool.length)]
 }
 
 export async function getRoundStats(roundId: string) {
