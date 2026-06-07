@@ -8,11 +8,13 @@ const ALL_RANKS = [
 ]
 
 export async function getRandomRound() {
-  // Prefer rounds that have a real YouTube embed URL; fall back to all rounds
-  const videoRounds = await prisma.gTRRound.findMany({
-    where: { imageUrl: { startsWith: 'https://www.youtube.com/embed/' } },
-  })
-  const pool = videoRounds.length > 0 ? videoRounds : await prisma.gTRRound.findMany()
+  // Prefer rounds that have a real video (YouTube embed or Cloudinary .mp4)
+  const allRounds = await prisma.gTRRound.findMany()
+  const videoRounds = allRounds.filter(r =>
+    r.imageUrl.startsWith('https://www.youtube.com/embed/') ||
+    (r.imageUrl.includes('cloudinary.com') && r.imageUrl.endsWith('.mp4'))
+  )
+  const pool = videoRounds.length > 0 ? videoRounds : allRounds
   if (pool.length === 0) {
     const err = new Error('No GTR rounds available') as Error & { statusCode: number }
     err.statusCode = 404

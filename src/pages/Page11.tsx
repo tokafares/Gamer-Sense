@@ -75,6 +75,7 @@ export default function Page11() {
   }
 
   const isYouTube = round?.imageUrl?.startsWith('https://www.youtube.com/embed/') ?? false
+  const isCloudinaryVideo = (url: string) => url.includes('cloudinary.com') && url.endsWith('.mp4')
   const isPlaceholderUrl = !round?.imageUrl ||
     round.imageUrl.includes('placehold.co') ||
     round.imageUrl.includes('placeholder') ||
@@ -158,15 +159,23 @@ export default function Page11() {
                   alignItems: 'center', justifyContent: 'center', gap: 12,
                 }}>
                   <span style={{ fontSize: 40, lineHeight: 1 }}>🎮</span>
-                  <span className="font-beaufort font-bold" style={{
-                    fontSize: 22, color: '#8FA3C0', letterSpacing: '0.08em',
-                  }}>
+                  <span className="font-beaufort font-bold" style={{ fontSize: 22, color: '#8FA3C0', letterSpacing: '0.08em' }}>
                     Video Coming Soon
                   </span>
                   <span style={{ color: '#1E3A5F', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13 }}>
                     Select your rank guess below
                   </span>
                 </div>
+              ) : isCloudinaryVideo(round.imageUrl) ? (
+                <video
+                  key={round.id}
+                  src={round.imageUrl}
+                  autoPlay
+                  muted
+                  loop
+                  controls
+                  style={{ display: 'block', width: '100%', height: '460px', objectFit: 'cover', borderRadius: 6 }}
+                />
               ) : isYouTube ? (
                 <iframe
                   key={round.id}

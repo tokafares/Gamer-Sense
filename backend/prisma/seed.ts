@@ -730,12 +730,9 @@ async function main() {
 
   // Seed GTR rounds — first 3 use real YouTube LoL gameplay videos
   const gtrRounds = [
-    // Silver: Skill Capped — "Silver vs Gold Difference" (embedding allowed)
-    { imageUrl: 'https://www.youtube.com/embed/ij41FI_Gmh0', correctRank: 'silver' },
-    // Gold: ProGuides — ranked gameplay showcase (embedding allowed)
-    { imageUrl: 'https://www.youtube.com/embed/5XptIJl2oic', correctRank: 'gold' },
-    // Platinum: ranked gameplay — embedding allowed
-    { imageUrl: 'https://www.youtube.com/embed/G_OzngK7hik', correctRank: 'platinum' },
+    { imageUrl: 'https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863277/zikGDS-pGAs1aPtHokRLmg_zx2isb.mp4', correctRank: 'silver' },
+    { imageUrl: 'https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863246/TgyygyoxuRvpGiKw3_1DeQ_if5f0m.mp4', correctRank: 'gold' },
+    { imageUrl: 'https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863160/WrEVCEHkaBzd6FlVB8_ugA_f3x5x0.mp4', correctRank: 'platinum' },
     // Rounds below are placeholders — add real YouTube embed URLs as content is created
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+4', correctRank: 'iron' },
     { imageUrl: 'https://placehold.co/800x450?text=GTR+Round+5', correctRank: 'bronze' },
