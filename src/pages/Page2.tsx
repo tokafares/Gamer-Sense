@@ -17,7 +17,7 @@ const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }
   { id: 'blitz',         label: 'BLITZ',         svg: BlitzSvg,     to: '/blitz'  },
   { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/knowledge-hub'  },
   { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/profile' },
-  { id: 'duels',         label: 'DUELS',         svg: GuessRankSvg, to: '/trivia-invite' },
+  { id: 'duels',         label: 'DUELS',         svg: GuessRankSvg, to: '/duels' },
   { id: 'guess-rank',   label: 'GUESS RANK',    svg: GuessRankSvg, to: '/gtr-invite'    },
 ]
 
