@@ -74,11 +74,17 @@ export default function Page8() {
   const { matchId, matchQuestions, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, setMatchStart: _, clearMatch } = useGameStore()
   const isMatchMode = !!matchId && matchQuestions.length > 0
 
-  const handleNext = useCallback(() => {
-    setSelectedAnswer(null)
-    setLocked(false)
-    setRefreshKey(k => k + 1)
-  }, [])
+  // Auto-advance 2 s after locking in (solo mode only — match mode uses socket round:result)
+  useEffect(() => {
+    if (!locked || isMatchMode) return
+    const t = setTimeout(() => {
+      setSelectedAnswer(null)
+      setLocked(false)
+      setRefreshKey(k => k + 1)
+    }, 2000)
+    return () => clearTimeout(t)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locked, isMatchMode])
 
   // Solo mode question fetch — disabled when in match mode
   const { question: soloQuestion, loading, error } = useQuestions(
@@ -474,7 +480,7 @@ export default function Page8() {
             </button>
           </motion.div>
 
-          {/* ── Solo mode answer reveal + Next button ── */}
+          {/* ── Solo mode answer reveal — auto-advances after 2 s ── */}
           {!isMatchMode && locked && soloQuestion && (() => {
             const correctAns = soloQuestion.options.find(a => a.id === soloQuestion.correctAnswer)
             return (
@@ -482,40 +488,21 @@ export default function Page8() {
                 variants={scrollFadeIn}
                 initial={reduced ? false : 'hidden'}
                 animate="show"
-                style={{ marginTop: '16px', display: 'flex', alignItems: 'flex-start', gap: '16px' }}
-              >
-                <div style={{
-                  flex: 1,
+                style={{
+                  marginTop: '16px',
                   background: '#0D1F3C',
                   border: '1px solid #1E3A5F',
                   borderLeft: '3px solid #00C9A7',
                   borderRadius: 4,
                   padding: '14px 20px',
-                }}>
-                  <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
-                    {soloQuestion.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
-                  </p>
-                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                    {soloQuestion.explanation}
-                  </p>
-                </div>
-                <motion.button
-                  onClick={handleNext}
-                  whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.18 } }}
-                  style={{
-                    flexShrink: 0, padding: '12px 28px',
-                    background: 'none',
-                    border: '2px solid #3AF9FF',
-                    borderRadius: 4,
-                    color: '#3AF9FF',
-                    cursor: 'pointer',
-                    letterSpacing: '0.1em',
-                    whiteSpace: 'nowrap',
-                  }}
-                  className="font-beaufort font-bold"
-                >
-                  NEXT QUESTION →
-                </motion.button>
+                }}
+              >
+                <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
+                  {soloQuestion.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
+                </p>
+                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                  {soloQuestion.explanation}
+                </p>
               </motion.div>
             )
           })()}

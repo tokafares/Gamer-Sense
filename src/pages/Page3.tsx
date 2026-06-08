@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -67,14 +67,20 @@ export default function Page3() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
   const [refreshKey,     setRefreshKey]     = useState(0)
+  const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { question, loading, error } = useQuestions('scenario', activeLane, refreshKey)
-
-  const handleNext = useCallback(() => {
-    setSelectedAnswer(null)
-    setLocked(false)
-    setRefreshKey(k => k + 1)
-  }, [])
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
+
+  // Auto-advance 2 s after locking in
+  useEffect(() => {
+    if (!locked) return
+    advanceRef.current = setTimeout(() => {
+      setSelectedAnswer(null)
+      setLocked(false)
+      setRefreshKey(k => k + 1)
+    }, 2000)
+    return () => { if (advanceRef.current) clearTimeout(advanceRef.current) }
+  }, [locked])
 
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || loading || !question) return
@@ -295,7 +301,7 @@ export default function Page3() {
             </button>
           </motion.div>
 
-          {/* ── Answer reveal + Next button — only shown after lock-in ── */}
+          {/* ── Answer reveal — shown after lock-in, auto-advances after 2 s ── */}
           {locked && question && (() => {
             const correctAns = question.options.find(a => a.id === question.correctAnswer)
             return (
@@ -303,40 +309,21 @@ export default function Page3() {
                 variants={scrollFadeIn}
                 initial={reduced ? false : 'hidden'}
                 animate="show"
-                style={{ marginTop: '16px', display: 'flex', alignItems: 'flex-start', gap: '16px' }}
-              >
-                <div style={{
-                  flex: 1,
+                style={{
+                  marginTop: '16px',
                   background: '#0D1F3C',
                   border: '1px solid #1E3A5F',
                   borderLeft: '3px solid #00C9A7',
                   borderRadius: 4,
                   padding: '14px 20px',
-                }}>
-                  <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
-                    {question.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
-                  </p>
-                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                    {question.explanation}
-                  </p>
-                </div>
-                <motion.button
-                  onClick={handleNext}
-                  whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.18 } }}
-                  style={{
-                    flexShrink: 0, padding: '12px 28px',
-                    background: 'none',
-                    border: '2px solid #3AF9FF',
-                    borderRadius: 4,
-                    color: '#3AF9FF',
-                    cursor: 'pointer',
-                    letterSpacing: '0.1em',
-                    whiteSpace: 'nowrap',
-                  }}
-                  className="font-beaufort font-bold"
-                >
-                  NEXT QUESTION →
-                </motion.button>
+                }}
+              >
+                <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
+                  {question.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
+                </p>
+                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                  {question.explanation}
+                </p>
               </motion.div>
             )
           })()}

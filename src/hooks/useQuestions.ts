@@ -8,12 +8,15 @@ export function useQuestions(type: string, lane: string, refreshKey = 0) {
   const [error,    setError]    = useState<string | null>(null)
 
   useEffect(() => {
+    if (!type) return
     let cancelled = false
     setLoading(true)
     setError(null)
 
     const params = new URLSearchParams({ type })
     if (lane) params.set('lane', lane)
+    // Cache-bust so each refreshKey/lane combo fetches a fresh question from the server
+    params.set('_r', String(refreshKey))
 
     apiGet<{ questions: Question[] }>(`/questions?${params.toString()}`)
       .then(data => {
