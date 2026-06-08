@@ -46,6 +46,7 @@ export default function Page9() {
             style={{
               fontSize: 48, lineHeight: 1.1,
               marginTop: 0, marginBottom: 48,
+              paddingBottom: '5px',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

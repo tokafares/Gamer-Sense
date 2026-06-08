@@ -270,7 +270,8 @@ const Home = () => {
               style={{
                 fontSize: '90px',
                 marginTop: '0px',
-                background: 'linear-gradient(to bottom, #3af9ff 45.833%, #00a7ad 136.76%)',
+                paddingBottom: '8px',
+                background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',

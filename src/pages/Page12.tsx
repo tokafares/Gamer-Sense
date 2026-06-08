@@ -91,6 +91,7 @@ function GTRResults() {
               className="font-beaufort font-bold"
               style={{
                 fontSize: 30, lineHeight: 1,
+                paddingBottom: '4px',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -209,7 +210,7 @@ function GTRResults() {
         }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '14px', flexShrink: 0, marginBottom: '6px' }}>
             <span className="font-beaufort font-bold" style={{
-              fontSize: '35px', lineHeight: 1,
+              fontSize: '35px', lineHeight: 1, paddingBottom: '4px',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>Voting Statistics</span>

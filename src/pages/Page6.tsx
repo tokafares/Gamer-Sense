@@ -80,6 +80,7 @@ function PlayerCard({
             style={{
               fontSize: '30px',
               lineHeight: 1,
+              paddingBottom: '4px',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

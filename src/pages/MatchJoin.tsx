@@ -113,6 +113,7 @@ export default function MatchJoin() {
               className="font-beaufort font-bold"
               style={{
                 fontSize: 40, lineHeight: 1, margin: 0,
+                paddingBottom: '5px',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
