@@ -48,15 +48,6 @@ function Landing() {
       <Header />
       <div className="w-full h-[1.2px] bg-gradient-to-r from-[#FFFCF6] to-[#969696]" />
       <HeroSection />
-      {/* Dark triangle that mirrors the hero diagonal — covers the upper-left triangle
-          of the 120px gap so the pattern starts from the diagonal edge, not a flat line.
-          Hero's own white polygon (z-20) covers the lower-right triangle. */}
-      <div style={{ position: 'relative', height: 120, marginTop: -120, zIndex: 5, pointerEvents: 'none' }}>
-        <svg viewBox="0 0 1728 120" preserveAspectRatio="none"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-          <polygon points="0,0 1728,0 0,120" fill="#091528" />
-        </svg>
-      </div>
       <WhatWeOffer />
       <Leaderboard />
       <div style={{ position: 'relative', zIndex: 1 }}>
