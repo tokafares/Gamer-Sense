@@ -127,6 +127,7 @@ export default function Page5() {
             <motion.h1
               className="font-beaufort font-bold"
               style={{
+                display: 'inline-block',
                 fontSize: '54px',
                 lineHeight: 1,
                 marginTop: 0,
