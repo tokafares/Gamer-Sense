@@ -117,10 +117,11 @@ export default function Page6() {
           <motion.h1
             className="font-beaufort font-bold"
             style={{
-              fontSize: '60px',
-              lineHeight: 1.1,
+              fontSize: '54px',
+              lineHeight: 1,
               marginTop: 0,
               marginBottom: '48px',
+              paddingBottom: '6px',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

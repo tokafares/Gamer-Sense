@@ -101,7 +101,7 @@ export default function Page3() {
             <h1
               className="font-beaufort font-bold"
               style={{
-                fontSize: '54px', lineHeight: 1, margin: 0,
+                fontSize: '54px', lineHeight: 1, margin: 0, paddingBottom: '6px',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
