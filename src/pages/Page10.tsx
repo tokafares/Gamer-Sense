@@ -6,7 +6,7 @@ import { apiPut } from '../lib/api'
 
 import PlayerCard   from '../assets/Group 367.svg'
 import UpgradeBtn   from '../assets/Group 321 upgrade button.svg'
-import GrayProfile  from '../assets/gray profile.png'
+import DefaultAvatar from '../assets/image 21.png'
 import { useAuthStore } from '../store/authStore'
 import { useProfile }   from '../hooks/useProfile'
 import StatsBg      from '../assets/Group 336.svg'
@@ -67,7 +67,7 @@ export default function Page10() {
   const [saveError, setSaveError]   = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const avatarSrc = localAvatar ?? profile?.avatarUrl ?? user?.avatarUrl ?? GrayProfile
+  const avatarSrc = localAvatar ?? profile?.avatarUrl ?? user?.avatarUrl ?? DefaultAvatar
   const displayName = profile?.username ?? user?.username ?? 'PLAYER'
   const displayLevel = profile?.level ?? user?.level ?? 0
 
@@ -190,33 +190,27 @@ export default function Page10() {
                   alt="Player card"
                   style={{ display: 'block', width: '100%', height: '100%', objectFit: 'fill' }}
                 />
-                {/* Cover the baked-in avatar PNG inside the SVG */}
-                <div style={{
-                  position: 'absolute', top: '6%', left: '9%', width: '82%', height: '62%',
-                  background: '#0D1F3C',
-                }} />
-                {/* Avatar in the portrait area (~top 62% of the card) */}
+                {/* Avatar — positioned over the portrait rect (x=33,y=39,w=362,h=356 in 429×582 SVG) */}
                 <img
                   src={avatarSrc}
                   alt=""
                   style={{
                     position: 'absolute',
-                    top: '6%',
-                    left: '9%',
-                    width: '82%',
-                    height: '62%',
+                    top: '6.7%',
+                    left: '7.7%',
+                    width: '84.4%',
+                    height: '61.2%',
                     objectFit: 'cover',
                     objectPosition: 'top center',
                   }}
                 />
-                {/* Cover static PNG text ("PLAYER NAME" + "LEVEL 25") and overlay dynamic values */}
+                {/* Username + level text below portrait */}
                 <div style={{
                   position: 'absolute',
                   top: '70%',
                   left: '4%',
                   right: '4%',
                   bottom: '8%',
-                  background: '#0D1F3C',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -413,7 +407,7 @@ export default function Page10() {
               {/* Avatar preview + upload */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
                 <img
-                  src={localAvatar ?? profile?.avatarUrl ?? user?.avatarUrl ?? GrayProfile}
+                  src={localAvatar ?? profile?.avatarUrl ?? user?.avatarUrl ?? DefaultAvatar}
                   alt=""
                   style={{ width: 90, height: 90, borderRadius: 6, objectFit: 'cover', border: '2px solid #1E3A5F' }}
                 />
