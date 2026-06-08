@@ -24,6 +24,12 @@ interface GTRRoundBody {
   correctRank: string
 }
 
+interface GTRRoundParams { id: string }
+interface GTRRoundUpdateBody {
+  imageUrl?: string | null
+  correctRank?: string
+}
+
 export async function adminRoutes(app: FastifyInstance) {
   // ── Questions ──────────────────────────────────────────────────────────────
 
@@ -39,8 +45,8 @@ export async function adminRoutes(app: FastifyInstance) {
             type: { type: 'string' },
             lane: { type: 'string' },
             text: { type: 'string' },
-            hint: { type: 'string' },
-            imageUrl: { type: 'string' },
+            hint: { type: ['string', 'null'] },
+            imageUrl: { type: ['string', 'null'] },
             options: { type: 'array' },
             correctAnswer: { type: 'string' },
             explanation: { type: 'string' },
@@ -110,6 +116,36 @@ export async function adminRoutes(app: FastifyInstance) {
     const rounds = await prisma.gTRRound.findMany({ orderBy: { createdAt: 'desc' } })
     return reply.send({ rounds })
   })
+
+  app.put<{ Params: GTRRoundParams; Body: GTRRoundUpdateBody }>(
+    '/admin/gtr/rounds/:id',
+    {
+      preHandler: adminGuard,
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            imageUrl: { type: ['string', 'null'] },
+            correctRank: { type: 'string' },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      try {
+        const round = await prisma.gTRRound.update({
+          where: { id: request.params.id },
+          data: {
+            ...(request.body.imageUrl !== undefined ? { imageUrl: request.body.imageUrl ?? '' } : {}),
+            ...(request.body.correctRank !== undefined ? { correctRank: request.body.correctRank } : {}),
+          },
+        })
+        return reply.send(round)
+      } catch {
+        return reply.status(404).send({ error: 'Round not found' })
+      }
+    },
+  )
 
   // ── Users ──────────────────────────────────────────────────────────────────
 

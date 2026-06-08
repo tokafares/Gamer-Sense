@@ -11,6 +11,7 @@ interface Question {
   lane: string
   text: string
   hint: string | null
+  imageUrl: string | null
   options: { id: string; text: string }[]
   correctAnswer: string
   explanation: string
@@ -267,6 +268,7 @@ function QuestionsTab() {
   const [error,     setError]     = useState<string | null>(null)
   const [form, setForm] = useState({
     type: 'scenario', lane: 'top', text: '', hint: '',
+    imageUrl: '',
     optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '',
   })
   const [saving, setSaving] = useState(false)
@@ -292,6 +294,7 @@ function QuestionsTab() {
       await apiPost('/questions', {
         type: form.type, lane: form.lane,
         text: form.text, hint: form.hint || null,
+        imageUrl: form.imageUrl || null,
         options: [
           { id: 'A', text: form.optA },
           { id: 'B', text: form.optB },
@@ -300,7 +303,7 @@ function QuestionsTab() {
         correctAnswer: form.correctAnswer,
         explanation: form.explanation,
       })
-      setForm({ type: 'scenario', lane: 'top', text: '', hint: '', optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '' })
+      setForm({ type: 'scenario', lane: 'top', text: '', hint: '', imageUrl: '', optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '' })
       await load()
     } catch {
       setError('Failed to add question')
@@ -346,6 +349,18 @@ function QuestionsTab() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
           {F('QUESTION TEXT', 'text', 'What is the best item for...')}
           {F('HINT (optional)', 'hint', 'Think about damage type...')}
+          {(form.type === 'blitz' || form.type === 'trivia') && (
+            <div>
+              <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>IMAGE URL (optional)</label>
+              <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/... or https://..." style={inputStyle} />
+            </div>
+          )}
+          {form.type === 'scenario' && (
+            <div>
+              <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>VIDEO URL (optional)</label>
+              <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/....mp4" style={inputStyle} />
+            </div>
+          )}
           {F('OPTION A', 'optA')}
           {F('OPTION B', 'optB')}
           {F('OPTION C', 'optC')}
@@ -404,6 +419,9 @@ function GTRTab() {
   const [error,   setError]   = useState<string | null>(null)
   const [form, setForm] = useState({ imageUrl: '', correctRank: 'gold' })
   const [saving, setSaving]   = useState(false)
+  const [editId,        setEditId]        = useState<string | null>(null)
+  const [editImageUrl,  setEditImageUrl]  = useState('')
+  const [editRank,      setEditRank]      = useState('gold')
 
   const RANKS = ['iron', 'bronze', 'silver', 'gold', 'emerald', 'platinum', 'diamond', 'master', 'challenger']
 
@@ -444,14 +462,30 @@ function GTRTab() {
     }
   }, [load])
 
+  const handleSaveEdit = useCallback(async (id: string) => {
+    try {
+      await apiPut(`/admin/gtr/rounds/${id}`, {
+        imageUrl: editImageUrl || null,
+        correctRank: editRank,
+      })
+      setEditId(null)
+      await load()
+    } catch {
+      setError('Failed to update round')
+    }
+  }, [editImageUrl, editRank, load])
+
   return (
     <div>
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, padding: 20, marginBottom: 24 }}>
         <p style={{ color: C.tealText, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>ADD GTR ROUND</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
           <div>
-            <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>VIDEO / IMAGE URL</label>
-            <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="YouTube embed or Cloudinary .mp4 URL" style={inputStyle} />
+            <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>VIDEO URL</label>
+            <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="Cloudinary .mp4 URL or YouTube embed URL" style={inputStyle} />
+            <p style={{ margin: '4px 0 0', color: C.muted, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11 }}>
+              Cloudinary .mp4 URL (recommended): https://res.cloudinary.com/... or YouTube embed URL
+            </p>
           </div>
           <div>
             <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>CORRECT RANK</label>
@@ -479,11 +513,37 @@ function GTRTab() {
             <tbody>
               {rounds.map(r => (
                 <tr key={r.id}>
-                  <td style={{ ...tableCell, maxWidth: 320, fontSize: 12, color: C.muted, wordBreak: 'break-all' }}>{r.imageUrl}</td>
-                  <td style={tableCell}>{r.correctRank}</td>
+                  <td style={{ ...tableCell, maxWidth: 320 }}>
+                    {editId === r.id ? (
+                      <input value={editImageUrl} onChange={e => setEditImageUrl(e.target.value)} style={{ ...inputStyle, fontSize: 12 }} />
+                    ) : (
+                      <span style={{ fontSize: 12, color: C.muted, wordBreak: 'break-all' }}>{r.imageUrl}</span>
+                    )}
+                  </td>
+                  <td style={tableCell}>
+                    {editId === r.id ? (
+                      <select value={editRank} onChange={e => setEditRank(e.target.value)} style={inputStyle}>
+                        {RANKS.map(rank => <option key={rank} value={rank}>{rank}</option>)}
+                      </select>
+                    ) : (
+                      r.correctRank
+                    )}
+                  </td>
                   <td style={tableCell}>{r.totalVotes ?? 0}</td>
                   <td style={tableCell}>
-                    <button onClick={() => { void handleDelete(r.id) }} style={{ ...ghostBtn, color: C.red, borderColor: C.red }}>DELETE</button>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {editId === r.id ? (
+                        <>
+                          <button onClick={() => { void handleSaveEdit(r.id) }} style={btnStyle(C.teal)}>SAVE</button>
+                          <button onClick={() => setEditId(null)} style={ghostBtn}>CANCEL</button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => { setEditId(r.id); setEditImageUrl(r.imageUrl); setEditRank(r.correctRank) }} style={ghostBtn}>EDIT</button>
+                          <button onClick={() => { void handleDelete(r.id) }} style={{ ...ghostBtn, color: C.red, borderColor: C.red }}>DELETE</button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
