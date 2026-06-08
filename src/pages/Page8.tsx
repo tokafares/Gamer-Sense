@@ -9,6 +9,7 @@ import { useGameStore } from '../store/gameStore'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 import DialogBgSvg   from '../assets/DialogBg.svg'
+import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.png'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
@@ -94,7 +95,7 @@ export default function Page8() {
           {/* ── 2-column layout (lane panel removed) ── */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', height: `${PANEL_H}px` }}>
 
-            {/* LEFT — image panel (fixed width so both panels sit left under the title) */}
+            {/* LEFT — image panel with artwork */}
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -103,6 +104,8 @@ export default function Page8() {
             >
               <img src={DialogBgSvg} alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+              <img src={GameArtwork} alt=""
+                style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
             </motion.div>
 
             {/* RIGHT — Q&A panel (Group 270 as unified background) */}

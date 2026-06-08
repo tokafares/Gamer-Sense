@@ -16,6 +16,7 @@ import ADCSvg        from '../assets/Group 261.svg'
 import SupportSvg    from '../assets/Group 262.svg'
 
 import DialogBgSvg   from '../assets/DialogBg.svg'
+import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.png'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
@@ -149,7 +150,7 @@ export default function Page4() {
               ))}
             </motion.div>
 
-            {/* CENTER — panel frame only (image removed) */}
+            {/* CENTER — panel with artwork */}
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -158,6 +159,8 @@ export default function Page4() {
             >
               <img src={DialogBgSvg} alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+              <img src={GameArtwork} alt=""
+                style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
             </motion.div>
 
             {/* RIGHT — Q&A panel (Group 270 as unified background) */}
