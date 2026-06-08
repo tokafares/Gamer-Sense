@@ -11,15 +11,13 @@ import BlitzSvg from '../assets/Group 239.svg'
 import CoachingSvg from '../assets/Coaching.svg'
 import ProfileSvg from '../assets/profile.svg'
 import GuessRankSvg from '../assets/guess rank.svg'
-import CreatorSvg from '../assets/creator.svg'
 
 const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }> = [
   { id: 'scenario',      label: 'SCENARIO',      svg: ScenarioSvg,  to: '/page3'  },
   { id: 'blitz',         label: 'BLITZ',         svg: BlitzSvg,     to: '/page4'  },
   { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/page5'  },
   { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/page10' },
-  { id: 'guess-rank',    label: 'GUESS RANK',    svg: GuessRankSvg, to: '/page11' },
-  { id: 'creator',       label: 'CREATOR',       svg: CreatorSvg,   to: null      },
+  { id: 'guess-rank',    label: 'DUELS',         svg: GuessRankSvg, to: '/page6'  },
 ]
 
 const CARD_W = 210
