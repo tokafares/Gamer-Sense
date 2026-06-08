@@ -3,6 +3,7 @@
     "builder": "RAILPACK"
   },
   "deploy": {
+    "startCommand": "npx prisma db push && node dist/index.js",
     "restartPolicyType": "ON_FAILURE"
   }
 }

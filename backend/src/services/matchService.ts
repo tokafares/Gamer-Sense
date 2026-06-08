@@ -25,6 +25,7 @@ export interface MatchState {
   matchId: string
   hostId: string
   invitedId: string
+  mode: string
   questions: MatchQuestion[]
   currentRound: number // 0-based index
   hostScore: number
@@ -36,11 +37,11 @@ export interface MatchState {
 
 // ── REST handlers ─────────────────────────────────────────────────────────────
 
-export async function createMatch(hostId: string) {
+export async function createMatch(hostId: string, mode = 'trivia') {
   const inviteToken = uuidv4()
 
   const match = await prisma.match.create({
-    data: { hostId, inviteToken },
+    data: { hostId, inviteToken, mode },
   })
 
   await redis.setex(tokenKey(inviteToken), TOKEN_TTL, match.id)
@@ -85,41 +86,59 @@ export async function joinMatch(token: string, invitedId: string) {
   // Token is single-use — delete immediately after successful join
   await redis.del(tokenKey(token))
 
-  return { matchId: updated.id, hostId: updated.hostId, invitedId: updated.invitedId }
+  return {
+    matchId: updated.id,
+    hostId: updated.hostId,
+    invitedId: updated.invitedId,
+    mode: updated.mode,
+  }
 }
 
 // ── State helpers used by socket handler ─────────────────────────────────────
 
 export async function loadState(matchId: string): Promise<MatchState | null> {
   const raw = await redis.get(stateKey(matchId))
-  return raw ? (JSON.parse(raw) as MatchState) : null
+  if (!raw) return null
+  const state = JSON.parse(raw) as MatchState
+  // Back-compat: old states without mode field default to trivia
+  if (!state.mode) state.mode = 'trivia'
+  return state
 }
 
 export async function saveState(state: MatchState): Promise<void> {
   await redis.setex(stateKey(state.matchId), STATE_TTL, JSON.stringify(state))
 }
 
-export async function initMatchState(matchId: string, hostId: string, invitedId: string): Promise<MatchState> {
-  // Pull random trivia questions for the match
-  const rows = await prisma.question.findMany({
-    where: { type: 'trivia' },
-    take: TRIVIA_QUESTION_COUNT * 3, // fetch extra, shuffle, take N
-    orderBy: { createdAt: 'asc' },
-  })
+export async function initMatchState(
+  matchId: string,
+  hostId: string,
+  invitedId: string,
+  mode = 'trivia',
+): Promise<MatchState> {
+  let questions: MatchQuestion[] = []
 
-  const shuffled = rows.sort(() => Math.random() - 0.5).slice(0, TRIVIA_QUESTION_COUNT)
-  const questions: MatchQuestion[] = shuffled.map((q) => ({
-    id: q.id,
-    text: q.text,
-    options: q.options,
-    correctAnswer: q.correctAnswer,
-    explanation: q.explanation,
-  }))
+  if (mode === 'trivia') {
+    // Pull random trivia questions for the match
+    const rows = await prisma.question.findMany({
+      where: { type: 'trivia' },
+      take: TRIVIA_QUESTION_COUNT * 3,
+      orderBy: { createdAt: 'asc' },
+    })
+    const shuffled = rows.sort(() => Math.random() - 0.5).slice(0, TRIVIA_QUESTION_COUNT)
+    questions = shuffled.map((q) => ({
+      id: q.id,
+      text: q.text,
+      options: q.options,
+      correctAnswer: q.correctAnswer,
+      explanation: q.explanation,
+    }))
+  }
 
   const state: MatchState = {
     matchId,
     hostId,
     invitedId,
+    mode,
     questions,
     currentRound: 0,
     hostScore: 0,
@@ -135,7 +154,6 @@ export async function initMatchState(matchId: string, hostId: string, invitedId:
 export async function finalizeMatch(state: MatchState): Promise<void> {
   const winnerId = state.hostScore >= state.invitedScore ? state.hostId : state.invitedId
 
-  // Write result to PostgreSQL
   await prisma.match.update({
     where: { id: state.matchId },
     data: { status: 'completed' },
@@ -165,4 +183,35 @@ export async function finalizeMatch(state: MatchState): Promise<void> {
 
   // Evict match state from Redis
   await redis.del(stateKey(state.matchId))
+}
+
+export async function finalizeGTRMatch(
+  matchId: string,
+  hostId: string,
+  invitedId: string,
+  hostScore: number,
+  invitedScore: number,
+): Promise<void> {
+  const winnerId = hostScore >= invitedScore ? hostId : invitedId
+
+  await prisma.match.update({
+    where: { id: matchId },
+    data: { status: 'completed' },
+  })
+  await prisma.matchResult.create({
+    data: { matchId, winnerId, hostScore, invitedScore },
+  })
+
+  // Award winner bonus
+  await prisma.userStats.upsert({
+    where: { userId: winnerId },
+    create: { userId: winnerId, points: 200, gtrCompleted: 1 },
+    update: { points: { increment: 200 }, gtrCompleted: { increment: 1 } },
+  })
+  const loserId = winnerId === hostId ? invitedId : hostId
+  await prisma.userStats.upsert({
+    where: { userId: loserId },
+    create: { userId: loserId, points: 0, gtrCompleted: 1 },
+    update: { gtrCompleted: { increment: 1 } },
+  })
 }

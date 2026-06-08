@@ -20,7 +20,8 @@ export default function MatchJoin() {
   const { user } = useAuthStore()
   const { setMatchStart } = useGameStore()
 
-  const [status, setStatus] = useState<'joining' | 'waiting' | 'starting' | 'error'>('joining')
+  const [status,   setStatus]   = useState<'joining' | 'waiting' | 'starting' | 'error'>('joining')
+  const [matchMode, setMatchMode] = useState<'trivia' | 'gtr'>('trivia')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   useEffect(() => {
@@ -30,10 +31,16 @@ export default function MatchJoin() {
 
     const run = async () => {
       try {
-        await apiGet<{ matchId: string; hostId: string; invitedId: string }>(
-          `/matches/join/${token}`
-        )
+        const joinRes = await apiGet<{
+          matchId: string
+          hostId: string
+          invitedId: string | null
+          mode: string
+        }>(`/matches/join/${token}`)
         if (cancelled) return
+
+        const mode = (joinRes.mode === 'gtr' ? 'gtr' : 'trivia') as 'trivia' | 'gtr'
+        setMatchMode(mode)
         setStatus('waiting')
 
         const socket = connectSocket()
@@ -47,7 +54,8 @@ export default function MatchJoin() {
           navigating = true
           setMatchStart(d.matchId, d.questions)
           setStatus('starting')
-          navigate('/trivia')
+          // Route based on match mode: GTR → /match, Trivia → /leaderboard
+          navigate(mode === 'gtr' ? '/match' : '/leaderboard')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) {
@@ -86,6 +94,8 @@ export default function MatchJoin() {
     error:    '#ef4444',
   }
 
+  const modeLabel = matchMode === 'gtr' ? 'Guess The Rank Duel' : '1v1 Trivia Match'
+
   return (
     <>
       <Header />
@@ -120,7 +130,7 @@ export default function MatchJoin() {
                 backgroundClip: 'text',
               }}
             >
-              1v1 Trivia Match
+              {modeLabel}
             </h1>
 
             {status !== 'error' && (
@@ -151,7 +161,7 @@ export default function MatchJoin() {
                   {statusText.error}
                 </span>
                 <button
-                  onClick={() => navigate('/trivia-invite')}
+                  onClick={() => navigate('/duels')}
                   style={{
                     padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                     border: 'none', borderRadius: 6, cursor: 'pointer',
@@ -159,7 +169,7 @@ export default function MatchJoin() {
                     fontWeight: 700, fontSize: 15, letterSpacing: '0.1em',
                   }}
                 >
-                  BACK TO LOBBY
+                  BACK TO DUELS
                 </button>
               </>
             )}

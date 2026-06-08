@@ -6,6 +6,7 @@ import {
   saveState,
   initMatchState,
   finalizeMatch,
+  finalizeGTRMatch,
   MatchState,
 } from '../services/matchService'
 import prisma from '../lib/prisma'
@@ -18,9 +19,10 @@ const socketMeta = new Map<string, { userId: string; matchId: string }>()
 const matchSockets = new Map<string, Set<string>>()
 
 // Per-match async mutex — serialises concurrent round:answer writes to prevent lost-update
-// Two sockets fire simultaneously; without a lock both read stale state, each saves only their
-// own answer, and bothAnswered is never true.
 const matchLocks = new Map<string, Promise<void>>()
+
+// GTR duel vote tracking — matchId → { userId → pointsEarned }
+const gtrVotes = new Map<string, Map<string, number>>()
 
 function withMatchLock<T>(matchId: string, fn: () => Promise<T>): Promise<T> {
   const current = matchLocks.get(matchId) ?? Promise.resolve()
@@ -53,7 +55,6 @@ export function registerMatchHandler(io: Server) {
     socket.on('match:join', async (payload: { token: string; userId: string }) => {
       const { token, userId } = payload ?? {}
 
-      // Authenticate via JWT carried in the socket handshake or event payload
       const jwtToken = (socket.handshake.auth?.token as string | undefined) ?? token
       const claims = verifyToken(jwtToken ?? '')
       if (!claims || claims.userId !== userId) {
@@ -94,71 +95,107 @@ export function registerMatchHandler(io: Server) {
         const meta = socketMeta.get(socket.id)
         if (!meta || meta.matchId !== matchId) return
 
-        // Serialise concurrent writes for the same match to avoid lost-update race
         await withMatchLock(matchId, async () => {
-        const state = await loadState(matchId)
-        if (!state || state.status !== 'active') return
-        if (roundIndex !== state.currentRound) return
+          const state = await loadState(matchId)
+          if (!state || state.status !== 'active' || state.mode !== 'trivia') return
+          if (roundIndex !== state.currentRound) return
 
-        const { userId } = meta
+          const { userId } = meta
 
-        // Record the answer
-        if (!state.answers[roundIndex]) state.answers[roundIndex] = {}
-        if (state.answers[roundIndex][userId]) return // already answered this round
+          if (!state.answers[roundIndex]) state.answers[roundIndex] = {}
+          if (state.answers[roundIndex][userId]) return
 
-        state.answers[roundIndex][userId] = answer
-        await saveState(state)
-
-        const question = state.questions[roundIndex]
-        const bothAnswered =
-          state.answers[roundIndex][state.hostId] !== undefined &&
-          state.answers[roundIndex][state.invitedId] !== undefined
-
-        if (!bothAnswered) return
-
-        // Resolve round
-        const hostAnswer = state.answers[roundIndex][state.hostId]
-        const invitedAnswer = state.answers[roundIndex][state.invitedId]
-        if (hostAnswer === question.correctAnswer) state.hostScore++
-        if (invitedAnswer === question.correctAnswer) state.invitedScore++
-
-        io.to(roomId(matchId)).emit('round:result', {
-          roundIndex,
-          correctAnswer: question.correctAnswer,
-          explanation: question.explanation,
-          hostScore: state.hostScore,
-          invitedScore: state.invitedScore,
-        })
-
-        state.currentRound++
-
-        if (state.currentRound >= state.questions.length) {
-          // Game over
-          state.status = 'completed'
+          state.answers[roundIndex][userId] = answer
           await saveState(state)
-          await finalizeMatch(state)
-          await invalidateLeaderboardCache()
 
-          const winnerId =
-            state.hostScore >= state.invitedScore ? state.hostId : state.invitedId
-          io.to(roomId(matchId)).emit('match:end', {
-            winnerId,
+          const question = state.questions[roundIndex]
+          const bothAnswered =
+            state.answers[roundIndex][state.hostId] !== undefined &&
+            state.answers[roundIndex][state.invitedId] !== undefined
+
+          if (!bothAnswered) return
+
+          const hostAnswer = state.answers[roundIndex][state.hostId]
+          const invitedAnswer = state.answers[roundIndex][state.invitedId]
+          if (hostAnswer === question.correctAnswer) state.hostScore++
+          if (invitedAnswer === question.correctAnswer) state.invitedScore++
+
+          io.to(roomId(matchId)).emit('round:result', {
+            roundIndex,
+            correctAnswer: question.correctAnswer,
+            explanation: question.explanation,
             hostScore: state.hostScore,
             invitedScore: state.invitedScore,
           })
-        } else {
-          await saveState(state)
-          const next = state.questions[state.currentRound]
-          io.to(roomId(matchId)).emit('round:question', {
-            roundIndex: state.currentRound,
-            question: {
-              id: next.id,
-              text: next.text,
-              options: next.options,
-            },
-          })
-        }
-        }) // end withMatchLock
+
+          state.currentRound++
+
+          if (state.currentRound >= state.questions.length) {
+            state.status = 'completed'
+            await saveState(state)
+            await finalizeMatch(state)
+            await invalidateLeaderboardCache()
+
+            const winnerId =
+              state.hostScore >= state.invitedScore ? state.hostId : state.invitedId
+            io.to(roomId(matchId)).emit('match:end', {
+              winnerId,
+              hostScore: state.hostScore,
+              invitedScore: state.invitedScore,
+            })
+          } else {
+            await saveState(state)
+            const next = state.questions[state.currentRound]
+            io.to(roomId(matchId)).emit('round:question', {
+              roundIndex: state.currentRound,
+              question: {
+                id: next.id,
+                text: next.text,
+                options: next.options,
+              },
+            })
+          }
+        })
+      },
+    )
+
+    // ── gtr:vote — GTR duel mode: fired after each player submits their rank vote ──
+    socket.on(
+      'gtr:vote',
+      async (payload: { matchId: string; pointsEarned: number }) => {
+        const { matchId, pointsEarned } = payload ?? {}
+        const meta = socketMeta.get(socket.id)
+        if (!meta || meta.matchId !== matchId) return
+
+        await withMatchLock(matchId, async () => {
+          const match = await prisma.match.findUnique({ where: { id: matchId } })
+          if (!match || match.mode !== 'gtr' || !match.invitedId) return
+
+          if (!gtrVotes.has(matchId)) gtrVotes.set(matchId, new Map())
+          const votes = gtrVotes.get(matchId)!
+
+          // Record score once per player
+          if (!votes.has(meta.userId)) {
+            votes.set(meta.userId, pointsEarned)
+          }
+
+          // When both players have voted, resolve match
+          if (votes.has(match.hostId) && votes.has(match.invitedId)) {
+            const hostScore    = votes.get(match.hostId)!
+            const invitedScore = votes.get(match.invitedId)!
+            gtrVotes.delete(matchId)
+
+            await finalizeGTRMatch(matchId, match.hostId, match.invitedId, hostScore, invitedScore)
+            await invalidateLeaderboardCache()
+
+            const winnerId = hostScore >= invitedScore ? match.hostId : match.invitedId
+            io.to(roomId(matchId)).emit('match:end', {
+              winnerId,
+              hostScore,
+              invitedScore,
+            })
+          }
+        })
       },
     )
 
@@ -181,7 +218,7 @@ export function registerMatchHandler(io: Server) {
 
       const newToken = uuidv4()
       const newMatch = await prisma.match.create({
-        data: { hostId: oldMatch.hostId, inviteToken: newToken },
+        data: { hostId: oldMatch.hostId, inviteToken: newToken, mode: oldMatch.mode },
       })
       await redis.setex(tokenKey(newToken), 600, newMatch.id)
 
@@ -242,7 +279,7 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
       socket.emit('match:error', { message: 'Waiting for opponent to join via invite link' })
       return
     }
-    state = await initMatchState(matchId, match.hostId, match.invitedId)
+    state = await initMatchState(matchId, match.hostId, match.invitedId, match.mode)
   }
 
   const safeQuestions = state.questions.map((q) => ({
@@ -253,10 +290,12 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
 
   io.to(roomId(matchId)).emit('match:start', { matchId, questions: safeQuestions })
 
-  // Push current round question
-  const current = state.questions[state.currentRound]
-  io.to(roomId(matchId)).emit('round:question', {
-    roundIndex: state.currentRound,
-    question: { id: current.id, text: current.text, options: current.options },
-  })
+  // Only push round:question for trivia mode (GTR players fetch rounds via REST)
+  if (match.mode === 'trivia' && state.questions.length > 0) {
+    const current = state.questions[state.currentRound]
+    io.to(roomId(matchId)).emit('round:question', {
+      roundIndex: state.currentRound,
+      question: { id: current.id, text: current.text, options: current.options },
+    })
+  }
 }

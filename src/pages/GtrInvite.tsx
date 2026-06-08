@@ -8,6 +8,7 @@ import PlayerBg    from '../assets/Player Profile Bg.svg'
 import GrayProfile from '../assets/gray profile.webp'
 
 import { useAuthStore } from '../store/authStore'
+import { useGameStore } from '../store/gameStore'
 import { apiPost } from '../lib/api'
 import { connectSocket, disconnectSocket } from '../lib/socket'
 
@@ -94,6 +95,7 @@ export default function GtrInvite() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { setMatchStart } = useGameStore()
 
   const [inviteUrl,  setInviteUrl]  = useState<string | null>(null)
   const [copied,     setCopied]     = useState(false)
@@ -105,7 +107,7 @@ export default function GtrInvite() {
     let cancelled  = false
     let navigating = false
 
-    apiPost<{ matchId: string; inviteToken: string; inviteUrl: string }>('/matches/create', { type: 'gtr' })
+    apiPost<{ matchId: string; inviteToken: string; inviteUrl: string }>('/matches/create', { mode: 'gtr' })
       .then(res => {
         if (cancelled) return
         setInviteUrl(res.inviteUrl)
@@ -117,9 +119,10 @@ export default function GtrInvite() {
         socket.on('match:waiting', () => {
           if (!cancelled) setStatus('waiting')
         })
-        socket.on('match:start', () => {
+        socket.on('match:start', (d: { matchId: string; questions: [] }) => {
           if (cancelled) return
           navigating = true
+          setMatchStart(d.matchId, [])
           setStatus('ready')
           navigate('/match')
         })

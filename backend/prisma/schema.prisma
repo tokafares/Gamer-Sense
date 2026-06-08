@@ -85,6 +85,7 @@ model Match {
   invitedId   String?
   invited     User?        @relation("GuestMatches", fields: [invitedId], references: [id])
   status      String       @default("waiting")
+  mode        String       @default("trivia")
   inviteToken String       @unique
   createdAt   DateTime     @default(now())
   result      MatchResult?

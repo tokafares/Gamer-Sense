@@ -111,7 +111,7 @@ export default function Page7() {
     let cancelled = false
     let navigating = false
 
-    apiPost<{ matchId: string; inviteToken: string; inviteUrl: string }>('/matches/create', {})
+    apiPost<{ matchId: string; inviteToken: string; inviteUrl: string }>('/matches/create', { mode: 'trivia' })
       .then(res => {
         if (cancelled) return
         setMatchId(res.matchId)
@@ -129,7 +129,7 @@ export default function Page7() {
           navigating = true
           setMatchStart(d.matchId, d.questions)
           setStatus('ready')
-          navigate('/trivia')
+          navigate('/leaderboard')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) setMatchError(d.message)

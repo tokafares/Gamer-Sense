@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
@@ -19,6 +19,7 @@ import RankTile9     from '../assets/Group 356.svg'
 import SubmitBtn     from '../assets/submit button 359.svg'
 import { useGameStore } from '../store/gameStore'
 import { useGTRRound }  from '../hooks/useGTRRound'
+import { connectSocket, disconnectSocket } from '../lib/socket'
 
 const RANK_TILES = [
   RankTile1, RankTile2, RankTile3, RankTile4, RankTile5,
@@ -41,8 +42,10 @@ export default function Page11() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const [selected, setSelected] = useState<number | null>(null)
-  const { currentRound, totalRounds, points, gtrResult, setGTRResult } = useGameStore()
+  const { currentRound, totalRounds, points, gtrResult, matchId, setGTRResult, clearMatch } = useGameStore()
   const [imgError, setImgError] = useState(false)
+  const isDuel = !!matchId
+  const voteEmitted = useRef(false)
 
   const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound()
 
@@ -54,7 +57,7 @@ export default function Page11() {
   // Reset image error state when a new round loads
   useEffect(() => { setImgError(false) }, [round?.id])
 
-  // When vote + stats both arrive: store result then navigate to results page
+  // When vote + stats both arrive
   useEffect(() => {
     if (!voteResult || !stats || !round) return
     setGTRResult({
@@ -65,9 +68,30 @@ export default function Page11() {
       totalVotes:  stats.totalVotes,
       percentages: stats.percentages,
     })
-    navigate('/results')
+
+    if (isDuel && matchId && !voteEmitted.current) {
+      // Emit vote result via socket — backend resolves match:end when both players vote
+      voteEmitted.current = true
+      connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
+      // Don't navigate yet — wait for match:end
+    } else if (!isDuel) {
+      navigate('/results')
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
+
+  // In duel mode: listen for match:end and navigate to winner screen
+  useEffect(() => {
+    if (!isDuel || !matchId) return
+    const socket = connectSocket()
+    socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
+      clearMatch()
+      disconnectSocket()
+      navigate('/match-winner', { state: d })
+    })
+    return () => { socket.off('match:end') }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDuel, matchId])
 
   const toggle = useCallback((i: number) => {
     if (voted) return

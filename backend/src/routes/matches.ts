@@ -6,13 +6,18 @@ interface JoinParams {
   token: string
 }
 
+interface CreateBody {
+  mode?: string
+}
+
 export async function matchRoutes(app: FastifyInstance) {
-  app.post(
+  app.post<{ Body: CreateBody }>(
     '/matches/create',
     { preHandler: authGuard },
     async (request, reply) => {
       try {
-        const result = await createMatch(request.user.userId)
+        const mode = request.body?.mode ?? 'trivia'
+        const result = await createMatch(request.user.userId, mode)
         return reply.status(201).send(result)
       } catch (err: unknown) {
         const e = err as Error & { statusCode?: number }
