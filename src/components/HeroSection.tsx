@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import ArenaBright from '../assets/image 18.png'
 import ArenaDark from '../assets/image 19.png'
 import PlayersBright from '../assets/C11 1.png'
@@ -141,17 +142,19 @@ export default function HeroSection() {
         </motion.p>
 
         {/* GET STARTED button */}
-        <motion.img
-          src={GetStartedBtn}
-          alt="Get Started"
-          className="absolute left-[79px] top-[62%] w-[345px] h-[65px] cursor-pointer flex-shrink-0"
-          variants={heroButtonAnim}
-          initial={reduced ? false : 'hidden'}
-          animate="show"
-          whileHover={reduced ? {} : { scale: 1.04, filter: 'brightness(1.1)' }}
-          whileTap={reduced ? {} : { scale: 0.97 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-        />
+        <Link to="/page2" style={{ position: 'absolute', left: '79px', top: '62%', lineHeight: 0 }}>
+          <motion.img
+            src={GetStartedBtn}
+            alt="Get Started"
+            className="w-[345px] h-[65px] cursor-pointer flex-shrink-0"
+            variants={heroButtonAnim}
+            initial={reduced ? false : 'hidden'}
+            animate="show"
+            whileHover={reduced ? {} : { scale: 1.04, filter: 'brightness(1.1)' }}
+            whileTap={reduced ? {} : { scale: 0.97 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          />
+        </Link>
       </div>
 
       {/* Diagonal white slash */}
