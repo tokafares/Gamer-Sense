@@ -18,7 +18,7 @@ const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }
   { id: 'blitz',         label: 'BLITZ',         svg: BlitzSvg,     to: '/page4'  },
   { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/page5'  },
   { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/page10' },
-  { id: 'guess-rank',    label: 'GUESS RANK',    svg: GuessRankSvg, to: '/page8'  },
+  { id: 'guess-rank',    label: 'GUESS RANK',    svg: GuessRankSvg, to: '/page11' },
   { id: 'creator',       label: 'CREATOR',       svg: CreatorSvg,   to: null      },
 ]
 
