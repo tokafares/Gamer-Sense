@@ -17,6 +17,7 @@ import Page9 from '../../pages/Page9'
 import Page10 from '../../pages/Page10'
 import Page11 from '../../pages/Page11'
 import Page12 from '../../pages/Page12'
+import GtrInvite from '../../pages/GtrInvite'
 
 export const Layout = () => {
   const location = useLocation()
@@ -40,8 +41,9 @@ export const Layout = () => {
               <Route path="/page9"  element={<PageWrapper><Page9 /></PageWrapper>} />
               <Route path="/page10" element={<PageWrapper><Page10 /></PageWrapper>} />
               <Route path="/page11" element={<PageWrapper><Page11 /></PageWrapper>} />
-              <Route path="/page12" element={<PageWrapper><Page12 /></PageWrapper>} />
-              <Route path="/"       element={<PageWrapper><Page6 /></PageWrapper>} />
+              <Route path="/page12"     element={<PageWrapper><Page12 /></PageWrapper>} />
+              <Route path="/gtr-invite" element={<PageWrapper><GtrInvite /></PageWrapper>} />
+              <Route path="/"           element={<PageWrapper><Page6 /></PageWrapper>} />
             </Routes>
           </AnimatePresence>
         </main>
