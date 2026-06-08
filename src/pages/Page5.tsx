@@ -127,6 +127,7 @@ export default function Page5() {
                 lineHeight: 1,
                 marginTop: 0,
                 marginBottom: `${TITLE_MB}px`,
+                paddingBottom: '6px',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
