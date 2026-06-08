@@ -4,6 +4,9 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import GrayProfile from '../assets/gray profile.png'
+import PlayerProfileBg from '../assets/Player Profile Bg.svg'
+import GoldRank from '../assets/Group 340.svg'
+import RematchBtn from '../assets/submit button 359.svg'
 import { useAuthStore } from '../store/authStore'
 
 interface MatchResultState {
@@ -21,13 +24,16 @@ export default function Page9() {
   const result   = (location.state as MatchResultState | null)
   const isWinner = result?.winnerId === user?.id
 
+  const winnerScore  = isWinner ? result?.hostScore   : result?.invitedScore
+  const invitedScore = isWinner ? result?.invitedScore : result?.hostScore
+
   return (
     <>
       <Header />
 
       <main style={{ paddingTop: '85.2px', background: 'transparent' }}>
         <div style={{
-          maxWidth: 860,
+          maxWidth: 1000,
           marginLeft: 'auto',
           marginRight: 'auto',
           padding: '48px 24px 80px',
@@ -39,7 +45,7 @@ export default function Page9() {
             className="font-beaufort font-bold"
             style={{
               fontSize: 48, lineHeight: 1.1,
-              marginTop: 0, marginBottom: 40,
+              marginTop: 0, marginBottom: 48,
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -53,7 +59,6 @@ export default function Page9() {
           </motion.h1>
 
           {!result ? (
-            /* No result — user navigated directly */
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -83,141 +88,111 @@ export default function Page9() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.1 }}
             >
-              {/* Player cards */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, marginBottom: 40, flexWrap: 'wrap' }}>
+              {/* Two player cards */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 40, marginBottom: 40, flexWrap: 'wrap' }}>
 
                 {/* Winner card */}
                 <motion.div
-                  initial={reduced ? false : { opacity: 0, x: -20 }}
+                  initial={reduced ? false : { opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.45, delay: 0.2 }}
-                  style={{
-                    background: '#0D1F3C',
-                    border: '2px solid #00C9A7',
-                    borderRadius: 12,
-                    padding: '28px 32px',
-                    minWidth: 220,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 12,
-                    boxShadow: '0 0 24px rgba(0,201,167,0.18)',
-                  }}
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                 >
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
-                    fontSize: 12, letterSpacing: '0.2em', color: '#00C9A7',
-                  }}>
-                    WINNER
-                  </span>
-                  <div style={{ fontSize: 48, lineHeight: 1 }}>🏆</div>
-                  <img
-                    src={isWinner ? (user?.avatarUrl ?? GrayProfile) : GrayProfile}
-                    alt=""
-                    style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #00C9A7' }}
-                  />
-                  <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#E8EDF5', letterSpacing: '0.05em' }}>
-                    {isWinner ? (user?.username ?? 'YOU') : 'OPPONENT'}
-                  </span>
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, fontWeight: 700,
+                  <div style={{ position: 'relative', width: 220 }}>
+                    <img src={PlayerProfileBg} alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <img
+                        src={isWinner ? (user?.avatarUrl ?? GoldRank) : GoldRank}
+                        alt="Winner"
+                        style={{
+                          width: '80%', height: '80%', objectFit: 'contain',
+                          filter: 'drop-shadow(0 0 18px rgba(0,201,167,0.55))',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 22, letterSpacing: '0.12em',
                     background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                   }}>
-                    {isWinner ? result.hostScore : result.invitedScore}
+                    WINNER
                   </span>
-                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
-                    CORRECT
-                  </span>
+
+                  <div style={{
+                    background: '#0D1F3C', border: '1px solid #1E3A5F',
+                    borderRadius: 4, padding: '6px 18px',
+                  }}>
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
+                    }}>
+                      {winnerScore ?? 0} Correct Answers
+                    </span>
+                  </div>
                 </motion.div>
 
-                {/* VS */}
-                <motion.span
-                  className="font-beaufort font-bold"
-                  style={{ fontSize: 40, color: '#1E3A5F' }}
-                  initial={reduced ? false : { opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.35, delay: 0.3 }}
-                >
-                  VS
-                </motion.span>
-
-                {/* Loser card */}
+                {/* Invited player card */}
                 <motion.div
-                  initial={reduced ? false : { opacity: 0, x: 20 }}
+                  initial={reduced ? false : { opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.45, delay: 0.2 }}
-                  style={{
-                    background: '#0D1F3C',
-                    border: '1px solid #1E3A5F',
-                    borderRadius: 12,
-                    padding: '28px 32px',
-                    minWidth: 220,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 12,
-                  }}
+                  transition={{ duration: 0.45, delay: 0.28 }}
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                 >
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
-                    fontSize: 12, letterSpacing: '0.2em', color: '#8FA3C0',
+                  <div style={{ position: 'relative', width: 220 }}>
+                    <img src={PlayerProfileBg} alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <img
+                        src={isWinner ? GrayProfile : (user?.avatarUrl ?? GrayProfile)}
+                        alt="Invited Player"
+                        style={{ width: '80%', height: '80%', objectFit: 'cover', borderRadius: 4 }}
+                      />
+                    </div>
+                  </div>
+
+                  <span className="font-beaufort font-bold" style={{
+                    fontSize: 22, letterSpacing: '0.06em', color: '#E8EDF5',
                   }}>
-                    DEFEATED
+                    Invited Player Profile
                   </span>
-                  <div style={{ fontSize: 48, lineHeight: 1, opacity: 0.35 }}>🏆</div>
-                  <img
-                    src={isWinner ? GrayProfile : (user?.avatarUrl ?? GrayProfile)}
-                    alt=""
-                    style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #1E3A5F', opacity: 0.7 }}
-                  />
-                  <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#8FA3C0', letterSpacing: '0.05em' }}>
-                    {isWinner ? 'OPPONENT' : (user?.username ?? 'YOU')}
-                  </span>
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, fontWeight: 700, color: '#8FA3C0',
+
+                  <div style={{
+                    background: '#0D1F3C', border: '1px solid #1E3A5F',
+                    borderRadius: 4, padding: '6px 18px',
                   }}>
-                    {isWinner ? result.invitedScore : result.hostScore}
-                  </span>
-                  <span style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em' }}>
-                    CORRECT
-                  </span>
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
+                    }}>
+                      {invitedScore ?? 0} Correct Answers
+                    </span>
+                  </div>
                 </motion.div>
 
               </div>
 
-              {/* Result message */}
-              <motion.p
-                initial={reduced ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.45 }}
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 22, letterSpacing: '0.08em', marginBottom: 36,
-                  color: isWinner ? '#00C9A7' : '#C9A227',
-                }}
-              >
-                {isWinner ? 'Great game! You outplayed your opponent.' : 'Good effort! Better luck next time.'}
-              </motion.p>
-
               {/* Rematch button */}
-              <motion.button
-                onClick={() => navigate('/page7')}
-                whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
+              <motion.div
                 initial={reduced ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.55 }}
-                style={{
-                  padding: '14px 48px',
-                  background: 'linear-gradient(to right, #00C9A7, #0090A7)',
-                  color: '#060F1E', border: 'none', borderRadius: 7,
-                  cursor: 'pointer',
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 700, fontSize: 16, letterSpacing: '0.12em',
-                }}
+                transition={{ duration: 0.4, delay: 0.45 }}
+                style={{ display: 'flex', justifyContent: 'center' }}
               >
-                REMATCH
-              </motion.button>
+                <motion.button
+                  onClick={() => navigate('/page7')}
+                  whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
+                  style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'block' }}
+                >
+                  <img src={RematchBtn} alt="Rematch" style={{ display: 'block', width: '220px', height: 'auto' }} />
+                </motion.button>
+              </motion.div>
 
             </motion.div>
           )}
