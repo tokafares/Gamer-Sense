@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { useQuestions } from '../hooks/useQuestions'
+import { useScenarioVideo } from '../hooks/useScenarioVideo'
 import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 
@@ -69,7 +70,11 @@ export default function Page3() {
   const [refreshKey,     setRefreshKey]     = useState(0)
   const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { question, loading, error } = useQuestions('scenario', activeLane, refreshKey)
+  const { video: scenarioVideo } = useScenarioVideo(activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
+
+  const isYouTube       = scenarioVideo?.url.startsWith('https://www.youtube.com/embed/') ?? false
+  const isCloudinaryVid = scenarioVideo?.url.includes('cloudinary.com') && scenarioVideo?.url.endsWith('.mp4')
 
   // Auto-advance 2 s after locking in — cycle to the next lane
   useEffect(() => {
@@ -168,17 +173,50 @@ export default function Page3() {
               ))}
             </motion.div>
 
-            {/* CENTER — panel with artwork */}
+            {/* CENTER — scenario video panel */}
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative' }}
+              style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: '#060F1E', borderRadius: 6, overflow: 'hidden' }}
             >
-              <img src={DialogBgSvg} alt=""
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-              <img src={GameArtwork} alt=""
-                style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
+              {scenarioVideo && isYouTube ? (
+                <iframe
+                  key={scenarioVideo.id}
+                  src={`${scenarioVideo.url}?rel=0&modestbranding=1&autoplay=1&mute=1`}
+                  title="Scenario"
+                  width="100%"
+                  height="100%"
+                  style={{ display: 'block', border: 'none', position: 'absolute', inset: 0 }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : scenarioVideo && isCloudinaryVid ? (
+                <video
+                  key={scenarioVideo.id}
+                  src={scenarioVideo.url}
+                  autoPlay
+                  muted
+                  loop
+                  controls
+                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : scenarioVideo ? (
+                <img
+                  key={scenarioVideo.id}
+                  src={scenarioVideo.url}
+                  alt=""
+                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                /* Fallback to static artwork when no video is set for this lane */
+                <>
+                  <img src={DialogBgSvg} alt=""
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+                  <img src={GameArtwork} alt=""
+                    style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
+                </>
+              )}
             </motion.div>
 
             {/* RIGHT — Q&A panel (Group 270 as unified background) */}
