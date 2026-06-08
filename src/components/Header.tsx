@@ -13,7 +13,7 @@ const FEATURE_NAV = [
   { label: 'DUELS',          to: '/page6' },
 ]
 
-const DUELS_PATHS  = new Set(['/page6', '/page7', '/page8', '/page9', '/page11', '/page12'])
+const DUELS_PATHS  = new Set(['/page6', '/page7', '/page8', '/page9', '/page11', '/page12', '/gtr-invite'])
 const BLITZ_PATHS  = new Set(['/page4'])
 const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...DUELS_PATHS, ...BLITZ_PATHS])
 

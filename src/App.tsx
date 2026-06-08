@@ -21,6 +21,7 @@ import Page9 from './pages/Page9'
 import Page10 from './pages/Page10'
 import Page11 from './pages/Page11'
 import Page12 from './pages/Page12'
+import GtrInvite from './pages/GtrInvite'
 import MatchJoin from './pages/MatchJoin'
 import ChampionDetail from './pages/ChampionDetail'
 import LoginModal from './components/LoginModal'
@@ -105,6 +106,7 @@ function App() {
       <Route path="/page11" element={<RequireAuth><Page11 /></RequireAuth>} />
       <Route path="/page12" element={<RequireAuth><Page12 /></RequireAuth>} />
       <Route path="/champion/:id" element={<ChampionDetail />} />
+      <Route path="/gtr-invite" element={<RequireAuth><GtrInvite /></RequireAuth>} />
       <Route path="/match/join/:token" element={<RequireAuth><MatchJoin /></RequireAuth>} />
       <Route path="*" element={<NotFound />} />
       </Routes>

@@ -179,6 +179,7 @@ export default function Page6() {
             />
 
             {/* Divider */}
+
             <motion.div
               initial={reduced ? false : { opacity: 0, scaleY: 0 }}
               animate={{ opacity: 1, scaleY: 1 }}
@@ -197,7 +198,7 @@ export default function Page6() {
               description="Watch a gameplay clip and guess the player's rank. Compete head-to-head — whoever reads the rank closest wins the round."
               delay={0.35}
               reduced={reduced}
-              onClick={() => { navigate('/page11') }}
+              onClick={() => { navigate('/gtr-invite') }}
             />
           </div>
         </div>
