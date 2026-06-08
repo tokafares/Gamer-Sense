@@ -14,7 +14,7 @@ const FEATURE_NAV = [
   { label: 'TRIVIA',         to: '/page6' },
 ]
 
-const TRIVIA_PATHS = new Set(['/page6', '/page7', '/page9'])
+const TRIVIA_PATHS = new Set(['/page6', '/page7', '/page8', '/page9'])
 const GTR_PATHS    = new Set(['/page11', '/page12'])
 const BLITZ_PATHS  = new Set(['/page4'])
 const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...TRIVIA_PATHS, ...GTR_PATHS, ...BLITZ_PATHS])

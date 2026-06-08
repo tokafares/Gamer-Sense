@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
@@ -96,7 +97,8 @@ function PlayerCard({
 }
 
 export default function Page6() {
-  const reduced = useReducedMotion()
+  const reduced  = useReducedMotion()
+  const navigate = useNavigate()
   const { user } = useAuthStore()
 
   return (
@@ -165,6 +167,30 @@ export default function Page6() {
 
             <PlayerCard img={GrayProfile} reduced={reduced} delay={0.3} />
           </div>
+
+          {/* Solo play button */}
+          <motion.button
+            onClick={() => { navigate('/page8') }}
+            initial={reduced ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45, ease: 'easeOut' }}
+            whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
+            style={{
+              marginTop: '48px',
+              padding: '14px 48px',
+              background: 'none',
+              border: '2px solid #3AF9FF',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              color: '#3AF9FF',
+              fontSize: '20px',
+              fontFamily: 'inherit',
+              letterSpacing: '0.12em',
+            }}
+            className="font-beaufort font-bold"
+          >
+            PLAY SOLO TRIVIA
+          </motion.button>
         </div>
       </main>
 
