@@ -48,21 +48,22 @@ function Landing() {
       <Header />
       <div className="w-full h-[1.2px] bg-gradient-to-r from-[#FFFCF6] to-[#969696]" />
       <HeroSection />
-      {/* Pull sections up by 120px (diagonal height) and clip the top-left triangle
-          so the pattern background reveals from the same diagonal as the hero slash */}
-      <div style={{
-        position: 'relative',
-        marginTop: -120,
-        paddingTop: 40,
-        clipPath: 'polygon(0 120px, 100% 0, 100% 100%, 0 100%)',
-        zIndex: 1,
-      }}>
-        <WhatWeOffer />
-        <Leaderboard />
+      {/* Dark triangle that mirrors the hero diagonal — covers the upper-left triangle
+          of the 120px gap so the pattern starts from the diagonal edge, not a flat line.
+          Hero's own white polygon (z-20) covers the lower-right triangle. */}
+      <div style={{ position: 'relative', height: 120, marginTop: -120, zIndex: 5, pointerEvents: 'none' }}>
+        <svg viewBox="0 0 1728 120" preserveAspectRatio="none"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+          <polygon points="0,0 1728,0 0,120" fill="#091528" />
+        </svg>
+      </div>
+      <WhatWeOffer />
+      <Leaderboard />
+      <div style={{ position: 'relative', zIndex: 1 }}>
         <OurPartners />
-        <div style={{ position: 'relative', zIndex: 20 }}>
-          <OurTeam />
-        </div>
+      </div>
+      <div style={{ position: 'relative', zIndex: 20 }}>
+        <OurTeam />
       </div>
       <img
         src={SeparatorLine}
