@@ -118,6 +118,7 @@ export default function HeroSection() {
             lineHeight: 1,
             whiteSpace: 'nowrap',
             width: 'max-content',
+            paddingRight: '6px',
             background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
