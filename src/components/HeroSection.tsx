@@ -16,7 +16,10 @@ export default function HeroSection() {
   const reduced = useReducedMotion()
 
   return (
-    <section className="relative w-full h-[calc(100vh-86.4px)] min-h-[500px] bg-[#091528] mt-[86.4px]">
+    <section
+      className="relative w-full h-[calc(100vh-86.4px)] min-h-[500px] bg-[#091528] mt-[86.4px]"
+      style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 120px), 0 100%)' }}
+    >
 
       {/* Background container — overflow-hidden here so images never bleed */}
       <div className="absolute inset-0 overflow-hidden">
@@ -159,17 +162,6 @@ export default function HeroSection() {
         </Link>
       </div>
 
-      {/* Diagonal slash — fill matches page background to avoid colour-mismatch gap */}
-      <div className="absolute left-0 w-full z-[20] pointer-events-none overflow-hidden h-[120px]" style={{ bottom: '-1px' }}>
-        <svg
-          viewBox="0 0 1728 120"
-          preserveAspectRatio="none"
-          className="absolute bottom-0 left-0 w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <polygon points="0,120 1728,120 1728,0" fill="#F0F2F5" />
-        </svg>
-      </div>
     </section>
   )
 }
