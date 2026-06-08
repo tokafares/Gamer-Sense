@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, memo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -43,7 +43,7 @@ const BAR_RENDER_MAX = 290
 
 // ── GTR Results UI ──────────────────────────────────────────────────────────
 
-function GTRResults() {
+const GTRResults = memo(function GTRResults() {
   const reduced = useReducedMotion()
   const { points, answers, currentRound, gtrResult } = useGameStore()
   const completedRound = answers.length || currentRound
@@ -285,7 +285,7 @@ function GTRResults() {
       </div>
     </>
   )
-}
+})
 
 // ── Page12 ──────────────────────────────────────────────────────────────────
 

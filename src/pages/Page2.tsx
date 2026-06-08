@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -49,6 +49,9 @@ const KnowledgeHub = () => {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+
+  const handleHoverStart = useCallback((id: string) => { if (!reduced) setHoveredCard(id) }, [reduced])
+  const handleHoverEnd   = useCallback(() => { if (!reduced) setHoveredCard(null) }, [reduced])
 
   return (
     <>
@@ -128,8 +131,8 @@ const KnowledgeHub = () => {
                     whileHover={reduced ? {} : { scale: 1.03, y: -4 }}
                     whileTap={reduced ? {} : { scale: 0.97 }}
                     transition={{ default: { duration: 0.35, ease: 'easeOut' } }}
-                    onHoverStart={reduced ? undefined : () => setHoveredCard(card.id)}
-                    onHoverEnd={reduced ? undefined : () => setHoveredCard(null)}
+                    onHoverStart={() => handleHoverStart(card.id)}
+                    onHoverEnd={handleHoverEnd}
                     style={{
                       boxShadow: hoveredCard === card.id
                         ? '0 0 25px rgba(0, 201, 167, 0.25), 0 8px 20px rgba(0,0,0,0.3)'
@@ -144,6 +147,7 @@ const KnowledgeHub = () => {
                           alt={card.label}
                           width={CARD_W}
                           height={CARD_H}
+                          loading="lazy"
                           style={{
                             display: 'block',
                             filter: hoveredCard === card.id ? 'brightness(1.3)' : 'brightness(1)',

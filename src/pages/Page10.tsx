@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -71,13 +71,13 @@ export default function Page10() {
   const displayName = profile?.username ?? user?.username ?? 'PLAYER'
   const displayLevel = profile?.level ?? user?.level ?? 0
 
-  function openEdit() {
+  const openEdit = useCallback(() => {
     setNewName(displayName)
     setSaveError(null)
     setEditOpen(true)
-  }
+  }, [displayName])
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
@@ -87,7 +87,7 @@ export default function Page10() {
       localStorage.setItem(LOCAL_AVATAR_KEY, result)
     }
     reader.readAsDataURL(file)
-  }
+  }, [])
 
   async function handleSave() {
     if (!user?.id) return
@@ -297,7 +297,7 @@ export default function Page10() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: 0.35 + i * 0.08 }}
                     >
-                      <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block' }} />
+                      <img src={src} alt="" loading="lazy" style={{ height: '100%', width: 'auto', display: 'block' }} />
                       {/* Text overlay */}
                       <div style={{
                         position: 'absolute', inset: 0,
@@ -352,6 +352,7 @@ export default function Page10() {
                       key={i}
                       src={src}
                       alt=""
+                      loading="lazy"
                       style={{ height: '82%', width: 'auto', display: 'block' }}
                       initial={reduced ? false : { opacity: 0, scale: 0.88 }}
                       animate={{ opacity: 1, scale: 1 }}

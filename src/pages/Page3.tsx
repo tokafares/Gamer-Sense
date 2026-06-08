@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -69,7 +69,7 @@ export default function Page3() {
   const { question, loading, error } = useQuestions('scenario', activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
-  async function handleLockIn() {
+  const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || loading || !question) return
     setLocked(true)
     if (import.meta.env.VITE_API_URL) {
@@ -82,7 +82,8 @@ export default function Page3() {
         recordAnswer({ round: currentRound, selectedId: selectedAnswer, correctId: res.correctAnswer, isCorrect: res.correct, pointsEarned: res.pointsEarned })
       } catch { /* submit failed silently — locked state still shown */ }
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAnswer, locked, loading, question, currentRound])
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -69,14 +69,18 @@ export default function Page5() {
   }, [champions, activeRole, search])
 
   // Stagger container for content lines — depends on reduced, memoised so reference is stable
-  const contentContainerVariants: Variants = reduced
+  const contentContainerVariants: Variants = useMemo(() => reduced
     ? { rest: {}, hovered: {} }
-    : { rest: {}, hovered: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }
+    : { rest: {}, hovered: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } },
+  [reduced])
 
-  const contentItemVariants: Variants = {
+  const contentItemVariants: Variants = useMemo(() => ({
     rest:    { opacity: 0, y: reduced ? 0 : 16 },
     hovered: { opacity: 1, y: 0 },
-  }
+  }), [reduced])
+
+  const handleMouseEnter = useCallback((id: string) => setHoveredId(id), [])
+  const handleMouseLeave = useCallback(() => setHoveredId(null), [])
 
   const tabs_h = Math.round(113 * 670 / 1088)
   const grid_h = Math.round(557 * PANEL_W / 1087)
@@ -313,8 +317,8 @@ export default function Page5() {
                           opacity: { duration: 0.25 },
                           scale:   { duration: 0.25 },
                         }}
-                        onMouseEnter={() => setHoveredId(champ.id)}
-                        onMouseLeave={() => setHoveredId(null)}
+                        onMouseEnter={() => handleMouseEnter(champ.id)}
+                        onMouseLeave={handleMouseLeave}
                         onClick={() => navigate(`/champion/${champ.id}`)}
                       >
                         {/* Inner layer — hover scale + glow, propagates "hovered" to all children */}

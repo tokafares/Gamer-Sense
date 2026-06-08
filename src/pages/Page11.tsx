@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
@@ -42,10 +42,10 @@ export default function Page11() {
 
   const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound()
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (selected === null || !round || voted) return
     void submitVote(RANKS_ORDER[selected])
-  }
+  }, [selected, round, voted, submitVote])
 
   // Reset image error state when a new round loads
   useEffect(() => { setImgError(false) }, [round?.id])
@@ -68,13 +68,13 @@ export default function Page11() {
   // Suppress unused — needed for useMemo dependency shape
   void useMemo(() => null, [])
 
-  function toggle(i: number) {
+  const toggle = useCallback((i: number) => {
     if (voted) return
     setSelected(prev => (prev === i ? null : i))
-  }
+  }, [voted])
 
   const isYouTube = round?.imageUrl?.startsWith('https://www.youtube.com/embed/') ?? false
-  const isCloudinaryVideo = (url: string) => url.includes('cloudinary.com') && url.endsWith('.mp4')
+  const isCloudinaryVideo = useCallback((url: string) => url.includes('cloudinary.com') && url.endsWith('.mp4'), [])
   const isPlaceholderUrl = !round?.imageUrl ||
     round.imageUrl.includes('placehold.co') ||
     round.imageUrl.includes('placeholder') ||
@@ -246,7 +246,7 @@ export default function Page11() {
                       style={{ cursor: voted ? 'default' : 'pointer', outline: 'none', position: 'relative', display: 'block', width: '100%' }}
                       whileHover={reduced || voted ? {} : { scale: 1.08, y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
                     >
-                      <img src={src} alt={rankName} style={{ display: 'block', width: '100%', height: 'auto' }} />
+                      <img src={src} alt={rankName} loading="lazy" style={{ display: 'block', width: '100%', height: 'auto' }} />
 
                       {/* Selection highlight (pre-vote) */}
                       {!voted && selected === i && (

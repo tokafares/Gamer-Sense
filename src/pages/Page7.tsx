@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
@@ -145,13 +145,13 @@ export default function Page7() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function copyInvite() {
+  const copyInvite = useCallback(() => {
     if (!inviteUrl) return
     void navigator.clipboard.writeText(inviteUrl).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
-  }
+  }, [inviteUrl])
 
   return (
     <>
