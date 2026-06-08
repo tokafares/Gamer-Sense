@@ -16,8 +16,6 @@ import MidLaneSvg    from '../assets/Group 260.svg'
 import ADCSvg        from '../assets/Group 261.svg'
 import SupportSvg    from '../assets/Group 262.svg'
 
-import DialogBgSvg   from '../assets/DialogBg.svg'
-import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.png'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
@@ -178,7 +176,7 @@ export default function Page3() {
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: '#060F1E', borderRadius: 6, overflow: 'hidden' }}
+              style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: '#060F1E', borderRadius: 6, overflow: 'hidden', border: '1px solid #1E3A5F' }}
             >
               {scenarioVideo && isYouTube ? (
                 <iframe
@@ -209,13 +207,20 @@ export default function Page3() {
                   style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
-                /* Fallback to static artwork when no video is set for this lane */
-                <>
-                  <img src={DialogBgSvg} alt=""
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-                  <img src={GameArtwork} alt=""
-                    style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
-                </>
+                /* No video configured for this lane yet */
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 12,
+                }}>
+                  <span style={{ fontSize: 36, lineHeight: 1 }}>🎮</span>
+                  <span className="font-beaufort font-bold" style={{ fontSize: 16, color: '#8FA3C0', letterSpacing: '0.08em' }}>
+                    No Video Set
+                  </span>
+                  <span style={{ color: '#1E3A5F', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12 }}>
+                    Add one via Admin → Videos
+                  </span>
+                </div>
               )}
             </motion.div>
 
