@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
@@ -33,6 +33,10 @@ const RANKS_ORDER = [
 const RANK_RATIO = 198 / 1361   // Group 365 aspect ratio
 const ROUND_H    = 65
 
+function isCloudinaryVideo(url: string): boolean {
+  return url.includes('cloudinary.com') && url.endsWith('.mp4')
+}
+
 export default function Page11() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
@@ -65,16 +69,12 @@ export default function Page11() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
 
-  // Suppress unused — needed for useMemo dependency shape
-  void useMemo(() => null, [])
-
   const toggle = useCallback((i: number) => {
     if (voted) return
     setSelected(prev => (prev === i ? null : i))
   }, [voted])
 
   const isYouTube = round?.imageUrl?.startsWith('https://www.youtube.com/embed/') ?? false
-  const isCloudinaryVideo = useCallback((url: string) => url.includes('cloudinary.com') && url.endsWith('.mp4'), [])
   const isPlaceholderUrl = !round?.imageUrl ||
     round.imageUrl.includes('placehold.co') ||
     round.imageUrl.includes('placeholder') ||

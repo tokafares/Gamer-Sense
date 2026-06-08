@@ -1,9 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import ArenaBright from '../assets/image 18.png'
-import ArenaDark from '../assets/image 19.png'
-import PlayersBright from '../assets/C11 1.png'
-import PlayersDark from '../assets/C11 2.png'
+import ArenaBright from '../assets/image 18.webp'
+import ArenaDark from '../assets/image 19.webp'
+import PlayersBright from '../assets/C11 1.webp'
+import PlayersDark from '../assets/C11 2.webp'
 import GetStartedBtn from '../assets/Group 68.svg'
 import {
   heroTitle,
@@ -32,6 +32,7 @@ export default function HeroSection() {
           src={ArenaBright}
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center z-[1] pointer-events-none"
+          fetchPriority="high"
           animate={reduced ? {} : { scale: [1, 1.08, 1] }}
           transition={{ duration: 20, ease: 'easeInOut', repeat: Infinity }}
         />
@@ -40,6 +41,7 @@ export default function HeroSection() {
         <img
           src={ArenaDark}
           alt=""
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover object-center z-[2] pointer-events-none"
         />
 
@@ -47,6 +49,7 @@ export default function HeroSection() {
         <motion.img
           src={PlayersBright}
           alt=""
+          fetchPriority="high"
           className="z-[3] pointer-events-none select-none"
           style={{
             position: 'absolute',
@@ -65,6 +68,7 @@ export default function HeroSection() {
         <motion.img
           src={PlayersDark}
           alt=""
+          fetchPriority="high"
           className="z-[4] pointer-events-none select-none"
           style={{
             position: 'absolute',

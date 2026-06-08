@@ -1,9 +1,10 @@
+import { useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import GrayProfile from '../assets/gray profile.png'
+import GrayProfile from '../assets/gray profile.webp'
 import PlayerProfileBg from '../assets/Player Profile Bg.svg'
 import GoldRank from '../assets/Group 340.svg'
 import RematchBtn from '../assets/submit button 359.svg'
@@ -20,6 +21,8 @@ export default function Page9() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user } = useAuthStore()
+
+  const goTriviaInvite = useCallback(() => navigate('/trivia-invite'), [navigate])
 
   const result   = (location.state as MatchResultState | null)
   const isWinner = result?.winnerId === user?.id
@@ -72,7 +75,7 @@ export default function Page9() {
                 No match result available.
               </p>
               <button
-                onClick={() => navigate('/trivia-invite')}
+                onClick={goTriviaInvite}
                 style={{
                   padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                   border: 'none', borderRadius: 6, cursor: 'pointer',
@@ -187,7 +190,7 @@ export default function Page9() {
                 style={{ display: 'flex', justifyContent: 'center' }}
               >
                 <motion.button
-                  onClick={() => navigate('/trivia-invite')}
+                  onClick={goTriviaInvite}
                   whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
                   style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'block' }}
                 >

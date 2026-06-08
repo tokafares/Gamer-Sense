@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -118,11 +118,11 @@ const Home = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function submitAnswer(answer: string) {
+  const submitAnswer = useCallback((answer: string) => {
     if (!activeMatchId || selectedAnswer) return
     setSelectedAnswer(answer)
     connectSocket().emit('round:answer', { matchId: activeMatchId, roundIndex, answer })
-  }
+  }, [activeMatchId, selectedAnswer, roundIndex])
 
   return (
     <>

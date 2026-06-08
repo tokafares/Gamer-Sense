@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import PlayerBg    from '../assets/Player Profile Bg.svg'
-import GrayProfile from '../assets/gray profile.png'
+import GrayProfile from '../assets/gray profile.webp'
 
 import { useAuthStore } from '../store/authStore'
 import { useGameStore } from '../store/gameStore'
@@ -17,7 +17,7 @@ const CARD_W  = 360
 const CARD_H  = Math.round(CARD_W * 504 / 441)
 const LABEL_H = 56
 
-function PlayerCard({
+const PlayerCard = memo(function PlayerCard({
   img,
   reduced,
   delay,
@@ -92,7 +92,7 @@ function PlayerCard({
       </motion.div>
     </motion.div>
   )
-}
+})
 
 export default function Page7() {
   const reduced = useReducedMotion()

@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
@@ -16,7 +17,7 @@ interface DuelModeCardProps {
   onClick: () => void
 }
 
-function DuelModeCard({ title, description, tag, delay, reduced, onClick }: DuelModeCardProps) {
+const DuelModeCard = memo(function DuelModeCard({ title, description, tag, delay, reduced, onClick }: DuelModeCardProps) {
   return (
     <motion.div
       initial={reduced ? false : { opacity: 0, y: 40 }}
@@ -109,11 +110,14 @@ function DuelModeCard({ title, description, tag, delay, reduced, onClick }: Duel
       </motion.button>
     </motion.div>
   )
-}
+})
 
 export default function Page6() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
+
+  const goTrivia = useCallback(() => { navigate('/trivia-invite') }, [navigate])
+  const goGtr    = useCallback(() => { navigate('/gtr-invite') }, [navigate])
 
   return (
     <>
@@ -175,7 +179,7 @@ export default function Page6() {
               description="Answer League of Legends trivia questions faster and more accurately than your opponent. First to lock in the correct answer wins the round."
               delay={0.2}
               reduced={reduced}
-              onClick={() => { navigate('/trivia-invite') }}
+              onClick={goTrivia}
             />
 
             {/* Divider */}
@@ -198,7 +202,7 @@ export default function Page6() {
               description="Watch a gameplay clip and guess the player's rank. Compete head-to-head — whoever reads the rank closest wins the round."
               delay={0.35}
               reduced={reduced}
-              onClick={() => { navigate('/gtr-invite') }}
+              onClick={goGtr}
             />
           </div>
         </div>

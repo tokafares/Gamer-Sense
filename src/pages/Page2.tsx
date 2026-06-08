@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import Group245 from '../assets/Group 245.png'
+import Group245 from '../assets/Group 245.webp'
 import ScenarioSvg from '../assets/Scenario.svg'
 import BlitzSvg from '../assets/Group 239.svg'
 import CoachingSvg from '../assets/Coaching.svg'
@@ -18,6 +18,7 @@ const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }
   { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/knowledge-hub'  },
   { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/profile' },
   { id: 'guess-rank',    label: 'DUELS',         svg: GuessRankSvg, to: '/duels'  },
+  { id: 'guess-rank-2',  label: 'GUESS RANK',    svg: GuessRankSvg, to: '/duels'  },
 ]
 
 const CARD_W = 210

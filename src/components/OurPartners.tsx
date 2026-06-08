@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import RiotLogo from '../assets/Group 74.svg'
 import LearnMoreBtn from '../assets/Group 171.svg'
-import PartnerIllustration from '../assets/C12 2.png'
+import PartnerIllustration from '../assets/C12 2.webp'
 import { scrollFadeUp, scrollFadeIn, scaleInSpring } from '../lib/animations'
 
 export default function OurPartners() {
@@ -76,6 +76,7 @@ export default function OurPartners() {
         <motion.img
           src={PartnerIllustration}
           alt=""
+          loading="lazy"
           className="w-full h-auto block"
           style={{ position: 'relative', zIndex: 1 }}
           variants={scrollFadeIn}

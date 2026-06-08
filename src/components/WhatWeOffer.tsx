@@ -1,12 +1,13 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import Card1 from '../assets/Group 232.svg'
-import Card2 from '../assets/Group 233.svg'
-import Card3 from '../assets/Group 231.svg'
+import Card1 from '../assets/Group 232.webp'
+import Card2 from '../assets/Group 233.webp'
+import Card3 from '../assets/Group 231.webp'
 import { scrollFadeUp, scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
+
+const vp = { once: true }
 
 export default function WhatWeOffer() {
   const reduced = useReducedMotion()
-  const vp = { once: true }
 
   return (
     <section className="w-full py-[80px] flex flex-col items-center">
@@ -53,6 +54,7 @@ export default function WhatWeOffer() {
         <motion.img
           src={Card1}
           alt="Scenario-Based Learning"
+          loading="lazy"
           className="w-[441px] h-[573px] object-contain"
           variants={cardItemAnim}
           whileHover={reduced ? {} : { y: -6, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.18))' }}
@@ -62,6 +64,7 @@ export default function WhatWeOffer() {
         <motion.img
           src={Card2}
           alt="Self-Paced Environment"
+          loading="lazy"
           className="w-[441px] h-[573px] object-contain"
           variants={cardItemAnim}
           whileHover={reduced ? {} : { y: -6, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.18))' }}
@@ -71,6 +74,7 @@ export default function WhatWeOffer() {
         <motion.img
           src={Card3}
           alt="Community Interaction"
+          loading="lazy"
           className="w-[441px] h-[573px] object-contain"
           variants={cardItemAnim}
           whileHover={reduced ? {} : { y: -6, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.18))' }}

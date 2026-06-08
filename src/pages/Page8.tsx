@@ -18,7 +18,7 @@ import ADCSvg        from '../assets/Group 261.svg'
 import SupportSvg    from '../assets/Group 262.svg'
 
 import DialogBgSvg   from '../assets/DialogBg.svg'
-import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.png'
+import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.webp'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'

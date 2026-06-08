@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import Group309 from '../assets/Group 309.png'
+import Group309 from '../assets/Group 309.webp'
 import ChampionBg from '../assets/ChampionBg.svg'
 import BtnTopLane from '../assets/knowledgehub-btn-toplane.svg'
 import BtnJungle from '../assets/knowledgehub-btn-jungle.svg'
@@ -33,6 +33,8 @@ const ROLE_COLORS: Record<Role, string> = {
 
 const PANEL_W  = 780
 const GRID_GAP = 16
+const TABS_H   = Math.round(113 * 670 / 1088)
+const GRID_H   = Math.round(557 * PANEL_W / 1087)
 const GRID_PAD = 22
 const TOP_PAD  = 48
 const TITLE_MB = 24
@@ -81,9 +83,6 @@ export default function Page5() {
 
   const handleMouseEnter = useCallback((id: string) => setHoveredId(id), [])
   const handleMouseLeave = useCallback(() => setHoveredId(null), [])
-
-  const tabs_h = Math.round(113 * 670 / 1088)
-  const grid_h = Math.round(557 * PANEL_W / 1087)
 
   return (
     <>
@@ -217,7 +216,7 @@ export default function Page5() {
                     <img
                       src={src}
                       alt={alt}
-                      style={{ display: 'block', height: `${tabs_h}px`, width: 'auto' }}
+                      style={{ display: 'block', height: `${TABS_H}px`, width: 'auto' }}
                     />
                   </motion.button>
                 )
@@ -230,7 +229,7 @@ export default function Page5() {
               backgroundSize: '100% 100%',
               backgroundRepeat: 'no-repeat',
               width: `${PANEL_W}px`,
-              height: `${grid_h}px`,
+              height: `${GRID_H}px`,
               boxSizing: 'border-box',
               overflow: 'hidden',
             }}>

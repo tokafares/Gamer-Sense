@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
+import { useEffect, lazy, Suspense } from 'react'
 import RequireAuth from './components/RequireAuth'
-import patternBg from './assets/Group 249.png'
+import { prefetchPageImages } from './lib/prefetch'
+import patternBg from './assets/Group 249.webp'
 import Header from './components/Header'
 import HeroSection from './components/HeroSection'
 import WhatWeOffer from './components/WhatWeOffer'
@@ -9,24 +11,25 @@ import OurPartners from './components/OurPartners'
 import OurTeam from './components/OurTeam'
 import Footer from './components/Footer'
 import SeparatorLine from './assets/Rectangle 6.svg'
-import Page1 from './pages/Page1'
-import Page2 from './pages/Page2'
-import Page3 from './pages/Page3'
-import Page4 from './pages/Page4'
-import Page5 from './pages/Page5'
-import Page6 from './pages/Page6'
-import Page7 from './pages/Page7'
-import Page8 from './pages/Page8'
-import Page9 from './pages/Page9'
-import Page10 from './pages/Page10'
-import Page11 from './pages/Page11'
-import Page12 from './pages/Page12'
-import GtrInvite from './pages/GtrInvite'
-import AdminPanel from './pages/AdminPanel'
-import MatchJoin from './pages/MatchJoin'
-import ChampionDetail from './pages/ChampionDetail'
 import LoginModal from './components/LoginModal'
 import { Link } from 'react-router-dom'
+
+const Page1        = lazy(() => import('./pages/Page1'))
+const Page2        = lazy(() => import('./pages/Page2'))
+const Page3        = lazy(() => import('./pages/Page3'))
+const Page4        = lazy(() => import('./pages/Page4'))
+const Page5        = lazy(() => import('./pages/Page5'))
+const Page6        = lazy(() => import('./pages/Page6'))
+const Page7        = lazy(() => import('./pages/Page7'))
+const Page8        = lazy(() => import('./pages/Page8'))
+const Page9        = lazy(() => import('./pages/Page9'))
+const Page10       = lazy(() => import('./pages/Page10'))
+const Page11       = lazy(() => import('./pages/Page11'))
+const Page12       = lazy(() => import('./pages/Page12'))
+const GtrInvite    = lazy(() => import('./pages/GtrInvite'))
+const AdminPanel   = lazy(() => import('./pages/AdminPanel'))
+const MatchJoin    = lazy(() => import('./pages/MatchJoin'))
+const ChampionDetail = lazy(() => import('./pages/ChampionDetail'))
 
 function NotFound() {
   return (
@@ -72,6 +75,8 @@ function Landing() {
 }
 
 function App() {
+  useEffect(() => { prefetchPageImages() }, [])
+
   return (
     <>
       <div
@@ -85,6 +90,7 @@ function App() {
           pointerEvents: 'none',
         }}
       />
+      <Suspense fallback={null}>
       <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/leaderboard"   element={<Page1 />} />
@@ -105,6 +111,7 @@ function App() {
       <Route path="/match/join/:token" element={<RequireAuth><MatchJoin /></RequireAuth>} />
       <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
       <LoginModal />
     </>
   )

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -6,7 +6,7 @@ import { apiPut } from '../lib/api'
 
 import PlayerCard   from '../assets/Group 367.svg'
 import UpgradeBtn   from '../assets/Group 321 upgrade button.svg'
-import DefaultAvatar from '../assets/image 21.png'
+import DefaultAvatar from '../assets/image 21.webp'
 import { useAuthStore } from '../store/authStore'
 import { useProfile }   from '../hooks/useProfile'
 import StatsBg      from '../assets/Group 336.svg'
@@ -89,7 +89,7 @@ export default function Page10() {
     reader.readAsDataURL(file)
   }, [])
 
-  async function handleSave() {
+  const handleSave = useCallback(async () => {
     if (!user?.id) return
     setSaving(true)
     setSaveError(null)
@@ -105,15 +105,15 @@ export default function Page10() {
     } finally {
       setSaving(false)
     }
-  }
+  }, [user, token, newName, login])
 
-  const STATS = [
+  const STATS = useMemo(() => [
     { src: StatFrame1, label: 'GTR Completed',  value: profile?.gtrCompleted  != null ? String(profile.gtrCompleted)  : '—' },
     { src: StatFrame2, label: 'Trivia Played',   value: profile?.triviaPlayed   != null ? String(profile.triviaPlayed)   : '—' },
     { src: StatFrame3, label: 'Quiz Completed',  value: profile?.quizCompleted  != null
         ? `${profile.quizCompleted}${profile.quizTotal != null ? '/' + profile.quizTotal : ''}`
         : '—' },
-  ]
+  ], [profile])
 
   return (
     <>

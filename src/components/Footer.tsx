@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import FooterBg from '../assets/Group 73.svg'
-import Woman from '../assets/C15 1.png'
+import Woman from '../assets/C15 1.webp'
 import { scrollFadeIn, footerStagger, footerItem, scaleInSpring } from '../lib/animations'
 
 interface Particle {
@@ -186,6 +186,7 @@ export default function Footer() {
       <motion.img
         src={Woman}
         alt=""
+        loading="lazy"
         className="absolute pointer-events-none select-none z-[5]"
         style={{ left: '0px', bottom: '0px', height: 'calc(100% + 60px)', width: 'auto' }}
         variants={scrollFadeIn}

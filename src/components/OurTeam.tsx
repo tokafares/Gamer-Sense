@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import MaskGroup from '../assets/Mask group.png'
-import TeamGroup from '../assets/C6 2.png'
+import MaskGroup from '../assets/Mask group.webp'
+import TeamGroup from '../assets/C6 2.webp'
 import LearnMoreBtn from '../assets/Group 171.svg'
 import { scrollFadeIn, slideFromLeftScroll, slideFromRightScroll } from '../lib/animations'
 
@@ -18,6 +18,7 @@ export default function OurTeam() {
       <motion.img
         src={TeamGroup}
         alt="Our Team"
+        loading="lazy"
         className="absolute z-[2] pointer-events-none select-none"
         style={{
           right: '0px',
@@ -40,6 +41,7 @@ export default function OurTeam() {
       <img
         src={MaskGroup}
         alt=""
+        loading="lazy"
         className="absolute left-0 w-full z-[5] pointer-events-none select-none"
         style={{
           top: '42%',
