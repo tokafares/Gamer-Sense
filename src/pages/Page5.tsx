@@ -124,26 +124,29 @@ export default function Page5() {
           }}>
 
             {/* Title */}
-            <motion.h1
-              className="font-beaufort font-bold"
-              style={{
-                display: 'inline-block',
-                fontSize: '54px',
-                lineHeight: 1,
-                marginTop: 0,
-                marginBottom: `${TITLE_MB}px`,
-                paddingBottom: '6px',
-                background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
+            <motion.div
+              style={{ marginTop: 0, marginBottom: `${TITLE_MB}px` }}
               initial={reduced ? false : { opacity: 0, x: -24 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, ease: 'easeOut' }}
             >
-              Knowledge Hub
-            </motion.h1>
+              <h1
+                className="font-beaufort font-bold"
+                style={{
+                  display: 'inline-block',
+                  fontSize: '54px',
+                  lineHeight: 1,
+                  margin: 0,
+                  paddingBottom: '6px',
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Knowledge Hub
+              </h1>
+            </motion.div>
 
             {/* Search bar */}
             <motion.div

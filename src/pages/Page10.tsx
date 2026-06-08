@@ -130,25 +130,29 @@ export default function Page10() {
         }}>
 
           {/* ── PROFILE heading ── */}
-          <motion.h1
-            className="font-beaufort font-bold"
-            style={{
-              display: 'inline-block',
-              fontSize: '54px',
-              lineHeight: 1,
-              margin: '0 0 22px',
-              paddingBottom: '6px',
-              background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
+          <motion.div
+            style={{ marginBottom: '22px' }}
             initial={reduced ? false : { opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Profile
-          </motion.h1>
+            <h1
+              className="font-beaufort font-bold"
+              style={{
+                display: 'inline-block',
+                fontSize: '54px',
+                lineHeight: 1,
+                margin: 0,
+                paddingBottom: '6px',
+                background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              Profile
+            </h1>
+          </motion.div>
 
           {/* ── Two-column layout ── */}
           <div style={{
