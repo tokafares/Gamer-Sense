@@ -52,10 +52,10 @@ export default function MatchJoin() {
         socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
           if (cancelled) return
           navigating = true
-          setMatchStart(d.matchId, d.questions)
+          setMatchStart(d.matchId, d.questions, false)
           setStatus('starting')
-          // Route based on match mode: GTR → /match, Trivia → /leaderboard
-          navigate(mode === 'gtr' ? '/match' : '/leaderboard')
+          // Route based on match mode: GTR → /match, Trivia → /trivia
+          navigate(mode === 'gtr' ? '/match' : '/trivia')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) {

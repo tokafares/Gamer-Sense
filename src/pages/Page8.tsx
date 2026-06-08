@@ -58,6 +58,7 @@ interface RoundResult {
   correctAnswer: string
   yourScore:     number
   opponentScore: number
+  explanation:   string
 }
 
 export default function Page8() {
@@ -71,7 +72,7 @@ export default function Page8() {
   const [refreshKey,      setRefreshKey]      = useState(0)
   const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const { matchId, matchQuestions, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, setMatchStart: _, clearMatch } = useGameStore()
+  const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
   const isMatchMode = !!matchId && matchQuestions.length > 0
 
   // Auto-advance 2 s after locking in — cycle to next lane (solo mode only)
@@ -107,10 +108,13 @@ export default function Page8() {
 
     const socket = getSocket() ?? connectSocket()
 
-    const onRoundResult = (data: { correctAnswer: string; yourScore: number; opponentScore: number }) => {
-      setRoundResult(data)
+    const onRoundResult = (data: { roundIndex: number; correctAnswer: string; explanation: string; hostScore: number; invitedScore: number }) => {
+      const yourScore     = isHost ? data.hostScore : data.invitedScore
+      const opponentScore = isHost ? data.invitedScore : data.hostScore
+      const result: RoundResult = { correctAnswer: data.correctAnswer, yourScore, opponentScore, explanation: data.explanation }
+      setRoundResult(result)
       setWaitingOpponent(false)
-      addPoints(data.yourScore)
+      addPoints(yourScore)
 
       // Advance to next round after 2.5 s
       advanceRef.current = setTimeout(() => {
@@ -121,7 +125,7 @@ export default function Page8() {
             selectedId:   selectedAnswer ?? '',
             correctId:    data.correctAnswer,
             isCorrect:    selectedAnswer === data.correctAnswer,
-            pointsEarned: data.yourScore,
+            pointsEarned: yourScore,
           })
           setSelectedAnswer(null)
           setLocked(false)
@@ -154,7 +158,7 @@ export default function Page8() {
       // Emit answer to server — server fires round:result when both players answered
       setWaitingOpponent(true)
       const socket = getSocket() ?? connectSocket()
-      socket.emit('answer:submit', { matchId, questionId: question.id, answerId: selectedAnswer })
+      socket.emit('round:answer', { matchId, roundIndex: currentRound - 1, answer: selectedAnswer })
       return
     }
 
@@ -450,11 +454,13 @@ export default function Page8() {
                   }}
                 >
                   <p className={LABEL_CLS} style={{ fontSize: '14px', lineHeight: 1.25, margin: '0 0 4px' }}>
-                    Correct answer: {roundResult.correctAnswer}
+                    Correct: {roundResult.correctAnswer} &nbsp;|&nbsp; You {roundResult.yourScore} — Opp {roundResult.opponentScore}
                   </p>
-                  <p style={{ fontSize: '12px', color: '#8FA3C0', margin: 0, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}>
-                    Your score: {roundResult.yourScore} &nbsp;|&nbsp; Opponent: {roundResult.opponentScore}
-                  </p>
+                  {roundResult.explanation && (
+                    <p className={PARA_CLS} style={{ fontSize: '12px', lineHeight: '16px', margin: 0, fontStyle: 'italic' }}>
+                      {roundResult.explanation}
+                    </p>
+                  )}
                 </motion.div>
               )}
             </motion.div>

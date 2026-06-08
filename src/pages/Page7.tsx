@@ -127,9 +127,9 @@ export default function Page7() {
         socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
           if (cancelled) return
           navigating = true
-          setMatchStart(d.matchId, d.questions)
+          setMatchStart(d.matchId, d.questions, true)
           setStatus('ready')
-          navigate('/leaderboard')
+          navigate('/trivia')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) setMatchError(d.message)
