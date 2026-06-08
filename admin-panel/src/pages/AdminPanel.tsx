@@ -210,6 +210,7 @@ function QuestionsTab() {
     setEditId(q.id)
     setShowForm(true)
     setMsg(null)
+    setTimeout(() => document.getElementById('question-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
   }
 
   function resetForm() {
@@ -269,7 +270,7 @@ function QuestionsTab() {
       </div>
 
       {showForm && (
-        <div style={{ ...S.card, marginBottom: 24 }}>
+        <div id="question-form" style={{ ...S.card, marginBottom: 24 }}>
           <h3 style={{ marginBottom: 16, color: '#00C9A7' }}>{editId ? 'Edit Question' : 'New Question'}</h3>
           {msg && <div style={msg.type === 'ok' ? S.success : S.error}>{msg.text}</div>}
 
