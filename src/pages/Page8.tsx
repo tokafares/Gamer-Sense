@@ -221,7 +221,7 @@ export default function Page8() {
                   variants={cardItemAnim}
                   onClick={() => {
                     if (isMatchMode) return
-                    setActiveLane(key); setSelectedAnswer(null); setLocked(false); setRefreshKey(0)
+                    setActiveLane(key); setSelectedAnswer(null); setLocked(false)
                   }}
                   aria-label={label}
                   style={{

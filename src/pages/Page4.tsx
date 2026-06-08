@@ -218,7 +218,7 @@ export default function Page4() {
                 <motion.button
                   key={key}
                   variants={cardItemAnim}
-                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false); setRefreshKey(0) }}
+                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false) }}
                   aria-label={label}
                   style={{
                     position: 'relative',
