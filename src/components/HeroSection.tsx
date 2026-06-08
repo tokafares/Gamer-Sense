@@ -1,6 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import DiagonalPattern from '../assets/Group 249 diagonal.png'
 import ArenaBright from '../assets/image 18.png'
 import ArenaDark from '../assets/image 19.png'
 import PlayersBright from '../assets/C11 1.png'
@@ -160,13 +159,16 @@ export default function HeroSection() {
         </Link>
       </div>
 
-      {/* Diagonal pattern transition — replaces white slash with the pattern image */}
-      <div className="absolute bottom-0 left-0 w-full z-[20] pointer-events-none h-[120px]">
-        <img
-          src={DiagonalPattern}
-          alt=""
-          style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', objectFit: 'fill' }}
-        />
+      {/* Diagonal white slash */}
+      <div className="absolute bottom-0 left-0 w-full z-[20] pointer-events-none overflow-hidden h-[120px]">
+        <svg
+          viewBox="0 0 1728 120"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 left-0 w-full h-full"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <polygon points="0,120 1728,120 1728,0" fill="white" />
+        </svg>
       </div>
     </section>
   )
