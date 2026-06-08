@@ -10,14 +10,12 @@ const FEATURE_NAV = [
   { label: 'KNOWLEDGE HUB', to: '/page5' },
   { label: 'BLITZ',          to: '/page4' },
   { label: 'PROFILE',        to: '/page10' },
-  { label: 'GUESS THE RANK', to: '/page11' },
-  { label: 'TRIVIA',         to: '/page6' },
+  { label: 'DUELS',          to: '/page6' },
 ]
 
-const TRIVIA_PATHS = new Set(['/page6', '/page7', '/page8', '/page9'])
-const GTR_PATHS    = new Set(['/page11', '/page12'])
+const DUELS_PATHS  = new Set(['/page6', '/page7', '/page8', '/page9', '/page11', '/page12'])
 const BLITZ_PATHS  = new Set(['/page4'])
-const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...TRIVIA_PATHS, ...GTR_PATHS, ...BLITZ_PATHS])
+const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...DUELS_PATHS, ...BLITZ_PATHS])
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -66,8 +64,7 @@ export default function Header() {
         <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[28px]">
           {isFeaturePage ? (
             FEATURE_NAV.map(({ label, to }, i) => {
-              const active = label === 'TRIVIA'          ? TRIVIA_PATHS.has(pathname)
-                           : label === 'GUESS THE RANK' ? GTR_PATHS.has(pathname)
+              const active = label === 'DUELS'          ? DUELS_PATHS.has(pathname)
                            : label === 'BLITZ'          ? BLITZ_PATHS.has(pathname)
                            : label === 'KNOWLEDGE HUB'  ? (pathname === to || isChampion)
                            : pathname === to
