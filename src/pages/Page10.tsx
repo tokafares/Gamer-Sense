@@ -98,7 +98,7 @@ export default function Page10() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            PROFILE
+            Profile
           </motion.h1>
 
           {/* ── Two-column layout ── */}
