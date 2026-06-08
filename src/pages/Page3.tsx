@@ -66,7 +66,14 @@ export default function Page3() {
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
-  const { question, loading, error } = useQuestions('scenario', activeLane)
+  const [refreshKey,     setRefreshKey]     = useState(0)
+  const { question, loading, error } = useQuestions('scenario', activeLane, refreshKey)
+
+  const handleNext = useCallback(() => {
+    setSelectedAnswer(null)
+    setLocked(false)
+    setRefreshKey(k => k + 1)
+  }, [])
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
   const handleLockIn = useCallback(async () => {
@@ -131,7 +138,7 @@ export default function Page3() {
                 <motion.button
                   key={key}
                   variants={cardItemAnim}
-                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false) }}
+                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false); setRefreshKey(0) }}
                   aria-label={label}
                   style={{
                     position: 'relative',
@@ -288,7 +295,7 @@ export default function Page3() {
             </button>
           </motion.div>
 
-          {/* ── Answer reveal — only shown after lock-in ── */}
+          {/* ── Answer reveal + Next button — only shown after lock-in ── */}
           {locked && question && (() => {
             const correctAns = question.options.find(a => a.id === question.correctAnswer)
             return (
@@ -296,21 +303,40 @@ export default function Page3() {
                 variants={scrollFadeIn}
                 initial={reduced ? false : 'hidden'}
                 animate="show"
-                style={{
-                  marginTop: '16px',
+                style={{ marginTop: '16px', display: 'flex', alignItems: 'flex-start', gap: '16px' }}
+              >
+                <div style={{
+                  flex: 1,
                   background: '#0D1F3C',
                   border: '1px solid #1E3A5F',
                   borderLeft: '3px solid #00C9A7',
                   borderRadius: 4,
                   padding: '14px 20px',
-                }}
-              >
-                <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
-                  {question.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
-                </p>
-                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                  {question.explanation}
-                </p>
+                }}>
+                  <p className={LABEL_CLS} style={{ fontSize: '14px', letterSpacing: '0.08em', margin: '0 0 6px' }}>
+                    {question.correctAnswer}.&nbsp;{correctAns?.text ?? ''}
+                  </p>
+                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                    {question.explanation}
+                  </p>
+                </div>
+                <motion.button
+                  onClick={handleNext}
+                  whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.18 } }}
+                  style={{
+                    flexShrink: 0, padding: '12px 28px',
+                    background: 'none',
+                    border: '2px solid #3AF9FF',
+                    borderRadius: 4,
+                    color: '#3AF9FF',
+                    cursor: 'pointer',
+                    letterSpacing: '0.1em',
+                    whiteSpace: 'nowrap',
+                  }}
+                  className="font-beaufort font-bold"
+                >
+                  NEXT QUESTION →
+                </motion.button>
               </motion.div>
             )
           })()}

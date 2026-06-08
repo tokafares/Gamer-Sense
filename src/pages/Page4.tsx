@@ -71,9 +71,11 @@ export default function Page4() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
   const [timeLeft,       setTimeLeft]       = useState(TIMER_SECONDS)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [refreshKey,     setRefreshKey]     = useState(0)
+  const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null)
+  const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const { question, loading, error } = useQuestions('blitz', activeLane)
+  const { question, loading, error } = useQuestions('blitz', activeLane, refreshKey)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
   const stopTimer = useCallback(() => {
@@ -123,6 +125,19 @@ export default function Page4() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnswer, locked, loading, question, currentRound, stopTimer])
+
+  // Auto-advance to next question 2 s after locking in
+  useEffect(() => {
+    if (!locked) return
+    advanceRef.current = setTimeout(() => {
+      setSelectedAnswer(null)
+      setLocked(false)
+      setRefreshKey(k => k + 1)
+    }, 2000)
+    return () => {
+      if (advanceRef.current) clearTimeout(advanceRef.current)
+    }
+  }, [locked])
 
   // Danger threshold for red styling
   const timerDanger = timeLeft <= 3
@@ -203,7 +218,7 @@ export default function Page4() {
                 <motion.button
                   key={key}
                   variants={cardItemAnim}
-                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false) }}
+                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false); setRefreshKey(0) }}
                   aria-label={label}
                   style={{
                     position: 'relative',

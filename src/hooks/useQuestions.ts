@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { apiGet, ApiError } from '../lib/api'
 import type { Question } from '../types/question'
 
-export function useQuestions(type: string, lane: string) {
+export function useQuestions(type: string, lane: string, refreshKey = 0) {
   const [question, setQuestion] = useState<Question | null>(null)
   const [loading,  setLoading]  = useState(true)
   const [error,    setError]    = useState<string | null>(null)
@@ -34,7 +34,7 @@ export function useQuestions(type: string, lane: string) {
       })
 
     return () => { cancelled = true }
-  }, [type, lane])
+  }, [type, lane, refreshKey])
 
   return { question, loading, error }
 }
