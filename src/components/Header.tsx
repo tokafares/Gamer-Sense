@@ -51,14 +51,17 @@ export default function Header() {
 
       <div className="relative z-10 flex items-center w-full h-full">
 
-        <motion.img
-          src={Logo}
-          alt="GamerSense"
-          className="ml-[79px] w-[170px] h-[30.74px] object-contain flex-shrink-0"
-          initial={reduced ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        />
+        <Link to="/" style={{ marginLeft: '79px', flexShrink: 0, lineHeight: 0 }}>
+          <motion.img
+            src={Logo}
+            alt="GamerSense"
+            className="w-[170px] h-[30.74px] object-contain"
+            style={{ cursor: 'pointer' }}
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          />
+        </Link>
 
         <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[28px]">
           {isFeaturePage ? (
