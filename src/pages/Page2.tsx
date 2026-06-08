@@ -90,6 +90,7 @@ const KnowledgeHub = () => {
             animate="show"
             className="font-beaufort font-bold"
             style={{
+              display: 'inline-block',
               fontSize: '42px',
               lineHeight: 1,
               marginBottom: '8px',
@@ -115,13 +116,18 @@ const KnowledgeHub = () => {
                 gap: '14px',
               }}
             >
-              {CARDS.map((card) => (
+              {CARDS.map((card, i) => (
                 /* Outer: entry animation via cardEntryVariants */
                 <motion.div
                   key={card.label}
                   variants={cardEntryVariants}
                   onClick={card.to ? () => navigate(card.to!) : undefined}
-                  style={{ cursor: card.to ? 'pointer' : 'default' }}
+                  style={{
+                    cursor: card.to ? 'pointer' : 'default',
+                    ...(i === CARDS.length - 1 && CARDS.length % 2 !== 0
+                      ? { gridColumn: '1 / -1', justifySelf: 'center' }
+                      : {}),
+                  }}
                 >
                   {/* Inner: hover animation only (two-layer pattern) */}
                   <motion.div
