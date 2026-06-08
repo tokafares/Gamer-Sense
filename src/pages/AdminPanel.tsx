@@ -262,21 +262,21 @@ function VideosTab() {
 
 // ── Questions tab ──────────────────────────────────────────────────────────────
 
+const BLANK_FORM = { type: 'scenario', lane: 'top', text: '', hint: '', imageUrl: '', optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '' }
+
 function QuestionsTab() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading,   setLoading]   = useState(true)
   const [error,     setError]     = useState<string | null>(null)
-  const [form, setForm] = useState({
-    type: 'scenario', lane: 'top', text: '', hint: '',
-    imageUrl: '',
-    optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '',
-  })
-  const [saving, setSaving] = useState(false)
+  const [form,      setForm]      = useState(BLANK_FORM)
+  const [saving,    setSaving]    = useState(false)
+  const [editId,    setEditId]    = useState<string | null>(null)
+  const [editForm,  setEditForm]  = useState(BLANK_FORM)
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await apiGet<{ questions: Question[] }>('/questions?type=scenario')
+      const data = await apiGet<{ questions: Question[] }>('/admin/questions')
       setQuestions(data.questions)
     } catch {
       setError('Failed to load questions')
@@ -291,7 +291,7 @@ function QuestionsTab() {
     if (!form.text.trim() || !form.optA.trim() || !form.optB.trim() || !form.optC.trim()) return
     setSaving(true)
     try {
-      await apiPost('/questions', {
+      await apiPost('/admin/questions', {
         type: form.type, lane: form.lane,
         text: form.text, hint: form.hint || null,
         imageUrl: form.imageUrl || null,
@@ -303,7 +303,7 @@ function QuestionsTab() {
         correctAnswer: form.correctAnswer,
         explanation: form.explanation,
       })
-      setForm({ type: 'scenario', lane: 'top', text: '', hint: '', imageUrl: '', optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '' })
+      setForm(BLANK_FORM)
       await load()
     } catch {
       setError('Failed to add question')
@@ -312,69 +312,133 @@ function QuestionsTab() {
     }
   }, [form, load])
 
+  const handleSaveEdit = useCallback(async (id: string) => {
+    setSaving(true)
+    try {
+      await apiPut(`/admin/questions/${id}`, {
+        type: editForm.type, lane: editForm.lane,
+        text: editForm.text, hint: editForm.hint || null,
+        imageUrl: editForm.imageUrl || null,
+        options: [
+          { id: 'A', text: editForm.optA },
+          { id: 'B', text: editForm.optB },
+          { id: 'C', text: editForm.optC },
+        ],
+        correctAnswer: editForm.correctAnswer,
+        explanation: editForm.explanation,
+      })
+      setEditId(null)
+      await load()
+    } catch {
+      setError('Failed to update question')
+    } finally {
+      setSaving(false)
+    }
+  }, [editForm, load])
+
   const handleDelete = useCallback(async (id: string) => {
     try {
-      await apiDelete(`/questions/${id}`)
+      await apiDelete(`/admin/questions/${id}`)
       await load()
     } catch {
       setError('Failed to delete question')
     }
   }, [load])
 
-  const F = (label: string, key: keyof typeof form, placeholder = '') => (
-    <div>
-      <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>{label}</label>
-      <input value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} style={inputStyle} />
-    </div>
-  )
+  const startEdit = (q: Question) => {
+    const opts = q.options as { id: string; text: string }[]
+    setEditForm({
+      type: q.type, lane: q.lane,
+      text: q.text, hint: q.hint ?? '',
+      imageUrl: q.imageUrl ?? '',
+      optA: opts.find(o => o.id === 'A')?.text ?? '',
+      optB: opts.find(o => o.id === 'B')?.text ?? '',
+      optC: opts.find(o => o.id === 'C')?.text ?? '',
+      correctAnswer: q.correctAnswer,
+      explanation: q.explanation,
+    })
+    setEditId(q.id)
+  }
 
-  return (
-    <div>
-      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, padding: 20, marginBottom: 24 }}>
-        <p style={{ color: C.tealText, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>ADD QUESTION</p>
+  const mediaField = (f: typeof BLANK_FORM, setter: React.Dispatch<React.SetStateAction<typeof BLANK_FORM>>) => {
+    if (f.type === 'blitz' || f.type === 'trivia') return (
+      <div>
+        <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>IMAGE URL (optional)</label>
+        <input value={f.imageUrl} onChange={e => setter(prev => ({ ...prev, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/... or https://..." style={inputStyle} />
+      </div>
+    )
+    if (f.type === 'scenario') return (
+      <div>
+        <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>VIDEO URL (optional)</label>
+        <input value={f.imageUrl} onChange={e => setter(prev => ({ ...prev, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/....mp4" style={inputStyle} />
+      </div>
+    )
+    return null
+  }
+
+  const formFields = (f: typeof BLANK_FORM, setter: React.Dispatch<React.SetStateAction<typeof BLANK_FORM>>) => {
+    const field = (label: string, key: keyof typeof BLANK_FORM, placeholder = '') => (
+      <div key={key}>
+        <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>{label}</label>
+        <input value={f[key]} onChange={e => setter(prev => ({ ...prev, [key]: e.target.value }))} placeholder={placeholder} style={inputStyle} />
+      </div>
+    )
+    return (
+      <>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
           <div>
             <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>TYPE</label>
-            <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} style={inputStyle}>
+            <select value={f.type} onChange={e => setter(prev => ({ ...prev, type: e.target.value }))} style={inputStyle}>
               {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div>
             <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>LANE</label>
-            <select value={form.lane} onChange={e => setForm(f => ({ ...f, lane: e.target.value }))} style={inputStyle}>
+            <select value={f.lane} onChange={e => setter(prev => ({ ...prev, lane: e.target.value }))} style={inputStyle}>
               {LANES.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
-          {F('QUESTION TEXT', 'text', 'What is the best item for...')}
-          {F('HINT (optional)', 'hint', 'Think about damage type...')}
-          {(form.type === 'blitz' || form.type === 'trivia') && (
-            <div>
-              <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>IMAGE URL (optional)</label>
-              <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/... or https://..." style={inputStyle} />
-            </div>
-          )}
-          {form.type === 'scenario' && (
-            <div>
-              <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>VIDEO URL (optional)</label>
-              <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/....mp4" style={inputStyle} />
-            </div>
-          )}
-          {F('OPTION A', 'optA')}
-          {F('OPTION B', 'optB')}
-          {F('OPTION C', 'optC')}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {field('QUESTION TEXT', 'text', 'What is the best item for...')}
+          {field('HINT (optional)', 'hint', 'Think about damage type...')}
+          {mediaField(f, setter)}
+          {field('OPTION A', 'optA')}
+          {field('OPTION B', 'optB')}
+          {field('OPTION C', 'optC')}
           <div>
             <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>CORRECT ANSWER</label>
-            <select value={form.correctAnswer} onChange={e => setForm(f => ({ ...f, correctAnswer: e.target.value }))} style={inputStyle}>
+            <select value={f.correctAnswer} onChange={e => setter(prev => ({ ...prev, correctAnswer: e.target.value }))} style={inputStyle}>
               <option value="A">A</option>
               <option value="B">B</option>
               <option value="C">C</option>
             </select>
           </div>
-          {F('EXPLANATION', 'explanation', 'This is correct because...')}
+          {field('EXPLANATION', 'explanation', 'This is correct because...')}
         </div>
-        <button onClick={() => { void handleAdd() }} disabled={saving} style={btnStyle()}>{saving ? 'SAVING…' : 'ADD QUESTION'}</button>
+      </>
+    )
+  }
+
+  return (
+    <div>
+      {/* Edit form — shown when editing an existing question */}
+      {editId && (
+        <div style={{ background: C.card, border: `2px solid ${C.teal}`, borderRadius: 6, padding: 20, marginBottom: 24 }}>
+          <p style={{ color: C.teal, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>EDIT QUESTION</p>
+          {formFields(editForm, setEditForm)}
+          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+            <button onClick={() => { void handleSaveEdit(editId) }} disabled={saving} style={btnStyle()}>{saving ? 'SAVING…' : 'SAVE CHANGES'}</button>
+            <button onClick={() => setEditId(null)} style={ghostBtn}>CANCEL</button>
+          </div>
+        </div>
+      )}
+
+      {/* Add form */}
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, padding: 20, marginBottom: 24 }}>
+        <p style={{ color: C.tealText, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>ADD QUESTION</p>
+        {formFields(form, setForm)}
+        <button onClick={() => { void handleAdd() }} disabled={saving} style={{ ...btnStyle(), marginTop: 16 }}>{saving ? 'SAVING…' : 'ADD QUESTION'}</button>
       </div>
 
       {error && <p style={{ color: C.red, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, marginBottom: 12 }}>{error}</p>}
@@ -393,13 +457,16 @@ function QuestionsTab() {
             </thead>
             <tbody>
               {questions.map(q => (
-                <tr key={q.id}>
+                <tr key={q.id} style={{ background: editId === q.id ? '#0a1c35' : 'transparent' }}>
                   <td style={tableCell}>{q.type}</td>
                   <td style={tableCell}>{q.lane}</td>
                   <td style={{ ...tableCell, maxWidth: 320 }}>{q.text}</td>
                   <td style={tableCell}>{q.correctAnswer}</td>
                   <td style={tableCell}>
-                    <button onClick={() => { void handleDelete(q.id) }} style={{ ...ghostBtn, color: C.red, borderColor: C.red }}>DELETE</button>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button onClick={() => startEdit(q)} style={ghostBtn}>EDIT</button>
+                      <button onClick={() => { void handleDelete(q.id) }} style={{ ...ghostBtn, color: C.red, borderColor: C.red }}>DELETE</button>
+                    </div>
                   </td>
                 </tr>
               ))}
