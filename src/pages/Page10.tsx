@@ -190,6 +190,11 @@ export default function Page10() {
                   alt="Player card"
                   style={{ display: 'block', width: '100%', height: '100%', objectFit: 'fill' }}
                 />
+                {/* Cover the baked-in avatar PNG inside the SVG */}
+                <div style={{
+                  position: 'absolute', top: '6%', left: '9%', width: '82%', height: '62%',
+                  background: '#0D1F3C',
+                }} />
                 {/* Avatar in the portrait area (~top 62% of the card) */}
                 <img
                   src={avatarSrc}
