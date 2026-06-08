@@ -1,14 +1,9 @@
-import { useEffect, useState, useMemo } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import { useGameStore } from '../store/gameStore'
-import type { MatchQuestion } from '../store/gameStore'
-import { useAuthStore }  from '../store/authStore'
-import { apiGet } from '../lib/api'
-import { connectSocket, disconnectSocket } from '../lib/socket'
 
 // ── Round Results dialog SVG frames ────────────────────────────────────────
 import ResultsBar      from '../assets/Group 370.svg'
@@ -45,138 +40,6 @@ const RANK_TILES = [
 const RANKS = ['iron', 'bronze', 'silver', 'gold', 'emerald', 'platinum', 'diamond', 'master', 'challenger']
 
 const BAR_RENDER_MAX = 290
-
-// ── Guest Join UI ───────────────────────────────────────────────────────────
-
-function GuestJoin({ token }: { token: string }) {
-  const navigate = useNavigate()
-  const { user } = useAuthStore()
-  const { setMatchStart } = useGameStore()
-  const reduced = useReducedMotion()
-
-  const [status, setStatus] = useState<'joining' | 'waiting' | 'starting' | 'error'>('joining')
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    let navigating = false
-
-    const run = async () => {
-      try {
-        // HTTP join — registers this user as invitedId on the match
-        await apiGet<{ matchId: string; hostId: string; invitedId: string }>(
-          `/matches/join/${token}`
-        )
-        if (cancelled) return
-        setStatus('waiting')
-
-        // Socket join — triggers match:start when both players are in the room
-        const socket = connectSocket()
-        socket.emit('match:join', { token, userId: user.id })
-
-        socket.on('match:waiting', () => {
-          if (!cancelled) setStatus('waiting')
-        })
-        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
-          if (cancelled) return
-          navigating = true
-          setMatchStart(d.matchId, d.questions)
-          setStatus('starting')
-          navigate('/page1')
-        })
-        socket.on('match:error', (d: { message: string }) => {
-          if (!cancelled) {
-            setStatus('error')
-            setErrorMsg(d.message)
-          }
-        })
-      } catch {
-        if (!cancelled) {
-          setStatus('error')
-          setErrorMsg('Invalid or expired invite link')
-        }
-      }
-    }
-
-    void run()
-
-    return () => {
-      cancelled = true
-      if (!navigating) disconnectSocket()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, user?.id])
-
-  const statusText: Record<string, string> = {
-    joining:  'Joining match…',
-    waiting:  'Waiting for host…',
-    starting: 'Match found! Starting…',
-    error:    errorMsg ?? 'Something went wrong',
-  }
-
-  const statusColor: Record<string, string> = {
-    joining:  '#8FA3C0',
-    waiting:  '#8FA3C0',
-    starting: '#00C9A7',
-    error:    '#ef4444',
-  }
-
-  return (
-    <motion.div
-      initial={reduced ? false : { opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.45 }}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 320,
-        gap: 20,
-      }}
-    >
-      <h1
-        className="font-beaufort font-bold"
-        style={{
-          fontSize: 48,
-          lineHeight: 1,
-          background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          margin: 0,
-        }}
-      >
-        1v1 Trivia Match
-      </h1>
-
-      {status !== 'error' && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <motion.div
-            animate={reduced ? {} : { rotate: 360 }}
-            transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
-            style={{
-              width: 20, height: 20,
-              border: '3px solid #1E3A5F',
-              borderTopColor: '#00C9A7',
-              borderRadius: '50%',
-            }}
-          />
-          <span style={{ color: statusColor[status], fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, letterSpacing: '0.1em' }}>
-            {statusText[status]}
-          </span>
-        </div>
-      )}
-
-      {status === 'error' && (
-        <span style={{ color: '#ef4444', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15 }}>
-          {statusText.error}
-        </span>
-      )}
-    </motion.div>
-  )
-}
 
 // ── GTR Results UI ──────────────────────────────────────────────────────────
 
@@ -426,11 +289,6 @@ function GTRResults() {
 // ── Page12 ──────────────────────────────────────────────────────────────────
 
 export default function Page12() {
-  // Support both /match/join/:token (path param) and ?token=xxx (query param)
-  const { token: pathToken } = useParams<{ token?: string }>()
-  const [searchParams] = useSearchParams()
-  const token = pathToken ?? searchParams.get('token')
-
   return (
     <>
       <Header />
@@ -444,7 +302,7 @@ export default function Page12() {
           position: 'relative',
           zIndex: 1,
         }}>
-          {token ? <GuestJoin token={token} /> : <GTRResults />}
+          <GTRResults />
         </div>
       </main>
 

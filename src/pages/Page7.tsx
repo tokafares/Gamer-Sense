@@ -128,7 +128,7 @@ export default function Page7() {
           navigating = true
           setMatchStart(d.matchId, d.questions)
           setStatus('ready')
-          navigate('/page1')
+          navigate('/page8')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) setMatchError(d.message)
