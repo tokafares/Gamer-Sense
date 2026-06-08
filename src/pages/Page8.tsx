@@ -2,21 +2,40 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { scrollFadeIn } from '../lib/animations'
+import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { useQuestions } from '../hooks/useQuestions'
 import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
+
+import TopLaneSvg    from '../assets/Group 259.svg'
+import JungleSvg     from '../assets/Group 258.svg'
+import MidLaneSvg    from '../assets/Group 260.svg'
+import ADCSvg        from '../assets/Group 261.svg'
+import SupportSvg    from '../assets/Group 262.svg'
+
 import DialogBgSvg   from '../assets/DialogBg.svg'
 import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.png'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
 
+const LANES = [
+  { key: 'top',     label: 'Top Lane', svg: TopLaneSvg  },
+  { key: 'jungle',  label: 'Jungle',   svg: JungleSvg   },
+  { key: 'mid',     label: 'Mid Lane', svg: MidLaneSvg  },
+  { key: 'adc',     label: 'ADC',      svg: ADCSvg      },
+  { key: 'support', label: 'Support',  svg: SupportSvg  },
+]
+
 // Group 270.svg native: 557 × 702 — scale to PANEL_H
 const PANEL_H = 600
 const SCALE   = PANEL_H / 702              // ≈ 0.855
+
+const LANE_H   = Math.round(116 * SCALE)   // ≈  99 px
+const LANE_W   = Math.round(149 * SCALE)   // ≈ 127 px
+const LANE_GAP = Math.round((PANEL_H - 5 * LANE_H) / 4) // ≈ 26 px
 
 const PANEL_W = Math.round(557 * SCALE)    // ≈ 476 px
 
@@ -32,7 +51,7 @@ const ANS_H = Math.round(332 * SCALE)      // ≈ 284 px
 const HINT_TOP = Math.round(560 * SCALE)   // ≈ 479 px
 const HINT_H   = PANEL_H - HINT_TOP        // ≈ 121 px
 
-// Click regions within Group 269.svg (native coords) — unchanged from original
+// Click regions within Group 269.svg (native coords)
 const ANSWER_REGIONS = [
   { id: 'A', top: 0,                        height: Math.round(96  * SCALE) },
   { id: 'B', top: Math.round(118 * SCALE),  height: Math.round(96  * SCALE) },
@@ -44,9 +63,10 @@ const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-
 
 export default function Page8() {
   const reduced = useReducedMotion()
+  const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
-  const { question, loading, error } = useQuestions('trivia', '')
+  const { question, loading, error } = useQuestions('trivia', activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
   const handleLockIn = useCallback(async () => {
@@ -93,15 +113,50 @@ export default function Page8() {
             </h1>
           </div>
 
-          {/* ── 2-column layout (lane panel removed) ── */}
+          {/* ── 3-column layout ── */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', height: `${PANEL_H}px` }}>
 
-            {/* LEFT — image panel with artwork */}
+            {/* LEFT — lane buttons */}
+            <motion.div
+              variants={staggerCards}
+              initial={reduced ? false : 'hidden'}
+              animate="show"
+              style={{
+                display: 'flex', flexDirection: 'column',
+                gap: `${LANE_GAP}px`, flexShrink: 0,
+                width: `${LANE_W}px`, height: '100%',
+              }}
+            >
+              {LANES.map(({ key, label, svg }) => (
+                <motion.button
+                  key={key}
+                  variants={cardItemAnim}
+                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false) }}
+                  aria-label={label}
+                  style={{
+                    position: 'relative',
+                    width: '100%', height: `${LANE_H}px`,
+                    padding: 0, background: 'none', border: 'none',
+                    cursor: 'pointer', outline: 'none', flexShrink: 0,
+                  }}
+                >
+                  <img src={svg} alt="" style={{ display: 'block', width: '100%', height: '100%' }} />
+                  {activeLane === key && (
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      border: '2px solid #3AF9FF', pointerEvents: 'none',
+                    }} />
+                  )}
+                </motion.button>
+              ))}
+            </motion.div>
+
+            {/* CENTER — panel with artwork */}
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              style={{ width: '647px', flexShrink: 0, height: '100%', position: 'relative' }}
+              style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative' }}
             >
               <img src={DialogBgSvg} alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
@@ -134,17 +189,15 @@ export default function Page8() {
                 </p>
               </div>
 
-              {/* ── Answer buttons ── */}
+              {/* Answer buttons */}
               <div style={{
                 position: 'absolute', top: `${ANS_TOP}px`, left: 0,
                 width: '100%', height: `${ANS_H}px`,
               }}>
-
-                {/* Original SVG — design unchanged */}
                 <img src={AnswerBtnsSvg} alt=""
                   style={{ display: 'block', width: '100%', height: '100%' }} />
 
-                {/* Dynamic answer text — background covers SVG placeholder text */}
+                {/* Dynamic answer text overlaid on each button frame */}
                 {question && ANSWER_REGIONS.map(({ id, top, height }) => {
                   const ans = question.options.find(a => a.id === id)
                   if (!ans) return null
@@ -166,7 +219,7 @@ export default function Page8() {
                   )
                 })}
 
-                {/* Staggered entrance: dark panel briefly covers each row then fades out */}
+                {/* Staggered entrance */}
                 {!reduced && ANSWER_REGIONS.map(({ id, top, height }, i) => (
                   <motion.div
                     key={`entrance-${id}`}
@@ -176,14 +229,11 @@ export default function Page8() {
                     style={{
                       position: 'absolute', top: `${top}px`, left: 0,
                       width: '100%', height: `${height}px`,
-                      background: '#060F1E',
-                      pointerEvents: 'none',
-                      zIndex: 1,
+                      background: '#060F1E', pointerEvents: 'none', zIndex: 1,
                     }}
                   />
                 ))}
 
-                {/* Interactive click regions — hover glow + selection highlight */}
                 {ANSWER_REGIONS.map(({ id, top, height }) => (
                   <motion.div
                     key={id}
@@ -191,7 +241,6 @@ export default function Page8() {
                     tabIndex={locked ? -1 : 0}
                     onClick={() => !locked && !loading && setSelectedAnswer(id)}
                     onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
-                    // Hover: border glow fades in over 0.25 s
                     whileHover={reduced || locked ? {} : {
                       borderColor: 'rgba(58,249,255,0.55)',
                       boxShadow: '0 0 14px rgba(58,249,255,0.32)',
@@ -201,18 +250,12 @@ export default function Page8() {
                       position: 'absolute', top: `${top}px`, left: 0,
                       width: '100%', height: `${height}px`,
                       cursor: locked ? 'default' : 'pointer',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      zIndex: 2,
-                      // transparent border keeps layout stable; color animated by FM on hover
-                      borderWidth: '2px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent',
+                      outline: 'none', boxSizing: 'border-box', zIndex: 2,
+                      borderWidth: '2px', borderStyle: 'solid', borderColor: 'transparent',
                       boxShadow: '0 0 0px rgba(58,249,255,0)',
                     }}
                     aria-label={`Answer ${id}`}
                   >
-                    {/* Selection highlight — fades in/out with AnimatePresence */}
                     <AnimatePresence>
                       {selectedAnswer === id && (
                         <motion.div
@@ -235,7 +278,7 @@ export default function Page8() {
                 ))}
               </div>
 
-              {/* Hint text overlay — only shown when hint data exists */}
+              {/* Hint text overlay */}
               {question?.hint && (
                 <div style={{
                   position: 'absolute', top: `${HINT_TOP}px`, left: 0,
@@ -251,7 +294,6 @@ export default function Page8() {
                 </div>
               )}
             </motion.div>
-
           </div>
 
           {/* ── Lock-in button ── */}

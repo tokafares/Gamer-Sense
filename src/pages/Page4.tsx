@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
@@ -20,6 +21,8 @@ import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.p
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
+
+const TIMER_SECONDS = 10
 
 const LANES = [
   { key: 'top',     label: 'Top Lane', svg: TopLaneSvg  },
@@ -62,15 +65,51 @@ const LABEL_CLS = 'font-beaufort font-bold bg-gradient-to-b from-[#FFFCF6] to-[#
 const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent'
 
 export default function Page4() {
-  const reduced = useReducedMotion()
+  const reduced  = useReducedMotion()
+  const navigate = useNavigate()
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
+  const [timeLeft,       setTimeLeft]       = useState(TIMER_SECONDS)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
   const { question, loading, error } = useQuestions('blitz', activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+  }, [])
+
+  const handleTimeout = useCallback(() => {
+    stopTimer()
+    setLocked(true)
+    navigate('/page12')
+  }, [stopTimer, navigate])
+
+  // Start/reset timer whenever a new question loads and is not yet locked
+  useEffect(() => {
+    if (loading || locked) return
+    stopTimer()
+    setTimeLeft(TIMER_SECONDS)
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          handleTimeout()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return stopTimer
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question?.id, loading, activeLane])
+
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || loading || !question) return
+    stopTimer()
     setLocked(true)
     if (import.meta.env.VITE_API_URL) {
       try {
@@ -83,7 +122,10 @@ export default function Page4() {
       } catch { /* silent */ }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAnswer, locked, loading, question, currentRound])
+  }, [selectedAnswer, locked, loading, question, currentRound, stopTimer])
+
+  // Danger threshold for red styling
+  const timerDanger = timeLeft <= 3
 
   return (
     <>
@@ -97,8 +139,8 @@ export default function Page4() {
           position: 'relative', zIndex: 1,
         }}>
 
-          {/* ── Blitz heading ── */}
-          <div style={{ marginBottom: '14px' }}>
+          {/* ── Blitz heading + timer ── */}
+          <div style={{ marginBottom: '14px', display: 'flex', alignItems: 'flex-end', gap: '24px' }}>
             <h1
               className="font-beaufort font-bold"
               style={{
@@ -111,6 +153,36 @@ export default function Page4() {
             >
               Blitz
             </h1>
+
+            {/* ── 10-second countdown ── */}
+            {!locked && (
+              <motion.div
+                key={timeLeft}
+                initial={reduced ? false : { scale: timerDanger ? 1.25 : 1.05, opacity: 0.7 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  marginBottom: '8px',
+                  minWidth: '56px',
+                  textAlign: 'center',
+                  padding: '4px 14px',
+                  borderRadius: '4px',
+                  border: `2px solid ${timerDanger ? '#FF4444' : '#1E3A5F'}`,
+                  background: timerDanger ? 'rgba(255,68,68,0.12)' : 'rgba(13,31,60,0.8)',
+                }}
+              >
+                <span
+                  className="font-beaufort font-bold"
+                  style={{
+                    fontSize: '28px',
+                    lineHeight: 1,
+                    color: timerDanger ? '#FF4444' : '#3AF9FF',
+                  }}
+                >
+                  {timeLeft}s
+                </span>
+              </motion.div>
+            )}
           </div>
 
           {/* ── 3-column layout ── */}
