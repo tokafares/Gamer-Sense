@@ -17,11 +17,8 @@ const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }
   { id: 'blitz',         label: 'BLITZ',         svg: BlitzSvg,     to: '/blitz'  },
   { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/knowledge-hub'  },
   { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/profile' },
-]
-
-const DUEL_MODES: Array<{ id: string; label: string; svg: string; to: string }> = [
-  { id: 'trivia',      label: 'TRIVIA',      svg: GuessRankSvg, to: '/trivia-invite' },
-  { id: 'guess-rank',  label: 'GUESS RANK',  svg: GuessRankSvg, to: '/gtr-invite'    },
+  { id: 'duels',         label: 'DUELS',         svg: GuessRankSvg, to: '/trivia-invite' },
+  { id: 'guess-rank',   label: 'GUESS RANK',    svg: GuessRankSvg, to: '/gtr-invite'    },
 ]
 
 const CARD_W = 210
@@ -113,7 +110,7 @@ const KnowledgeHub = () => {
             initial={reduced ? false : 'hidden'}
             animate="show"
           >
-            {/* 4 regular feature cards */}
+            {/* All 6 feature cards in a uniform 2-column grid */}
             <div
               style={{
                 display: 'grid',
@@ -174,88 +171,6 @@ const KnowledgeHub = () => {
                 </motion.div>
               ))}
             </div>
-
-            {/* DUELS composite card — full width, contains Trivia + Guess Rank */}
-            <motion.div variants={cardEntryVariants} style={{ marginTop: '14px' }}>
-              <div
-                style={{
-                  width: `${CARD_W * 2 + 14}px`,
-                  background: 'rgba(13,31,60,0.55)',
-                  border: '1px solid #1E3A5F',
-                  borderRadius: '8px',
-                  padding: '10px 14px 10px',
-                  boxSizing: 'border-box',
-                }}
-              >
-                {/* DUELS label */}
-                <span
-                  className="font-beaufort font-bold"
-                  style={{
-                    display: 'block',
-                    fontSize: '11px',
-                    letterSpacing: '0.12em',
-                    color: '#00C9A7',
-                    marginBottom: '8px',
-                    textAlign: 'center',
-                  }}
-                >
-                  DUELS
-                </span>
-
-                {/* Two sub-mode cards */}
-                <div style={{ display: 'flex', gap: '14px' }}>
-                  {DUEL_MODES.map((mode) => (
-                    <motion.div
-                      key={mode.id}
-                      onClick={() => navigate(mode.to)}
-                      animate={{ scale: 1, y: 0 }}
-                      whileHover={reduced ? {} : { scale: 1.03, y: -4 }}
-                      whileTap={reduced ? {} : { scale: 0.97 }}
-                      transition={{ default: { duration: 0.35, ease: 'easeOut' } }}
-                      onHoverStart={() => handleHoverStart(mode.id)}
-                      onHoverEnd={handleHoverEnd}
-                      style={{
-                        cursor: 'pointer',
-                        flex: 1,
-                        boxShadow: hoveredCard === mode.id
-                          ? '0 0 25px rgba(0, 201, 167, 0.25), 0 8px 20px rgba(0,0,0,0.3)'
-                          : 'none',
-                        transition: 'box-shadow 0.3s ease-out',
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <img
-                          src={mode.svg}
-                          alt={mode.label}
-                          width={CARD_W}
-                          height={CARD_H}
-                          loading="lazy"
-                          style={{
-                            display: 'block',
-                            width: '100%',
-                            height: 'auto',
-                            filter: hoveredCard === mode.id ? 'brightness(1.3)' : 'brightness(1)',
-                            transition: 'filter 0.3s ease',
-                          }}
-                        />
-                        <span
-                          className="font-beaufort font-bold"
-                          style={{
-                            marginTop: '6px',
-                            color: '#0E1B2F',
-                            fontSize: '12px',
-                            letterSpacing: '0.07em',
-                            textAlign: 'center',
-                          }}
-                        >
-                          {mode.label}
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
 
