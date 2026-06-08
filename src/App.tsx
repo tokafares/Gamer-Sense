@@ -48,13 +48,20 @@ function Landing() {
       <Header />
       <div className="w-full h-[1.2px] bg-gradient-to-r from-[#FFFCF6] to-[#969696]" />
       <HeroSection />
-      <WhatWeOffer />
-      <Leaderboard />
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      {/* Pull sections up by 120px (diagonal height) and clip the top-left triangle
+          so the pattern background reveals from the same diagonal as the hero slash */}
+      <div style={{
+        position: 'relative',
+        marginTop: -120,
+        clipPath: 'polygon(0 120px, 100% 0, 100% 100%, 0 100%)',
+        zIndex: 1,
+      }}>
+        <WhatWeOffer />
+        <Leaderboard />
         <OurPartners />
-      </div>
-      <div style={{ position: 'relative', zIndex: 20 }}>
-        <OurTeam />
+        <div style={{ position: 'relative', zIndex: 20 }}>
+          <OurTeam />
+        </div>
       </div>
       <img
         src={SeparatorLine}
