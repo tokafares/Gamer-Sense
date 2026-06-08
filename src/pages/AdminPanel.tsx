@@ -262,16 +262,18 @@ function VideosTab() {
 
 // ── Questions tab ──────────────────────────────────────────────────────────────
 
-const BLANK_FORM = { type: 'scenario', lane: 'top', text: '', hint: '', imageUrl: '', optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '' }
+const BLANK_Q = { type: 'scenario', lane: 'top', text: '', hint: '', imageUrl: '', optA: '', optB: '', optC: '', correctAnswer: 'A', explanation: '' }
+
+const LBL: React.CSSProperties = { display: 'block', color: '#8FA3C0', fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }
 
 function QuestionsTab() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading,   setLoading]   = useState(true)
   const [error,     setError]     = useState<string | null>(null)
-  const [form,      setForm]      = useState(BLANK_FORM)
+  const [addForm,   setAddForm]   = useState(BLANK_Q)
   const [saving,    setSaving]    = useState(false)
   const [editId,    setEditId]    = useState<string | null>(null)
-  const [editForm,  setEditForm]  = useState(BLANK_FORM)
+  const [editForm,  setEditForm]  = useState(BLANK_Q)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -288,29 +290,25 @@ function QuestionsTab() {
   useEffect(() => { void load() }, [load])
 
   const handleAdd = useCallback(async () => {
-    if (!form.text.trim() || !form.optA.trim() || !form.optB.trim() || !form.optC.trim()) return
+    if (!addForm.text.trim() || !addForm.optA.trim() || !addForm.optB.trim() || !addForm.optC.trim()) return
     setSaving(true)
     try {
       await apiPost('/admin/questions', {
-        type: form.type, lane: form.lane,
-        text: form.text, hint: form.hint || null,
-        imageUrl: form.imageUrl || null,
-        options: [
-          { id: 'A', text: form.optA },
-          { id: 'B', text: form.optB },
-          { id: 'C', text: form.optC },
-        ],
-        correctAnswer: form.correctAnswer,
-        explanation: form.explanation,
+        type: addForm.type, lane: addForm.lane,
+        text: addForm.text, hint: addForm.hint || null,
+        imageUrl: addForm.imageUrl || null,
+        options: [{ id: 'A', text: addForm.optA }, { id: 'B', text: addForm.optB }, { id: 'C', text: addForm.optC }],
+        correctAnswer: addForm.correctAnswer,
+        explanation: addForm.explanation,
       })
-      setForm(BLANK_FORM)
+      setAddForm(BLANK_Q)
       await load()
     } catch {
       setError('Failed to add question')
     } finally {
       setSaving(false)
     }
-  }, [form, load])
+  }, [addForm, load])
 
   const handleSaveEdit = useCallback(async (id: string) => {
     setSaving(true)
@@ -319,11 +317,7 @@ function QuestionsTab() {
         type: editForm.type, lane: editForm.lane,
         text: editForm.text, hint: editForm.hint || null,
         imageUrl: editForm.imageUrl || null,
-        options: [
-          { id: 'A', text: editForm.optA },
-          { id: 'B', text: editForm.optB },
-          { id: 'C', text: editForm.optC },
-        ],
+        options: [{ id: 'A', text: editForm.optA }, { id: 'B', text: editForm.optB }, { id: 'C', text: editForm.optC }],
         correctAnswer: editForm.correctAnswer,
         explanation: editForm.explanation,
       })
@@ -358,93 +352,152 @@ function QuestionsTab() {
       explanation: q.explanation,
     })
     setEditId(q.id)
-  }
-
-  const mediaField = (f: typeof BLANK_FORM, setter: React.Dispatch<React.SetStateAction<typeof BLANK_FORM>>) => {
-    if (f.type === 'blitz' || f.type === 'trivia') return (
-      <div>
-        <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>IMAGE URL (optional)</label>
-        <input value={f.imageUrl} onChange={e => setter(prev => ({ ...prev, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/... or https://..." style={inputStyle} />
-      </div>
-    )
-    if (f.type === 'scenario') return (
-      <div>
-        <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>VIDEO URL (optional)</label>
-        <input value={f.imageUrl} onChange={e => setter(prev => ({ ...prev, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/....mp4" style={inputStyle} />
-      </div>
-    )
-    return null
-  }
-
-  const formFields = (f: typeof BLANK_FORM, setter: React.Dispatch<React.SetStateAction<typeof BLANK_FORM>>) => {
-    const field = (label: string, key: keyof typeof BLANK_FORM, placeholder = '') => (
-      <div key={key}>
-        <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>{label}</label>
-        <input value={f[key]} onChange={e => setter(prev => ({ ...prev, [key]: e.target.value }))} placeholder={placeholder} style={inputStyle} />
-      </div>
-    )
-    return (
-      <>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-          <div>
-            <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>TYPE</label>
-            <select value={f.type} onChange={e => setter(prev => ({ ...prev, type: e.target.value }))} style={inputStyle}>
-              {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>LANE</label>
-            <select value={f.lane} onChange={e => setter(prev => ({ ...prev, lane: e.target.value }))} style={inputStyle}>
-              {LANES.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {field('QUESTION TEXT', 'text', 'What is the best item for...')}
-          {field('HINT (optional)', 'hint', 'Think about damage type...')}
-          {mediaField(f, setter)}
-          {field('OPTION A', 'optA')}
-          {field('OPTION B', 'optB')}
-          {field('OPTION C', 'optC')}
-          <div>
-            <label style={{ display: 'block', color: C.muted, fontSize: 11, letterSpacing: '0.1em', marginBottom: 4, fontFamily: "'Barlow Condensed', sans-serif" }}>CORRECT ANSWER</label>
-            <select value={f.correctAnswer} onChange={e => setter(prev => ({ ...prev, correctAnswer: e.target.value }))} style={inputStyle}>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-            </select>
-          </div>
-          {field('EXPLANATION', 'explanation', 'This is correct because...')}
-        </div>
-      </>
-    )
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
     <div>
-      {/* Edit form — shown when editing an existing question */}
-      {editId && (
-        <div style={{ background: C.card, border: `2px solid ${C.teal}`, borderRadius: 6, padding: 20, marginBottom: 24 }}>
-          <p style={{ color: C.teal, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>EDIT QUESTION</p>
-          {formFields(editForm, setEditForm)}
-          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+      {/* ── Edit form ── */}
+      {editId !== null && (
+        <div style={{ background: '#0D1F3C', border: '2px solid #00C9A7', borderRadius: 6, padding: 20, marginBottom: 24 }}>
+          <p style={{ color: '#00C9A7', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>EDIT QUESTION</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div>
+              <label style={LBL}>TYPE</label>
+              <select value={editForm.type} onChange={e => setEditForm(f => ({ ...f, type: e.target.value }))} style={inputStyle}>
+                {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={LBL}>LANE</label>
+              <select value={editForm.lane} onChange={e => setEditForm(f => ({ ...f, lane: e.target.value }))} style={inputStyle}>
+                {LANES.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+            <div>
+              <label style={LBL}>QUESTION TEXT</label>
+              <input value={editForm.text} onChange={e => setEditForm(f => ({ ...f, text: e.target.value }))} placeholder="What is the best item for..." style={inputStyle} />
+            </div>
+            <div>
+              <label style={LBL}>HINT (optional)</label>
+              <input value={editForm.hint} onChange={e => setEditForm(f => ({ ...f, hint: e.target.value }))} placeholder="Think about damage type..." style={inputStyle} />
+            </div>
+            {(editForm.type === 'blitz' || editForm.type === 'trivia') && (
+              <div>
+                <label style={LBL}>IMAGE URL (optional)</label>
+                <input value={editForm.imageUrl} onChange={e => setEditForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/... or https://..." style={inputStyle} />
+              </div>
+            )}
+            {editForm.type === 'scenario' && (
+              <div>
+                <label style={LBL}>VIDEO URL (optional)</label>
+                <input value={editForm.imageUrl} onChange={e => setEditForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/....mp4" style={inputStyle} />
+              </div>
+            )}
+            <div>
+              <label style={LBL}>OPTION A</label>
+              <input value={editForm.optA} onChange={e => setEditForm(f => ({ ...f, optA: e.target.value }))} style={inputStyle} />
+            </div>
+            <div>
+              <label style={LBL}>OPTION B</label>
+              <input value={editForm.optB} onChange={e => setEditForm(f => ({ ...f, optB: e.target.value }))} style={inputStyle} />
+            </div>
+            <div>
+              <label style={LBL}>OPTION C</label>
+              <input value={editForm.optC} onChange={e => setEditForm(f => ({ ...f, optC: e.target.value }))} style={inputStyle} />
+            </div>
+            <div>
+              <label style={LBL}>CORRECT ANSWER</label>
+              <select value={editForm.correctAnswer} onChange={e => setEditForm(f => ({ ...f, correctAnswer: e.target.value }))} style={inputStyle}>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+            <div>
+              <label style={LBL}>EXPLANATION</label>
+              <input value={editForm.explanation} onChange={e => setEditForm(f => ({ ...f, explanation: e.target.value }))} placeholder="This is correct because..." style={inputStyle} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => { void handleSaveEdit(editId) }} disabled={saving} style={btnStyle()}>{saving ? 'SAVING…' : 'SAVE CHANGES'}</button>
             <button onClick={() => setEditId(null)} style={ghostBtn}>CANCEL</button>
           </div>
         </div>
       )}
 
-      {/* Add form */}
-      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, padding: 20, marginBottom: 24 }}>
-        <p style={{ color: C.tealText, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>ADD QUESTION</p>
-        {formFields(form, setForm)}
-        <button onClick={() => { void handleAdd() }} disabled={saving} style={{ ...btnStyle(), marginTop: 16 }}>{saving ? 'SAVING…' : 'ADD QUESTION'}</button>
+      {/* ── Add form ── */}
+      <div style={{ background: '#0D1F3C', border: '1px solid #1E3A5F', borderRadius: 6, padding: 20, marginBottom: 24 }}>
+        <p style={{ color: '#3AF9FF', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.1em', margin: '0 0 16px' }}>ADD QUESTION</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+          <div>
+            <label style={LBL}>TYPE</label>
+            <select value={addForm.type} onChange={e => setAddForm(f => ({ ...f, type: e.target.value }))} style={inputStyle}>
+              {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={LBL}>LANE</label>
+            <select value={addForm.lane} onChange={e => setAddForm(f => ({ ...f, lane: e.target.value }))} style={inputStyle}>
+              {LANES.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+          <div>
+            <label style={LBL}>QUESTION TEXT</label>
+            <input value={addForm.text} onChange={e => setAddForm(f => ({ ...f, text: e.target.value }))} placeholder="What is the best item for..." style={inputStyle} />
+          </div>
+          <div>
+            <label style={LBL}>HINT (optional)</label>
+            <input value={addForm.hint} onChange={e => setAddForm(f => ({ ...f, hint: e.target.value }))} placeholder="Think about damage type..." style={inputStyle} />
+          </div>
+          {(addForm.type === 'blitz' || addForm.type === 'trivia') && (
+            <div>
+              <label style={LBL}>IMAGE URL (optional)</label>
+              <input value={addForm.imageUrl} onChange={e => setAddForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/... or https://..." style={inputStyle} />
+            </div>
+          )}
+          {addForm.type === 'scenario' && (
+            <div>
+              <label style={LBL}>VIDEO URL (optional)</label>
+              <input value={addForm.imageUrl} onChange={e => setAddForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://res.cloudinary.com/....mp4" style={inputStyle} />
+            </div>
+          )}
+          <div>
+            <label style={LBL}>OPTION A</label>
+            <input value={addForm.optA} onChange={e => setAddForm(f => ({ ...f, optA: e.target.value }))} style={inputStyle} />
+          </div>
+          <div>
+            <label style={LBL}>OPTION B</label>
+            <input value={addForm.optB} onChange={e => setAddForm(f => ({ ...f, optB: e.target.value }))} style={inputStyle} />
+          </div>
+          <div>
+            <label style={LBL}>OPTION C</label>
+            <input value={addForm.optC} onChange={e => setAddForm(f => ({ ...f, optC: e.target.value }))} style={inputStyle} />
+          </div>
+          <div>
+            <label style={LBL}>CORRECT ANSWER</label>
+            <select value={addForm.correctAnswer} onChange={e => setAddForm(f => ({ ...f, correctAnswer: e.target.value }))} style={inputStyle}>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </div>
+          <div>
+            <label style={LBL}>EXPLANATION</label>
+            <input value={addForm.explanation} onChange={e => setAddForm(f => ({ ...f, explanation: e.target.value }))} placeholder="This is correct because..." style={inputStyle} />
+          </div>
+        </div>
+        <button onClick={() => { void handleAdd() }} disabled={saving} style={btnStyle()}>{saving ? 'SAVING…' : 'ADD QUESTION'}</button>
       </div>
 
-      {error && <p style={{ color: C.red, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, marginBottom: 12 }}>{error}</p>}
+      {error && <p style={{ color: '#ef4444', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, marginBottom: 12 }}>{error}</p>}
 
-      {loading ? <p style={{ color: C.muted, fontFamily: "'Barlow Condensed', sans-serif" }}>Loading…</p> : (
-        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, overflow: 'hidden' }}>
+      {loading ? <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif" }}>Loading…</p> : (
+        <div style={{ background: '#0D1F3C', border: '1px solid #1E3A5F', borderRadius: 6, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
@@ -465,7 +518,7 @@ function QuestionsTab() {
                   <td style={tableCell}>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button onClick={() => startEdit(q)} style={ghostBtn}>EDIT</button>
-                      <button onClick={() => { void handleDelete(q.id) }} style={{ ...ghostBtn, color: C.red, borderColor: C.red }}>DELETE</button>
+                      <button onClick={() => { void handleDelete(q.id) }} style={{ ...ghostBtn, color: '#ef4444', borderColor: '#ef4444' }}>DELETE</button>
                     </div>
                   </td>
                 </tr>
