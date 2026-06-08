@@ -159,15 +159,15 @@ export default function HeroSection() {
         </Link>
       </div>
 
-      {/* Diagonal white slash */}
-      <div className="absolute bottom-0 left-0 w-full z-[20] pointer-events-none overflow-hidden h-[120px]">
+      {/* Diagonal slash — fill matches page background to avoid colour-mismatch gap */}
+      <div className="absolute left-0 w-full z-[20] pointer-events-none overflow-hidden h-[120px]" style={{ bottom: '-1px' }}>
         <svg
           viewBox="0 0 1728 120"
           preserveAspectRatio="none"
           className="absolute bottom-0 left-0 w-full h-full"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <polygon points="0,120 1728,120 1728,0" fill="white" />
+          <polygon points="0,120 1728,120 1728,0" fill="#F0F2F5" />
         </svg>
       </div>
     </section>
