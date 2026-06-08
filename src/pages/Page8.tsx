@@ -74,10 +74,14 @@ export default function Page8() {
   const { matchId, matchQuestions, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, setMatchStart: _, clearMatch } = useGameStore()
   const isMatchMode = !!matchId && matchQuestions.length > 0
 
-  // Auto-advance 2 s after locking in (solo mode only — match mode uses socket round:result)
+  // Auto-advance 2 s after locking in — cycle to next lane (solo mode only)
   useEffect(() => {
     if (!locked || isMatchMode) return
     const t = setTimeout(() => {
+      setActiveLane(prev => {
+        const idx = LANES.findIndex(l => l.key === prev)
+        return LANES[(idx + 1) % LANES.length].key
+      })
       setSelectedAnswer(null)
       setLocked(false)
       setRefreshKey(k => k + 1)

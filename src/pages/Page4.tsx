@@ -126,10 +126,14 @@ export default function Page4() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnswer, locked, loading, question, currentRound, stopTimer])
 
-  // Auto-advance to next question 2 s after locking in
+  // Auto-advance to next question 2 s after locking in — cycle to the next lane
   useEffect(() => {
     if (!locked) return
     advanceRef.current = setTimeout(() => {
+      setActiveLane(prev => {
+        const idx = LANES.findIndex(l => l.key === prev)
+        return LANES[(idx + 1) % LANES.length].key
+      })
       setSelectedAnswer(null)
       setLocked(false)
       setRefreshKey(k => k + 1)
