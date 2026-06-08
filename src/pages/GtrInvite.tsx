@@ -121,7 +121,7 @@ export default function GtrInvite() {
           if (cancelled) return
           navigating = true
           setStatus('ready')
-          navigate('/page11')
+          navigate('/match')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) setMatchError(d.message)

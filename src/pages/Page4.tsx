@@ -88,7 +88,7 @@ export default function Page4() {
   const handleTimeout = useCallback(() => {
     stopTimer()
     setLocked(true)
-    navigate('/page12')
+    navigate('/results')
   }, [stopTimer, navigate])
 
   // Start/reset timer whenever a new question loads and is not yet locked

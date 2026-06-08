@@ -94,18 +94,18 @@ function App() {
       />
       <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/page1"  element={<Page1 />} />
-      <Route path="/page2"  element={<Page2 />} />
-      <Route path="/page3"  element={<RequireAuth><Page3 /></RequireAuth>} />
-      <Route path="/page4"  element={<RequireAuth><Page4 /></RequireAuth>} />
-      <Route path="/page5"  element={<Page5 />} />
-      <Route path="/page6"  element={<RequireAuth><Page6 /></RequireAuth>} />
-      <Route path="/page7"  element={<RequireAuth><Page7 /></RequireAuth>} />
-      <Route path="/page8"  element={<RequireAuth><Page8 /></RequireAuth>} />
-      <Route path="/page9"  element={<RequireAuth><Page9 /></RequireAuth>} />
-      <Route path="/page10" element={<RequireAuth><Page10 /></RequireAuth>} />
-      <Route path="/page11" element={<RequireAuth><Page11 /></RequireAuth>} />
-      <Route path="/page12" element={<RequireAuth><Page12 /></RequireAuth>} />
+      <Route path="/leaderboard"   element={<Page1 />} />
+      <Route path="/features"      element={<Page2 />} />
+      <Route path="/scenarios"     element={<RequireAuth><Page3 /></RequireAuth>} />
+      <Route path="/blitz"         element={<RequireAuth><Page4 /></RequireAuth>} />
+      <Route path="/knowledge-hub" element={<Page5 />} />
+      <Route path="/duels"         element={<RequireAuth><Page6 /></RequireAuth>} />
+      <Route path="/trivia-invite" element={<RequireAuth><Page7 /></RequireAuth>} />
+      <Route path="/trivia"        element={<RequireAuth><Page8 /></RequireAuth>} />
+      <Route path="/match-winner"  element={<RequireAuth><Page9 /></RequireAuth>} />
+      <Route path="/profile"       element={<RequireAuth><Page10 /></RequireAuth>} />
+      <Route path="/match"         element={<RequireAuth><Page11 /></RequireAuth>} />
+      <Route path="/results"       element={<RequireAuth><Page12 /></RequireAuth>} />
       <Route path="/champion/:id" element={<ChampionDetail />} />
       <Route path="/gtr-invite" element={<RequireAuth><GtrInvite /></RequireAuth>} />
       <Route path="/admin"     element={<AdminPanel />} />

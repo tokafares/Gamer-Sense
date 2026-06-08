@@ -13,11 +13,11 @@ import ProfileSvg from '../assets/profile.svg'
 import GuessRankSvg from '../assets/guess rank.svg'
 
 const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }> = [
-  { id: 'scenario',      label: 'SCENARIO',      svg: ScenarioSvg,  to: '/page3'  },
-  { id: 'blitz',         label: 'BLITZ',         svg: BlitzSvg,     to: '/page4'  },
-  { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/page5'  },
-  { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/page10' },
-  { id: 'guess-rank',    label: 'DUELS',         svg: GuessRankSvg, to: '/page6'  },
+  { id: 'scenario',      label: 'SCENARIO',      svg: ScenarioSvg,  to: '/scenarios'  },
+  { id: 'blitz',         label: 'BLITZ',         svg: BlitzSvg,     to: '/blitz'  },
+  { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/knowledge-hub'  },
+  { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/profile' },
+  { id: 'guess-rank',    label: 'DUELS',         svg: GuessRankSvg, to: '/duels'  },
 ]
 
 const CARD_W = 210

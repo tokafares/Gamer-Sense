@@ -144,7 +144,7 @@ export default function HeroSection() {
         </motion.p>
 
         {/* GET STARTED button */}
-        <Link to="/page2" style={{ position: 'absolute', left: '79px', top: '62%', lineHeight: 0 }}>
+        <Link to="/features" style={{ position: 'absolute', left: '79px', top: '62%', lineHeight: 0 }}>
           <motion.img
             src={GetStartedBtn}
             alt="Get Started"

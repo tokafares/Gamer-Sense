@@ -175,7 +175,7 @@ export default function Page6() {
               description="Answer League of Legends trivia questions faster and more accurately than your opponent. First to lock in the correct answer wins the round."
               delay={0.2}
               reduced={reduced}
-              onClick={() => { navigate('/page7') }}
+              onClick={() => { navigate('/trivia-invite') }}
             />
 
             {/* Divider */}

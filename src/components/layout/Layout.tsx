@@ -30,19 +30,19 @@ export const Layout = () => {
         <main className="flex-1">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/page1"  element={<PageWrapper><Page1 /></PageWrapper>} />
-              <Route path="/page2"  element={<PageWrapper><Page2 /></PageWrapper>} />
-              <Route path="/page3"  element={<PageWrapper><Page3 /></PageWrapper>} />
-              <Route path="/page4"  element={<PageWrapper><Page4 /></PageWrapper>} />
-              <Route path="/page5"  element={<PageWrapper><Page5 /></PageWrapper>} />
-              <Route path="/page6"  element={<PageWrapper><Page6 /></PageWrapper>} />
-              <Route path="/page7"  element={<PageWrapper><Page7 /></PageWrapper>} />
-              <Route path="/page8"  element={<PageWrapper><Page8 /></PageWrapper>} />
-              <Route path="/page9"  element={<PageWrapper><Page9 /></PageWrapper>} />
-              <Route path="/page10" element={<PageWrapper><Page10 /></PageWrapper>} />
-              <Route path="/page11" element={<PageWrapper><Page11 /></PageWrapper>} />
-              <Route path="/page12"     element={<PageWrapper><Page12 /></PageWrapper>} />
-              <Route path="/gtr-invite" element={<PageWrapper><GtrInvite /></PageWrapper>} />
+              <Route path="/leaderboard"   element={<PageWrapper><Page1 /></PageWrapper>} />
+              <Route path="/features"      element={<PageWrapper><Page2 /></PageWrapper>} />
+              <Route path="/scenarios"     element={<PageWrapper><Page3 /></PageWrapper>} />
+              <Route path="/blitz"         element={<PageWrapper><Page4 /></PageWrapper>} />
+              <Route path="/knowledge-hub" element={<PageWrapper><Page5 /></PageWrapper>} />
+              <Route path="/duels"         element={<PageWrapper><Page6 /></PageWrapper>} />
+              <Route path="/trivia-invite" element={<PageWrapper><Page7 /></PageWrapper>} />
+              <Route path="/trivia"        element={<PageWrapper><Page8 /></PageWrapper>} />
+              <Route path="/match-winner"  element={<PageWrapper><Page9 /></PageWrapper>} />
+              <Route path="/profile"       element={<PageWrapper><Page10 /></PageWrapper>} />
+              <Route path="/match"         element={<PageWrapper><Page11 /></PageWrapper>} />
+              <Route path="/results"       element={<PageWrapper><Page12 /></PageWrapper>} />
+              <Route path="/gtr-invite"    element={<PageWrapper><GtrInvite /></PageWrapper>} />
               <Route path="/"           element={<PageWrapper><Page6 /></PageWrapper>} />
             </Routes>
           </AnimatePresence>

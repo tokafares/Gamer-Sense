@@ -100,7 +100,7 @@ const Home = () => {
     socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
       clearMatch()
       disconnectSocket()
-      navigate('/page9', {
+      navigate('/match-winner', {
         state: {
           winnerId: d.winnerId,
           hostScore: d.hostScore,

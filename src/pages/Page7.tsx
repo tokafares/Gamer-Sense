@@ -129,7 +129,7 @@ export default function Page7() {
           navigating = true
           setMatchStart(d.matchId, d.questions)
           setStatus('ready')
-          navigate('/page8')
+          navigate('/trivia')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) setMatchError(d.message)

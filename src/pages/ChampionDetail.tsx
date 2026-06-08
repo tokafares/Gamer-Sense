@@ -76,7 +76,7 @@ export default function ChampionDetail() {
           Check your connection and try again.
         </div>
         <motion.button
-          onClick={() => navigate('/page5')}
+          onClick={() => navigate('/knowledge-hub')}
           style={{ background: 'none', border: '1px solid #00C9A7', color: '#00C9A7', padding: '12px 32px', cursor: 'pointer', fontFamily: BARLOW_COND, fontWeight: 700, fontSize: 14, letterSpacing: 2, borderRadius: 6 }}
           animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
           transition={{ filter: { duration: 0.15 } }}
@@ -96,7 +96,7 @@ export default function ChampionDetail() {
           Champion not found
         </div>
         <motion.button
-          onClick={() => navigate('/page5')}
+          onClick={() => navigate('/knowledge-hub')}
           style={{ background: 'none', border: '1px solid #00C9A7', color: '#00C9A7', padding: '12px 32px', cursor: 'pointer', fontFamily: BARLOW_COND, fontWeight: 700, fontSize: 14, letterSpacing: 2, borderRadius: 6 }}
           animate={{ filter: 'brightness(1) drop-shadow(0 0 0px transparent)' }}
           transition={{ filter: { duration: 0.15 } }}
@@ -152,7 +152,7 @@ export default function ChampionDetail() {
 
       {/* ══ BACK BUTTON ═══════════════════════════════════════════════════════ */}
       <motion.button
-        onClick={() => navigate('/page5')}
+        onClick={() => navigate('/knowledge-hub')}
         style={{
           position: 'fixed',
           top: 28,

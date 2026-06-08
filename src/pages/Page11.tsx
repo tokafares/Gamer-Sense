@@ -61,7 +61,7 @@ export default function Page11() {
       totalVotes:  stats.totalVotes,
       percentages: stats.percentages,
     })
-    navigate('/page12')
+    navigate('/results')
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
 

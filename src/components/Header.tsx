@@ -6,15 +6,15 @@ import { navSlideDown } from '../lib/animations'
 import { useAuthStore } from '../store/authStore'
 
 const FEATURE_NAV = [
-  { label: 'SCENARIOS',      to: '/page3' },
-  { label: 'KNOWLEDGE HUB', to: '/page5' },
-  { label: 'BLITZ',          to: '/page4' },
-  { label: 'PROFILE',        to: '/page10' },
-  { label: 'DUELS',          to: '/page6' },
+  { label: 'SCENARIOS',      to: '/scenarios' },
+  { label: 'KNOWLEDGE HUB', to: '/knowledge-hub' },
+  { label: 'BLITZ',          to: '/blitz' },
+  { label: 'PROFILE',        to: '/profile' },
+  { label: 'DUELS',          to: '/duels' },
 ]
 
-const DUELS_PATHS  = new Set(['/page6', '/page7', '/page8', '/page9', '/page11', '/page12', '/gtr-invite'])
-const BLITZ_PATHS  = new Set(['/page4'])
+const DUELS_PATHS  = new Set(['/duels', '/trivia-invite', '/trivia', '/match-winner', '/match', '/results', '/gtr-invite'])
+const BLITZ_PATHS  = new Set(['/blitz'])
 const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...DUELS_PATHS, ...BLITZ_PATHS])
 
 export default function Header() {
@@ -23,7 +23,7 @@ export default function Header() {
   const { isAuthenticated, user, openLoginModal, logout } = useAuthStore()
 
   const isHome        = pathname === '/'
-  const isFeatures    = pathname === '/page2'
+  const isFeatures    = pathname === '/features'
   const isChampion    = pathname.startsWith('/champion/')
   const isFeaturePage = FEATURE_PATHS.has(pathname) || isChampion
 
@@ -105,7 +105,7 @@ export default function Header() {
                 </motion.span>
               </Link>
 
-              <Link to="/page2" className="flex items-center gap-[4px] no-underline cursor-pointer">
+              <Link to="/features" className="flex items-center gap-[4px] no-underline cursor-pointer">
                 {isFeatures && (
                   <img src={NavIcon} alt="" className="w-[10.44px] h-[13.92px] rotate-180 flex-shrink-0" />
                 )}

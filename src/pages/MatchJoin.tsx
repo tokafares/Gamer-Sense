@@ -47,7 +47,7 @@ export default function MatchJoin() {
           navigating = true
           setMatchStart(d.matchId, d.questions)
           setStatus('starting')
-          navigate('/page8')
+          navigate('/trivia')
         })
         socket.on('match:error', (d: { message: string }) => {
           if (!cancelled) {
@@ -151,7 +151,7 @@ export default function MatchJoin() {
                   {statusText.error}
                 </span>
                 <button
-                  onClick={() => navigate('/page7')}
+                  onClick={() => navigate('/trivia-invite')}
                   style={{
                     padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                     border: 'none', borderRadius: 6, cursor: 'pointer',

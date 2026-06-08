@@ -132,7 +132,7 @@ export default function Page8() {
 
     const onMatchEnd = (data: { winnerId: string; hostScore: number; invitedScore: number }) => {
       clearMatch()
-      navigate('/page9', { state: data })
+      navigate('/match-winner', { state: data })
     }
 
     socket.on('round:result', onRoundResult)

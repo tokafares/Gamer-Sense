@@ -72,7 +72,7 @@ export default function Page9() {
                 No match result available.
               </p>
               <button
-                onClick={() => navigate('/page7')}
+                onClick={() => navigate('/trivia-invite')}
                 style={{
                   padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                   border: 'none', borderRadius: 6, cursor: 'pointer',
@@ -187,7 +187,7 @@ export default function Page9() {
                 style={{ display: 'flex', justifyContent: 'center' }}
               >
                 <motion.button
-                  onClick={() => navigate('/page7')}
+                  onClick={() => navigate('/trivia-invite')}
                   whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
                   style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'block' }}
                 >
