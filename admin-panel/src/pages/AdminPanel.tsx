@@ -10,6 +10,7 @@ interface AdminQuestion {
   lane: string
   text: string
   hint: string | null
+  imageUrl: string | null
   options: { id: string; text: string }[]
   correctAnswer: string
   explanation: string
@@ -164,6 +165,7 @@ const EMPTY_QUESTION = {
   lane: 'top',
   text: '',
   hint: '',
+  imageUrl: '',
   options: [
     { id: 'A', text: '' },
     { id: 'B', text: '' },
@@ -200,6 +202,7 @@ function QuestionsTab() {
       lane: q.lane,
       text: q.text,
       hint: q.hint ?? '',
+      imageUrl: q.imageUrl ?? '',
       options: q.options as typeof EMPTY_QUESTION.options,
       correctAnswer: q.correctAnswer,
       explanation: q.explanation,
@@ -218,7 +221,7 @@ function QuestionsTab() {
 
   async function handleSubmit() {
     try {
-      const body = { ...form, hint: form.hint || undefined }
+      const body = { ...form, hint: form.hint || null, imageUrl: form.imageUrl || null }
       if (editId) {
         await apiPut(`/admin/questions/${editId}`, body)
         setMsg({ type: 'ok', text: 'Question updated.' })
@@ -300,6 +303,29 @@ function QuestionsTab() {
 
           <label style={S.label}>HINT (optional)</label>
           <input style={S.input} value={form.hint} onChange={e => setForm(f => ({ ...f, hint: e.target.value }))} />
+
+          {(form.type === 'blitz' || form.type === 'trivia') && (
+            <>
+              <label style={S.label}>IMAGE URL (optional)</label>
+              <input
+                style={S.input}
+                placeholder="https://res.cloudinary.com/... or https://..."
+                value={form.imageUrl}
+                onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+              />
+            </>
+          )}
+          {form.type === 'scenario' && (
+            <>
+              <label style={S.label}>VIDEO URL (optional)</label>
+              <input
+                style={S.input}
+                placeholder="https://res.cloudinary.com/....mp4"
+                value={form.imageUrl}
+                onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+              />
+            </>
+          )}
 
           {form.options.map((o, i) => (
             <div key={o.id}>
