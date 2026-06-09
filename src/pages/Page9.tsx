@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header        from '../components/Header'
@@ -47,7 +47,7 @@ export default function Page9() {
 
   // My card always left, opponent always right
   // Trophy + WINNER text follows whoever actually won
-  const cards = [
+  const cards = useMemo(() => [
     {
       avatar:   myAvatar,
       username: myUsername,
@@ -60,7 +60,7 @@ export default function Page9() {
       score:    theirScore,
       isWinner: !iWon,
     },
-  ]
+  ], [myAvatar, myUsername, myScore, iWon, theirScore])
 
   return (
     <>

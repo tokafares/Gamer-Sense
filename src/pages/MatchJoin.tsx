@@ -49,10 +49,10 @@ export default function MatchJoin() {
         socket.on('match:waiting', () => {
           if (!cancelled) setStatus('waiting')
         })
-        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
+        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[]; gtrRoundIds?: string[] }) => {
           if (cancelled) return
           navigating = true
-          setMatchStart(d.matchId, d.questions, false)
+          setMatchStart(d.matchId, d.questions, false, d.gtrRoundIds ?? [])
           setStatus('starting')
           // Route based on match mode: GTR → /match, Trivia → /trivia
           navigate(mode === 'gtr' ? '/match' : '/trivia')

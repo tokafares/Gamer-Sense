@@ -34,13 +34,14 @@ interface GameState {
   matchId: string | null
   matchQuestions: MatchQuestion[]
   isHost: boolean | undefined
+  gtrRoundIds: string[]
 }
 
 interface GameActions {
   submitAnswer: (answer: AnswerRecord) => void
   addPoints: (pts: number) => void
   setGTRResult: (data: GTRResultData) => void
-  setMatchStart: (matchId: string, questions: MatchQuestion[], isHost?: boolean) => void
+  setMatchStart: (matchId: string, questions: MatchQuestion[], isHost?: boolean, gtrRoundIds?: string[]) => void
   clearMatch: () => void
   resetGame: () => void
 }
@@ -55,6 +56,7 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
   matchId: null,
   matchQuestions: [],
   isHost: undefined,
+  gtrRoundIds: [],
 
   submitAnswer: (answer) =>
     set((state) => ({
@@ -70,11 +72,11 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
 
   setGTRResult: (data) => set({ gtrResult: data }),
 
-  setMatchStart: (matchId, questions, isHost?) =>
-    set({ matchId, matchQuestions: questions, totalRounds: questions.length || 3, isHost }),
+  setMatchStart: (matchId, questions, isHost?, gtrRoundIds?) =>
+    set({ matchId, matchQuestions: questions, totalRounds: questions.length || 3, isHost, gtrRoundIds: gtrRoundIds ?? [] }),
 
   clearMatch: () =>
-    set({ matchId: null, matchQuestions: [], isHost: undefined }),
+    set({ matchId: null, matchQuestions: [], isHost: undefined, gtrRoundIds: [] }),
 
   resetGame: () =>
     set({
@@ -86,5 +88,6 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
       matchId: null,
       matchQuestions: [],
       isHost: undefined,
+      gtrRoundIds: [],
     }),
 }))

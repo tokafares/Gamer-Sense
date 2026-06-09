@@ -119,10 +119,10 @@ export default function GtrInvite() {
         socket.on('match:waiting', () => {
           if (!cancelled) setStatus('waiting')
         })
-        socket.on('match:start', (d: { matchId: string; questions: [] }) => {
+        socket.on('match:start', (d: { matchId: string; questions: []; gtrRoundIds?: string[] }) => {
           if (cancelled) return
           navigating = true
-          setMatchStart(d.matchId, [])
+          setMatchStart(d.matchId, [], true, d.gtrRoundIds ?? [])
           setStatus('ready')
           navigate('/match')
         })

@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
 import prisma from '../lib/prisma'
 import redis from '../lib/redis'
+import { getRandomRound } from './gtrService'
 
 const TOKEN_TTL = 600 // 10 minutes
 const STATE_TTL = 7200 // 2 hours
 const TRIVIA_QUESTION_COUNT = 5
+const GTR_ROUND_COUNT = 3
 
 // ── Redis key helpers ─────────────────────────────────────────────────────────
 
@@ -33,6 +35,8 @@ export interface MatchState {
   // answers[roundIndex][userId] = selected answer
   answers: Record<number, Record<string, string>>
   status: 'waiting' | 'active' | 'completed'
+  // GTR duel: pre-selected round IDs so both players see the same videos
+  gtrRoundIds?: string[]
 }
 
 // ── REST handlers ─────────────────────────────────────────────────────────────
@@ -117,6 +121,8 @@ export async function initMatchState(
 ): Promise<MatchState> {
   let questions: MatchQuestion[] = []
 
+  let gtrRoundIds: string[] | undefined
+
   if (mode === 'trivia') {
     // Pull random trivia questions for the match
     const rows = await prisma.question.findMany({
@@ -132,6 +138,18 @@ export async function initMatchState(
       correctAnswer: q.correctAnswer,
       explanation: q.explanation,
     }))
+  } else if (mode === 'gtr') {
+    // Pre-select rounds so both players watch the same videos
+    const rounds: string[] = []
+    const seenIds = new Set<string>()
+    for (let i = 0; i < GTR_ROUND_COUNT; i++) {
+      // Up to 10 attempts to avoid duplicates
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const r = await getRandomRound()
+        if (!seenIds.has(r.id)) { seenIds.add(r.id); rounds.push(r.id); break }
+      }
+    }
+    gtrRoundIds = rounds
   }
 
   const state: MatchState = {
@@ -145,6 +163,7 @@ export async function initMatchState(
     invitedScore: 0,
     answers: {},
     status: 'active',
+    gtrRoundIds,
   }
 
   await saveState(state)

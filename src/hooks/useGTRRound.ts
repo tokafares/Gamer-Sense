@@ -24,7 +24,8 @@ export interface VoteResult {
 }
 
 // roundIndex (1-based) triggers a new fetch whenever it changes
-export function useGTRRound(roundIndex: number) {
+// roundId: when provided (duel mode), fetches that specific round instead of random
+export function useGTRRound(roundIndex: number, roundId?: string) {
   const [round,   setRound]   = useState<GTRRound | null>(null)
   const [stats,   setStats]   = useState<GTRStats | null>(null)
   const [voted,   setVoted]   = useState(false)
@@ -44,7 +45,8 @@ export function useGTRRound(roundIndex: number) {
     let cancelled = false
     setLoading(true)
 
-    apiGet<GTRRound>('/gtr/round')
+    const url = roundId ? `/gtr/round/${roundId}` : '/gtr/round'
+    apiGet<GTRRound>(url)
       .then(data => { if (!cancelled) { setRound(data); setLoading(false) } })
       .catch((err: unknown) => {
         if (!cancelled) {
@@ -54,7 +56,7 @@ export function useGTRRound(roundIndex: number) {
       })
 
     return () => { cancelled = true }
-  }, [roundIndex])
+  }, [roundIndex, roundId])
 
   const submitVote = useCallback(async (votedRank: string) => {
     if (!round || voted) return

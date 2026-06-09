@@ -47,7 +47,7 @@ export default function Page11() {
   const [selected,    setSelected]    = useState<number | null>(null)
   const [localRound,  setLocalRound]  = useState(1)
   const [advancing,   setAdvancing]   = useState(false)
-  const { points, opponentScore, gtrResult, matchId, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
+  const { points, opponentScore, gtrResult, matchId, gtrRoundIds, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
   const isDuel = !!matchId
@@ -58,10 +58,12 @@ export default function Page11() {
   // Reset game state on first mount for solo mode
   useEffect(() => {
     if (!isDuel) resetGame()
+    return () => { if (matchEndTimeout.current) clearTimeout(matchEndTimeout.current) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound(localRound)
+  const duelRoundId = isDuel ? (gtrRoundIds[localRound - 1] ?? undefined) : undefined
+  const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound(localRound, duelRoundId)
 
   const handleSubmit = useCallback(() => {
     if (selected === null || !round || voted) return
@@ -97,7 +99,21 @@ export default function Page11() {
       if (isDuel && matchId && !voteEmitted.current) {
         voteEmitted.current = true
         connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
-        // Wait for match:end socket event
+        // Fallback: if match:end never arrives within 12s, navigate anyway
+        matchEndTimeout.current = setTimeout(() => {
+          const capturedIsHost = useGameStore.getState().isHost
+          clearMatch()
+          disconnectSocket()
+          navigate('/match-winner', {
+            state: {
+              winnerId: '',
+              hostScore: 0,
+              invitedScore: 0,
+              isHost: capturedIsHost,
+              gameType: 'gtr',
+            },
+          })
+        }, 12000)
       } else if (!isDuel) {
         setTimeout(() => navigate('/results'), 2500)
       }
@@ -106,16 +122,19 @@ export default function Page11() {
   }, [voteResult, stats])
 
   // In duel mode: listen for match:end and navigate to winner screen
+  const matchEndTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     if (!isDuel || !matchId) return
     const socket = connectSocket()
-    socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
+    const onMatchEnd = (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
+      if (matchEndTimeout.current) clearTimeout(matchEndTimeout.current)
       clearMatch()
       disconnectSocket()
       const capturedIsHost = useGameStore.getState().isHost
       navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost } })
-    })
-    return () => { socket.off('match:end') }
+    }
+    socket.on('match:end', onMatchEnd)
+    return () => { socket.off('match:end', onMatchEnd) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDuel, matchId])
 

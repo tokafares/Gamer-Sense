@@ -24,6 +24,9 @@ const matchLocks = new Map<string, Promise<void>>()
 // GTR duel vote tracking — matchId → { userId → pointsEarned }
 const gtrVotes = new Map<string, Map<string, number>>()
 
+// GTR vote timeout handles — fires match:end if second vote never arrives
+const gtrVoteTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+
 function withMatchLock<T>(matchId: string, fn: () => Promise<T>): Promise<T> {
   const current = matchLocks.get(matchId) ?? Promise.resolve()
   let unlock!: () => void
@@ -171,6 +174,9 @@ export function registerMatchHandler(io: Server) {
           const match = await prisma.match.findUnique({ where: { id: matchId } })
           if (!match || match.mode !== 'gtr' || !match.invitedId) return
 
+          // Skip if already finalized
+          if (match.status === 'completed') return
+
           if (!gtrVotes.has(matchId)) gtrVotes.set(matchId, new Map())
           const votes = gtrVotes.get(matchId)!
 
@@ -179,21 +185,37 @@ export function registerMatchHandler(io: Server) {
             votes.set(meta.userId, pointsEarned)
           }
 
-          // When both players have voted, resolve match
-          if (votes.has(match.hostId) && votes.has(match.invitedId)) {
-            const hostScore    = votes.get(match.hostId)!
-            const invitedScore = votes.get(match.invitedId)!
+          const resolveMatch = async (hScore: number, iScore: number) => {
+            if (gtrVoteTimeouts.has(matchId)) {
+              clearTimeout(gtrVoteTimeouts.get(matchId)!)
+              gtrVoteTimeouts.delete(matchId)
+            }
             gtrVotes.delete(matchId)
 
-            await finalizeGTRMatch(matchId, match.hostId, match.invitedId, hostScore, invitedScore)
+            await finalizeGTRMatch(matchId, match.hostId, match.invitedId!, hScore, iScore)
             await invalidateLeaderboardCache()
 
-            const winnerId = hostScore >= invitedScore ? match.hostId : match.invitedId
-            io.to(roomId(matchId)).emit('match:end', {
-              winnerId,
-              hostScore,
-              invitedScore,
-            })
+            const winnerId = hScore >= iScore ? match.hostId : match.invitedId!
+            io.to(roomId(matchId)).emit('match:end', { winnerId, hostScore: hScore, invitedScore: iScore })
+          }
+
+          // Both players voted — resolve immediately
+          if (votes.has(match.hostId) && votes.has(match.invitedId)) {
+            await resolveMatch(votes.get(match.hostId)!, votes.get(match.invitedId)!)
+            return
+          }
+
+          // First vote arrived — start fallback timeout for missing player (15s)
+          if (!gtrVoteTimeouts.has(matchId)) {
+            gtrVoteTimeouts.set(matchId, setTimeout(() => {
+              void withMatchLock(matchId, async () => {
+                const currentVotes = gtrVotes.get(matchId)
+                if (!currentVotes) return // already resolved
+                const hScore = currentVotes.get(match.hostId) ?? 0
+                const iScore = currentVotes.get(match.invitedId!) ?? 0
+                await resolveMatch(hScore, iScore)
+              })
+            }, 15_000))
           }
         })
       },
@@ -235,7 +257,15 @@ export function registerMatchHandler(io: Server) {
         const sockets = matchSockets.get(meta.matchId)
         if (sockets) {
           sockets.delete(socket.id)
-          if (sockets.size === 0) matchSockets.delete(meta.matchId)
+          if (sockets.size === 0) {
+            matchSockets.delete(meta.matchId)
+            // If both players disconnected, cancel any pending GTR vote timeout
+            if (gtrVoteTimeouts.has(meta.matchId)) {
+              clearTimeout(gtrVoteTimeouts.get(meta.matchId)!)
+              gtrVoteTimeouts.delete(meta.matchId)
+            }
+            gtrVotes.delete(meta.matchId)
+          }
         }
         socketMeta.delete(socket.id)
       }
@@ -288,7 +318,11 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
     options: q.options,
   }))
 
-  io.to(roomId(matchId)).emit('match:start', { matchId, questions: safeQuestions })
+  io.to(roomId(matchId)).emit('match:start', {
+    matchId,
+    questions: safeQuestions,
+    gtrRoundIds: state.gtrRoundIds ?? [],
+  })
 
   // Only push round:question for trivia mode (GTR players fetch rounds via REST)
   if (match.mode === 'trivia' && state.questions.length > 0) {

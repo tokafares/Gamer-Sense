@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { authGuard } from '../middleware/authGuard'
 import { getRandomRound, getRoundStats, submitVote } from '../services/gtrService'
+import prisma from '../lib/prisma'
 
 interface VoteBody {
   votedRank: string
@@ -20,6 +21,21 @@ export async function gtrRoutes(app: FastifyInstance) {
       return reply.status(e.statusCode ?? 500).send({ error: e.message })
     }
   })
+
+  app.get<{ Params: RoundParams }>(
+    '/gtr/round/:roundId',
+    { preHandler: authGuard },
+    async (request, reply) => {
+      try {
+        const round = await prisma.gTRRound.findUnique({ where: { id: request.params.roundId } })
+        if (!round) return reply.status(404).send({ error: 'Round not found' })
+        return reply.send(round)
+      } catch (err: unknown) {
+        const e = err as Error & { statusCode?: number }
+        return reply.status(e.statusCode ?? 500).send({ error: e.message })
+      }
+    },
+  )
 
   app.get<{ Params: RoundParams }>(
     '/gtr/:roundId/stats',

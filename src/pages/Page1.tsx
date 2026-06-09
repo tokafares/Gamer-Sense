@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { motion, useReducedMotion } from 'framer-motion'
@@ -22,7 +23,7 @@ const offerCards = [
 ]
 
 /* ─── Riot Games logo ─────────────────────────────────── */
-const RiotLogo = () => (
+const RiotLogo = memo(() => (
   <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-label="Riot Games logo">
     <polygon points="28,3 53,16 53,40 28,53 3,40 3,16" fill="#C8102E" />
     <polygon points="28,10 46,19 46,37 28,46 10,37 10,19" fill="#8B0000" />
@@ -35,14 +36,14 @@ const RiotLogo = () => (
       fontWeight="900"
     >R</text>
   </svg>
-)
+))
 
 /* ─── play icon ────────────────────────────────────────── */
-const PlayIcon = ({ size = 14 }: { size?: number }) => (
+const PlayIcon = memo(({ size = 14 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 14 14" fill="currentColor" aria-hidden>
     <polygon points="0,0 14,7 0,14" />
   </svg>
-)
+))
 
 /* ─── page ────────────────────────────────────────────── */
 
