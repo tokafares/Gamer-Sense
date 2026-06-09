@@ -51,7 +51,9 @@ export default function Page11() {
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
   const isDuel = !!matchId
+  // Reset per-round when localRound changes so each round can emit its vote
   const voteEmitted = useRef(false)
+  useEffect(() => { voteEmitted.current = false }, [localRound])
 
   // Reset game state on first mount for solo mode
   useEffect(() => {
@@ -86,20 +88,19 @@ export default function Page11() {
     if (isDuel && matchId && !voteEmitted.current) {
       voteEmitted.current = true
       connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
-      // Wait for match:end — backend drives next round in duel mode
-    } else if (!isDuel) {
-      if (localRound < TOTAL_GTR_ROUNDS) {
-        // Show result briefly, then advance to next round
-        setAdvancing(true)
-        setTimeout(() => {
-          setAdvancing(false)
-          setLocalRound(r => r + 1)
-        }, 2500)
-      } else {
-        // All 3 rounds done — go to results
-        setTimeout(() => navigate('/results'), 2500)
-      }
     }
+
+    // Both solo and duel advance rounds locally; duel waits for match:end only after final round
+    if (localRound < TOTAL_GTR_ROUNDS) {
+      setAdvancing(true)
+      setTimeout(() => {
+        setAdvancing(false)
+        setLocalRound(r => r + 1)
+      }, 2500)
+    } else if (!isDuel) {
+      setTimeout(() => navigate('/results'), 2500)
+    }
+    // duel final round: stay put and wait for match:end socket event
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
 
