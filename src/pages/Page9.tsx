@@ -7,7 +7,6 @@ import SeparatorLine from '../assets/Rectangle 6.svg'
 import WinnerCup     from '../assets/Group 323.png'
 import CardBg        from '../assets/DialogBg.svg'
 import CardFrame     from '../assets/Group 282.svg'
-import BadgeWinner   from '../assets/Group 321.svg'
 import BadgeWide     from '../assets/Group 322.svg'
 import { useAuthStore } from '../store/authStore'
 
@@ -85,7 +84,6 @@ export default function Page9() {
                 className="font-beaufort font-bold"
                 style={{
                   fontSize: 72, lineHeight: 1, margin: 0,
-                  letterSpacing: '0.08em',
                   background: iWon
                     ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
                     : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
@@ -98,7 +96,7 @@ export default function Page9() {
               </h1>
               <p style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 16, letterSpacing: '0.12em', textTransform: 'uppercase',
+                fontSize: 16, textTransform: 'uppercase',
                 color: iWon ? '#3AF9FF' : '#8FA3C0',
                 marginTop: 10, marginBottom: 0,
               }}>
@@ -250,7 +248,6 @@ export default function Page9() {
                           className="font-beaufort font-bold"
                           style={{
                             fontSize: card.isWinner ? 42 : 28,
-                            letterSpacing: '0.1em',
                             lineHeight: 1,
                             textTransform: 'uppercase',
                             background: card.isWinner
@@ -270,7 +267,6 @@ export default function Page9() {
                             style={{
                               fontSize: 16,
                               color: '#3AF9FF',
-                              letterSpacing: '0.08em',
                               marginTop: 4,
                             }}
                           >
@@ -281,27 +277,20 @@ export default function Page9() {
                     </div>
 
                     {/* ── Correct answers badge ── */}
-                    <div style={{ position: 'relative', width: 220, height: 52, flexShrink: 0 }}>
-                      <img
-                        src={card.isWinner ? BadgeWinner : BadgeWide}
-                        alt=""
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-                      />
-                      {/* cover baked-in SVG text — inset matches stroke width so border stays visible */}
-                      <div style={{ position: 'absolute', inset: '4px 5px', background: '#0F1E2D' }} />
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <span
-                          className="font-beaufort font-bold"
-                          style={{
-                            fontSize: 16, color: '#E8EDF5', letterSpacing: '0.08em',
-                          }}
-                        >
-                          {card.score} Correct Answers
-                        </span>
-                      </div>
+                    <div style={{
+                      width: 220, height: 52, flexShrink: 0,
+                      background: '#0F1E2D',
+                      border: '2px solid',
+                      borderImageSource: 'linear-gradient(to bottom, #3AF9FF, #00A7AD)',
+                      borderImageSlice: 1,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span
+                        className="font-beaufort font-bold"
+                        style={{ fontSize: 16, color: '#E8EDF5' }}
+                      >
+                        {card.score} Correct Answers
+                      </span>
                     </div>
                   </motion.div>
                 ))}
