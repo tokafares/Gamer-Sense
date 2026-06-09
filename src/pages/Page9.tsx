@@ -6,6 +6,7 @@ import Footer        from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import WinnerCup     from '../assets/Group 323.png'
 import CardBg        from '../assets/DialogBg.svg'
+import CardFrame     from '../assets/Group 282.svg'
 import BadgeWinner   from '../assets/Group 321.svg'
 import BadgeWide     from '../assets/Group 322.svg'
 import { useAuthStore } from '../store/authStore'
@@ -17,14 +18,14 @@ interface MatchResultState {
   isHost?:      boolean
 }
 
-// DialogBg natural ratio: 441 × 504
-const CARD_W    = 260
-const CARD_H    = Math.round(CARD_W * 504 / 441)   // ≈ 297
-// Image frame sits inside the card — leave space for label area at bottom
-const IMG_W     = Math.round(CARD_W * 0.88)
-const IMG_H     = Math.round(CARD_H * 0.72)
-const IMG_LEFT  = Math.round((CARD_W - IMG_W) / 2)
-const IMG_TOP   = Math.round(CARD_H * 0.04)
+// DialogBg actual SVG: 783 × 702 — stretched to portrait card, fine since it's a filled polygon
+const CARD_W     = 260
+const CARD_H     = 340
+// Group 282 is a square frame — fits inside the card with space for the label below
+const FRAME_SIZE = 210
+const FRAME_TOP  = 16
+const FRAME_LEFT = Math.round((CARD_W - FRAME_SIZE) / 2)  // 25
+const LABEL_TOP  = FRAME_TOP + FRAME_SIZE + 10             // 236
 
 export default function Page9() {
   const reduced  = useReducedMotion()
@@ -172,14 +173,14 @@ export default function Page9() {
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                       />
 
-                      {/* Image area: avatar + optional trophy + Group 282 border */}
+                      {/* ── Image frame area (Group 282 + photo/trophy inside) ── */}
                       <div style={{
                         position: 'absolute',
-                        top: IMG_TOP, left: IMG_LEFT,
-                        width: IMG_W, height: IMG_H,
+                        top: FRAME_TOP, left: FRAME_LEFT,
+                        width: FRAME_SIZE, height: FRAME_SIZE,
                         overflow: 'hidden',
                       }}>
-                        {/* Avatar — winner: blurred for trophy overlay; loser: generic placeholder or grayscale */}
+                        {/* Avatar or placeholder fills the frame */}
                         {card.avatar ? (
                           <img
                             src={card.avatar}
@@ -194,13 +195,12 @@ export default function Page9() {
                             }}
                           />
                         ) : (
-                          /* Generic placeholder when opponent avatar is unknown */
                           <div style={{
                             position: 'absolute', inset: 0,
                             background: 'linear-gradient(180deg, #0D1F3C 0%, #060F1E 100%)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                           }}>
-                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
                               <circle cx="12" cy="8" r="4" fill="#1E3A5F"/>
                               <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#1E3A5F" strokeWidth="2" strokeLinecap="round"/>
                             </svg>
@@ -216,7 +216,7 @@ export default function Page9() {
                               position: 'absolute',
                               top: '50%', left: '50%',
                               transform: 'translate(-50%, -50%)',
-                              width: '72%', height: 'auto',
+                              width: '75%', height: 'auto',
                               objectFit: 'contain',
                               filter: 'drop-shadow(0 0 16px rgba(0,201,167,0.6))',
                               pointerEvents: 'none',
@@ -224,13 +224,23 @@ export default function Page9() {
                           />
                         )}
 
+                        {/* Group 282 — transparent decorative border frame on top */}
+                        <img
+                          src={CardFrame}
+                          alt=""
+                          style={{
+                            position: 'absolute', inset: 0,
+                            width: '100%', height: '100%',
+                            pointerEvents: 'none',
+                          }}
+                        />
                       </div>
 
                       {/* Bottom label area inside card */}
                       <div style={{
                         position: 'absolute',
-                        bottom: 0, left: 0, right: 0,
-                        height: CARD_H - IMG_TOP - IMG_H,
+                        top: LABEL_TOP, left: 0, right: 0,
+                        bottom: 0,
                         display: 'flex', flexDirection: 'column',
                         alignItems: 'center', justifyContent: 'center',
                         gap: 2, padding: '0 8px',
