@@ -7,7 +7,6 @@ import SeparatorLine from '../assets/Rectangle 6.svg'
 import GrayProfile   from '../assets/gray profile.webp'
 import WinnerCup     from '../assets/Group 323.png'
 import CardBg        from '../assets/DialogBg.svg'
-import CardFrame     from '../assets/Group 282.svg'
 import BadgeWinner   from '../assets/Group 321.svg'
 import BadgeWide     from '../assets/Group 322.svg'
 import { useAuthStore } from '../store/authStore'
@@ -211,16 +210,6 @@ export default function Page9() {
                           />
                         )}
 
-                        {/* Group 282 decorative border overlay */}
-                        <img
-                          src={CardFrame}
-                          alt=""
-                          style={{
-                            position: 'absolute', inset: 0,
-                            width: '100%', height: '100%',
-                            pointerEvents: 'none',
-                          }}
-                        />
                       </div>
 
                       {/* Bottom label area inside card */}
@@ -269,6 +258,8 @@ export default function Page9() {
                         alt=""
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                       />
+                      {/* cover baked-in SVG text */}
+                      <div style={{ position: 'absolute', inset: '5px', background: '#0F1E2D' }} />
                       <div style={{
                         position: 'absolute', inset: 0,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -306,6 +297,8 @@ export default function Page9() {
                     alt=""
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                   />
+                  {/* cover baked-in SVG text */}
+                  <div style={{ position: 'absolute', inset: '5px', background: '#0F1E2D' }} />
                   <span
                     className="font-beaufort font-bold"
                     style={{
