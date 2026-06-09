@@ -109,12 +109,14 @@ export default function Page8() {
   }, [locked, isMatchMode])
 
   // Solo mode question fetch — disabled when in match mode
-  const { question: soloQuestion, loading, error } = useQuestions(
+  const { question: soloQuestion, loading: soloLoading, error } = useQuestions(
     isMatchMode ? '' : 'trivia',
     isMatchMode ? '' : activeLane,
     refreshKey
   )
 
+  // In match mode useQuestions never clears loading, so gate only on solo
+  const loading  = !isMatchMode && soloLoading
   const question = isMatchMode ? currentMatchQuestion : soloQuestion
 
   // ── Socket setup for 1v1 match ──
