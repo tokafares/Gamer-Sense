@@ -45,20 +45,20 @@ export default function Page9() {
   const myUsername = user?.username ?? 'You'
   const myAvatar   = user?.avatarUrl ?? null
 
-  // Winner always on the left, loser on the right
-  // Opponent avatar is never known — use null to render a generic placeholder
+  // My card always left, opponent always right
+  // Trophy + WINNER text follows whoever actually won
   const cards = [
     {
-      avatar:   iWon ? myAvatar : null,
-      username: iWon ? myUsername : 'Opponent',
-      score:    iWon ? myScore    : theirScore,
-      isWinner: true,
+      avatar:   myAvatar,
+      username: myUsername,
+      score:    myScore,
+      isWinner: iWon,
     },
     {
-      avatar:   iWon ? null : myAvatar,
-      username: iWon ? 'Opponent'  : myUsername,
-      score:    iWon ? theirScore  : myScore,
-      isWinner: false,
+      avatar:   null,
+      username: 'Opponent',
+      score:    theirScore,
+      isWinner: !iWon,
     },
   ]
 
@@ -155,7 +155,7 @@ export default function Page9() {
                 {cards.map((card, idx) => (
                   <motion.div
                     key={idx}
-                    initial={reduced ? false : { opacity: 0, x: card.isWinner ? -80 : 80 }}
+                    initial={reduced ? false : { opacity: 0, x: idx === 0 ? -80 : 80 }}
                     animate={{ opacity: card.isWinner ? 1 : 0.55, x: 0 }}
                     transition={{ duration: 0.65, delay: 0.3 + idx * 0.15, ease: 'easeOut' }}
                     style={{
