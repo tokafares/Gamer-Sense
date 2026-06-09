@@ -7,6 +7,7 @@ import { useQuestions } from '../hooks/useQuestions'
 import { useScenarioVideo } from '../hooks/useScenarioVideo'
 import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
+import QuestionMedia from '../components/QuestionMedia'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -179,46 +180,42 @@ export default function Page3() {
               transition={{ duration: 0.5, delay: 0.15 }}
               style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: '#060F1E', borderRadius: 6, overflow: 'hidden', border: '1px solid #1E3A5F' }}
             >
-              {scenarioVideo && isYouTube ? (
-                <iframe
-                  key={scenarioVideo.id}
-                  src={`${scenarioVideo.url}?rel=0&modestbranding=1&autoplay=1&mute=1`}
-                  title="Scenario"
-                  width="100%"
-                  height="100%"
-                  style={{ display: 'block', border: 'none', position: 'absolute', inset: 0 }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : scenarioVideo && isCloudinaryVid ? (
-                <video
-                  key={scenarioVideo.id}
-                  src={scenarioVideo.url}
-                  autoPlay
-                  muted
-                  loop
-                  controls
-                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : scenarioVideo ? (
-                <img
-                  key={scenarioVideo.id}
-                  src={scenarioVideo.url}
-                  alt=""
-                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                /* Fallback video shown when no lane-specific video is configured */
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  controls
-                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
-                >
-                  <source src="https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863160/WrEVCEHkaBzd6FlVB8_ugA_f3x5x0.mp4" type="video/mp4" />
-                </video>
-              )}
+              <QuestionMedia
+                imageUrl={question?.imageUrl}
+                fallback={
+                  scenarioVideo && isYouTube ? (
+                    <iframe
+                      key={scenarioVideo.id}
+                      src={`${scenarioVideo.url}?rel=0&modestbranding=1&autoplay=1&mute=1`}
+                      title="Scenario"
+                      width="100%"
+                      height="100%"
+                      style={{ display: 'block', border: 'none', position: 'absolute', inset: 0 }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : scenarioVideo && isCloudinaryVid ? (
+                    <video
+                      key={scenarioVideo.id}
+                      src={scenarioVideo.url}
+                      autoPlay muted loop controls
+                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : scenarioVideo ? (
+                    <img
+                      key={scenarioVideo.id}
+                      src={scenarioVideo.url}
+                      alt=""
+                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <video autoPlay muted loop controls
+                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}>
+                      <source src="https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863160/WrEVCEHkaBzd6FlVB8_ugA_f3x5x0.mp4" type="video/mp4" />
+                    </video>
+                  )
+                }
+              />
             </motion.div>
 
             {/* RIGHT — Q&A panel (Group 270 as unified background) */}

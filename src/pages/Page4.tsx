@@ -7,6 +7,7 @@ import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { useQuestions } from '../hooks/useQuestions'
 import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
+import QuestionMedia from '../components/QuestionMedia'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -251,8 +252,15 @@ export default function Page4() {
             >
               <img src={DialogBgSvg} alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-              <img src={GameArtwork} alt=""
-                style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
+              <div style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', overflow: 'hidden', borderRadius: 4 }}>
+                <QuestionMedia
+                  imageUrl={question?.imageUrl}
+                  fallback={
+                    <img src={GameArtwork} alt=""
+                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
+                  }
+                />
+              </div>
             </motion.div>
 
             {/* RIGHT — Q&A panel (Group 270 as unified background) */}

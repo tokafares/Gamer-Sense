@@ -9,6 +9,7 @@ import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 import { useAuthStore } from '../store/authStore'
 import { connectSocket } from '../lib/socket'
+import QuestionMedia from '../components/QuestionMedia'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -373,8 +374,15 @@ export default function Page8() {
             >
               <img src={DialogBgSvg} alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-              <img src={GameArtwork} alt=""
-                style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
+              <div style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', overflow: 'hidden', borderRadius: 4 }}>
+                <QuestionMedia
+                  imageUrl={soloQuestion?.imageUrl}
+                  fallback={
+                    <img src={GameArtwork} alt=""
+                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
+                  }
+                />
+              </div>
 
               {/* Waiting overlay */}
               <AnimatePresence>

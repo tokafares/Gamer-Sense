@@ -8,6 +8,7 @@ export interface Question {
   type: string
   lane: string
   text: string
+  imageUrl: string | null
   hint: string | null
   options: Answer[]
   correctAnswer: string
