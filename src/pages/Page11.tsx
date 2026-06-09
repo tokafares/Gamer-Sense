@@ -18,6 +18,7 @@ import RankTile8     from '../assets/Group 355.svg'
 import RankTile9     from '../assets/Group 356.svg'
 import SubmitBtn     from '../assets/submit button 359.svg'
 import { useGameStore } from '../store/gameStore'
+import { useAuthStore } from '../store/authStore'
 import { useGTRRound }  from '../hooks/useGTRRound'
 import { connectSocket, disconnectSocket } from '../lib/socket'
 
@@ -42,7 +43,8 @@ export default function Page11() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const [selected, setSelected] = useState<number | null>(null)
-  const { currentRound, totalRounds, points, gtrResult, matchId, setGTRResult, clearMatch } = useGameStore()
+  const { currentRound, totalRounds, points, opponentScore, gtrResult, matchId, setGTRResult, clearMatch } = useGameStore()
+  const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
   const isDuel = !!matchId
   const voteEmitted = useRef(false)
@@ -117,6 +119,67 @@ export default function Page11() {
           position: 'relative',
           zIndex: 1,
         }}>
+
+          {/* ── 1v1 scoreboard — duel mode only ── */}
+          {isDuel && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                background: '#0A1628', border: '1px solid #1E3A5F',
+                borderRadius: 8, padding: '14px 28px', marginBottom: 12,
+              }}
+            >
+              {/* My side */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  background: '#1E3A5F', overflow: 'hidden', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="8" r="4" fill="#3AF9FF" opacity="0.5"/>
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#3AF9FF" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+                    </svg>
+                  )}
+                </div>
+                <div>
+                  <div className="font-beaufort font-bold" style={{ fontSize: 15, color: '#E8EDF5', lineHeight: 1 }}>{user?.username ?? 'You'}</div>
+                  <div className="font-beaufort font-bold" style={{ fontSize: 26, color: '#3AF9FF', lineHeight: 1.1 }}>{points}</div>
+                </div>
+              </div>
+
+              {/* VS */}
+              <span className="font-beaufort font-bold" style={{
+                fontSize: 36, fontStyle: 'italic',
+                background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              }}>VS</span>
+
+              {/* Opponent side */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexDirection: 'row-reverse' }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  background: '#1E3A5F', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="4" fill="#8FA3C0" opacity="0.5"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#8FA3C0" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+                  </svg>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className="font-beaufort font-bold" style={{ fontSize: 15, color: '#E8EDF5', lineHeight: 1 }}>Opponent</div>
+                  <div className="font-beaufort font-bold" style={{ fontSize: 26, color: '#8FA3C0', lineHeight: 1.1 }}>{opponentScore}</div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* ── Round bar ── */}
           <motion.div
@@ -300,7 +363,34 @@ export default function Page11() {
             </div>
           </motion.div>
 
-          {/* ── Submit button — hidden after voting (redirects to /page9) ── */}
+          {/* ── Waiting for opponent — duel mode, after voting ── */}
+          {voted && isDuel && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                gap: 12, marginTop: 24, padding: '20px 0',
+              }}
+            >
+              <motion.div
+                animate={reduced ? {} : { opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                style={{
+                  width: 10, height: 10, borderRadius: '50%', background: '#3AF9FF',
+                }}
+              />
+              <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#8FA3C0' }}>
+                Waiting for opponent…
+              </span>
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#1E3A5F' }}>
+                Results will show when both players have voted
+              </span>
+            </motion.div>
+          )}
+
+          {/* ── Submit button — hidden after voting ── */}
           {!voted && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
               <motion.div
