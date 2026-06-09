@@ -273,10 +273,7 @@ export default function Page3() {
                       style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
-                    <video autoPlay muted loop controls
-                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}>
-                      <source src="https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863160/WrEVCEHkaBzd6FlVB8_ugA_f3x5x0.mp4" type="video/mp4" />
-                    </video>
+                    <div style={{ width: '100%', height: '100%', background: '#060F1E' }} />
                   )
                 }
               />
