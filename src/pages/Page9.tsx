@@ -1,11 +1,14 @@
 import { useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
+import Header        from '../components/Header'
+import Footer        from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import GrayProfile   from '../assets/gray profile.webp'
 import WinnerCup     from '../assets/Group 323.png'
+import CardBg        from '../assets/DialogBg.svg'
+import CardFrame     from '../assets/Group 282.svg'
+import RematchBtn    from '../assets/Group 321 winner btn.svg'
 import { useAuthStore } from '../store/authStore'
 
 interface MatchResultState {
@@ -15,14 +18,20 @@ interface MatchResultState {
   isHost?:      boolean
 }
 
-const CARD_W = 260
-const CARD_H = 280
+// DialogBg natural ratio: 441 × 504
+const CARD_W    = 260
+const CARD_H    = Math.round(CARD_W * 504 / 441)   // ≈ 297
+// Image frame sits inside the card — leave space for label area at bottom
+const IMG_W     = Math.round(CARD_W * 0.88)
+const IMG_H     = Math.round(CARD_H * 0.72)
+const IMG_LEFT  = Math.round((CARD_W - IMG_W) / 2)
+const IMG_TOP   = Math.round(CARD_H * 0.04)
 
 export default function Page9() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const location = useLocation()
-  const { user }  = useAuthStore()
+  const { user } = useAuthStore()
 
   const goTriviaInvite = useCallback(() => navigate('/trivia-invite'), [navigate])
 
@@ -31,19 +40,23 @@ export default function Page9() {
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
 
-  // Winner card is always shown first (left), loser second (right)
-  const winnerCard = {
-    avatar:  iWon ? (user?.avatarUrl ?? GrayProfile) : GrayProfile,
-    label:   iWon ? (user?.username ?? 'You')        : 'Invited Player Profile',
-    score:   iWon ? myScore                          : theirScore,
-    isWinner: true,
-  }
-  const loserCard = {
-    avatar:  iWon ? GrayProfile                      : (user?.avatarUrl ?? GrayProfile),
-    label:   iWon ? 'Invited Player Profile'         : (user?.username ?? 'You'),
-    score:   iWon ? theirScore                       : myScore,
-    isWinner: false,
-  }
+  // Winner always on the left
+  const cards = [
+    {
+      avatar:   iWon ? (user?.avatarUrl ?? GrayProfile) : GrayProfile,
+      label:    'WINNER',
+      subLabel: iWon ? (user?.username ?? 'You') : 'Invited Player',
+      score:    iWon ? myScore    : theirScore,
+      isWinner: true,
+    },
+    {
+      avatar:   iWon ? GrayProfile : (user?.avatarUrl ?? GrayProfile),
+      label:    iWon ? 'Invited Player Profile' : (user?.username ?? 'You'),
+      subLabel: '',
+      score:    iWon ? theirScore : myScore,
+      isWinner: false,
+    },
+  ]
 
   return (
     <>
@@ -51,20 +64,20 @@ export default function Page9() {
 
       <main style={{ paddingTop: '85.2px', background: 'transparent' }}>
         <div style={{
-          maxWidth: 800,
+          maxWidth: 760,
           marginLeft: 'auto',
           marginRight: 'auto',
           padding: '48px 24px 80px',
           textAlign: 'center',
         }}>
 
-          {/* ── VICTORY / DEFEAT heading (kept from previous design) ── */}
+          {/* ── VICTORY / DEFEAT heading ── */}
           {result && (
             <motion.div
               initial={reduced ? false : { opacity: 0, scale: 0.88 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              style={{ marginBottom: 32 }}
+              style={{ marginBottom: 40 }}
             >
               <h1
                 className="font-beaufort font-bold"
@@ -92,24 +105,8 @@ export default function Page9() {
             </motion.div>
           )}
 
-          {/* ── "Winner of the Trivia Match" heading ── */}
-          <motion.h2
-            className="font-beaufort font-bold"
-            initial={reduced ? false : { opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: result ? 0.15 : 0 }}
-            style={{
-              fontSize: 36, lineHeight: 1, margin: '0 0 32px',
-              background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            Winner of the Trivia Match
-          </motion.h2>
-
           {!result ? (
+            /* ── No result state ── */
             <motion.div
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -141,7 +138,7 @@ export default function Page9() {
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.2 }}
+              transition={{ duration: 0.45, delay: 0.15 }}
             >
               {/* ── Two player cards ── */}
               <div style={{
@@ -152,132 +149,171 @@ export default function Page9() {
                 marginBottom: 36,
                 flexWrap: 'wrap',
               }}>
-                {[winnerCard, loserCard].map((card, idx) => (
+                {cards.map((card, idx) => (
                   <motion.div
                     key={idx}
                     initial={reduced ? false : { opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45, delay: 0.25 + idx * 0.1 }}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
+                    transition={{ duration: 0.45, delay: 0.25 + idx * 0.12 }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                   >
-                    {/* Card frame */}
-                    <div style={{
-                      width: CARD_W,
-                      height: CARD_H,
-                      background: '#0D1F3C',
-                      border: '2px solid #1E3A5F',
-                      position: 'relative',
-                      overflow: 'hidden',
-                    }}>
-                      {/* Avatar — blurred for winner, normal for loser */}
+                    {/* ── Card: DialogBg frame ── */}
+                    <div style={{ position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0 }}>
+                      {/* Card background */}
                       <img
-                        src={card.avatar}
-                        alt={card.label}
-                        style={{
-                          display: 'block',
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          objectPosition: 'top center',
-                          filter: card.isWinner ? 'blur(4px) brightness(0.6)' : 'none',
-                        }}
+                        src={CardBg}
+                        alt=""
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                       />
 
-                      {/* Trophy cup overlay — winner card only */}
-                      {card.isWinner && (
+                      {/* Image area: Group 282 frame + avatar inside */}
+                      <div style={{
+                        position: 'absolute',
+                        top: IMG_TOP,
+                        left: IMG_LEFT,
+                        width: IMG_W,
+                        height: IMG_H,
+                      }}>
+                        {/* Avatar */}
                         <img
-                          src={WinnerCup}
-                          alt="Winner Trophy"
+                          src={card.avatar}
+                          alt={card.label}
                           style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: '68%',
-                            height: 'auto',
-                            objectFit: 'contain',
-                            filter: 'drop-shadow(0 0 18px rgba(0,201,167,0.55))',
-                            pointerEvents: 'none',
+                            position: 'absolute', inset: 0,
+                            width: '100%', height: '100%',
+                            objectFit: 'cover', objectPosition: 'top center',
+                            filter: card.isWinner ? 'blur(4px) brightness(0.55)' : 'none',
                           }}
                         />
-                      )}
+
+                        {/* Trophy cup — winner only */}
+                        {card.isWinner && (
+                          <img
+                            src={WinnerCup}
+                            alt="Trophy"
+                            style={{
+                              position: 'absolute',
+                              top: '50%', left: '50%',
+                              transform: 'translate(-50%, -50%)',
+                              width: '72%', height: 'auto',
+                              objectFit: 'contain',
+                              filter: 'drop-shadow(0 0 16px rgba(0,201,167,0.6))',
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        )}
+
+                        {/* Group 282 decorative frame on top */}
+                        <img
+                          src={CardFrame}
+                          alt=""
+                          style={{
+                            position: 'absolute', inset: 0,
+                            width: '100%', height: '100%',
+                            pointerEvents: 'none',
+                            mixBlendMode: 'screen',
+                            opacity: 0.18,
+                          }}
+                        />
+                      </div>
+
+                      {/* Label inside card at bottom */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: 0, left: 0, right: 0,
+                        height: CARD_H - IMG_TOP - IMG_H,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '0 8px',
+                      }}>
+                        <span
+                          className="font-beaufort font-bold"
+                          style={{
+                            fontSize: 18,
+                            letterSpacing: '0.06em',
+                            background: card.isWinner
+                              ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
+                              : 'none',
+                            WebkitBackgroundClip: card.isWinner ? 'text' : undefined,
+                            WebkitTextFillColor: card.isWinner ? 'transparent' : undefined,
+                            backgroundClip:      card.isWinner ? 'text' : undefined,
+                            color: card.isWinner ? undefined : '#E8EDF5',
+                          }}
+                        >
+                          {card.label}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Name label */}
-                    <span
-                      className="font-beaufort font-bold"
-                      style={{
-                        fontSize: 18,
-                        letterSpacing: '0.06em',
-                        background: card.isWinner
-                          ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
-                          : 'none',
-                        WebkitBackgroundClip: card.isWinner ? 'text' : undefined,
-                        WebkitTextFillColor: card.isWinner ? 'transparent' : undefined,
-                        backgroundClip: card.isWinner ? 'text' : undefined,
-                        color: card.isWinner ? undefined : '#E8EDF5',
-                      }}
-                    >
-                      {card.isWinner ? 'WINNER' : card.label}
-                    </span>
-
-                    {/* Correct answers pill */}
-                    <div style={{
-                      background: '#0D1F3C',
-                      border: '1px solid #1E3A5F',
-                      borderRadius: 4,
-                      padding: '5px 16px',
-                    }}>
-                      <span style={{
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontSize: 13,
-                        color: '#E8EDF5',
-                        letterSpacing: '0.04em',
+                    {/* ── Correct answers badge — Group 321 with text overlay ── */}
+                    <div style={{ position: 'relative', width: 160, height: 38, flexShrink: 0 }}>
+                      <img
+                        src={RematchBtn}
+                        alt=""
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                      />
+                      <div style={{
+                        position: 'absolute', inset: 0,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
-                        {card.score} Correct Answers
-                      </span>
+                        <span style={{
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
+                        }}>
+                          {card.score} Correct Answers
+                        </span>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
               </div>
 
-              {/* ── Rematch button ── */}
+              {/* ── Rematch button — Group 321 ── */}
               <motion.div
                 initial={reduced ? false : { opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.45 }}
-                style={{ display: 'flex', justifyContent: 'center', gap: 12 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
               >
+                {/* Rematch */}
                 <button
                   onClick={goTriviaInvite}
                   style={{
-                    padding: '12px 48px',
-                    background: '#060F1E',
-                    color: '#E8EDF5',
-                    border: '1px solid #1E3A5F',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 16,
-                    letterSpacing: '0.1em',
+                    position: 'relative', width: 225, height: 60,
+                    background: 'none', border: 'none', padding: 0,
+                    cursor: 'pointer', display: 'block',
                   }}
                 >
-                  Rematch
+                  <img
+                    src={RematchBtn}
+                    alt=""
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                  />
+                  <span
+                    className="font-beaufort font-bold"
+                    style={{
+                      position: 'absolute', inset: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 18, letterSpacing: '0.12em',
+                      background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    Rematch
+                  </span>
                 </button>
+
+                {/* Back to Duels — plain text link */}
                 <button
                   onClick={() => navigate('/duels')}
                   style={{
-                    padding: '12px 32px',
-                    background: 'transparent',
-                    color: '#8FA3C0',
-                    border: '1px solid #1E3A5F',
-                    borderRadius: 4,
-                    cursor: 'pointer',
+                    background: 'none', border: 'none', cursor: 'pointer',
                     fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 16,
-                    letterSpacing: '0.1em',
+                    fontSize: 13, color: '#8FA3C0', letterSpacing: '0.08em',
+                    textDecoration: 'underline',
                   }}
                 >
                   Back to Duels
