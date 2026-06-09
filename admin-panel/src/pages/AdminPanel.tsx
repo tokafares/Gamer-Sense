@@ -390,6 +390,11 @@ function GTRTab() {
   const [imageUrl, setImageUrl] = useState('')
   const [correctRank, setCorrectRank] = useState('gold')
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  // inline edit state
+  const [editId, setEditId] = useState<string | null>(null)
+  const [editUrl, setEditUrl] = useState('')
+  const [editRank, setEditRank] = useState('gold')
+  const [editMsg, setEditMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -413,6 +418,30 @@ function GTRTab() {
       await load()
     } catch (e) {
       setMsg({ type: 'err', text: e instanceof ApiError ? e.message : 'Error adding round' })
+    }
+  }
+
+  function startEdit(r: AdminGTRRound) {
+    setEditId(r.id)
+    setEditUrl(r.imageUrl)
+    setEditRank(r.correctRank)
+    setEditMsg(null)
+  }
+
+  function cancelEdit() {
+    setEditId(null)
+    setEditMsg(null)
+  }
+
+  async function handleSave() {
+    if (!editUrl.trim()) { setEditMsg({ type: 'err', text: 'Video URL is required' }); return }
+    try {
+      await apiPut(`/admin/gtr/rounds/${editId}`, { imageUrl: editUrl, correctRank: editRank })
+      setEditId(null)
+      setEditMsg(null)
+      await load()
+    } catch (e) {
+      setEditMsg({ type: 'err', text: e instanceof ApiError ? e.message : 'Error saving round' })
     }
   }
 
@@ -444,26 +473,53 @@ function GTRTab() {
         <div style={{ color: '#8FA3C0' }}>Loading...</div>
       ) : (
         rounds.map((r, i) => (
-          <div key={r.id} style={{ ...S.card, display: 'flex', gap: 16, alignItems: 'center' }}>
-            {r.imageUrl.startsWith('https://www.youtube.com/embed/') ? (
-              <iframe
-                src={r.imageUrl}
-                title={`GTR Round ${i + 1}`}
-                style={{ width: 120, height: 68, borderRadius: 4, border: '1px solid #1E3A5F', flexShrink: 0 }}
-                allowFullScreen
-              />
+          <div key={r.id} style={S.card}>
+            {editId === r.id ? (
+              /* ── Inline edit form ── */
+              <div>
+                <h3 style={{ marginBottom: 12, color: '#00C9A7' }}>Edit Round #{rounds.length - i}</h3>
+                {editMsg && <div style={editMsg.type === 'ok' ? S.success : S.error}>{editMsg.text}</div>}
+                <label style={S.label}>VIDEO URL</label>
+                <input
+                  style={S.input}
+                  placeholder="https://www.youtube.com/embed/VIDEO_ID"
+                  value={editUrl}
+                  onChange={e => setEditUrl(e.target.value)}
+                />
+                <label style={S.label}>CORRECT RANK</label>
+                <select style={S.select} value={editRank} onChange={e => setEditRank(e.target.value)}>
+                  {RANKS.map(rk => <option key={rk} value={rk}>{rk}</option>)}
+                </select>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button style={S.btn('primary')} onClick={() => { void handleSave() }}>Save</button>
+                  <button style={S.btn('ghost')} onClick={cancelEdit}>Cancel</button>
+                </div>
+              </div>
             ) : (
-              <img
-                src={r.imageUrl}
-                alt={`GTR Round ${i + 1}`}
-                style={{ width: 120, height: 68, objectFit: 'cover', borderRadius: 4, border: '1px solid #1E3A5F', flexShrink: 0 }}
-              />
+              /* ── Normal card view ── */
+              <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                {r.imageUrl.startsWith('https://www.youtube.com/embed/') ? (
+                  <iframe
+                    src={r.imageUrl}
+                    title={`GTR Round ${i + 1}`}
+                    style={{ width: 120, height: 68, borderRadius: 4, border: '1px solid #1E3A5F', flexShrink: 0 }}
+                    allowFullScreen
+                  />
+                ) : (
+                  <img
+                    src={r.imageUrl}
+                    alt={`GTR Round ${i + 1}`}
+                    style={{ width: 120, height: 68, objectFit: 'cover', borderRadius: 4, border: '1px solid #1E3A5F', flexShrink: 0 }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, marginBottom: 4 }}>Round #{rounds.length - i}</div>
+                  <div style={{ fontSize: 12, color: '#8FA3C0', wordBreak: 'break-all' }}>{r.imageUrl}</div>
+                </div>
+                <span style={S.badge('#C9A227')}>{r.correctRank}</span>
+                <button style={S.btn('ghost')} onClick={() => startEdit(r)}>Edit</button>
+              </div>
             )}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, marginBottom: 4 }}>Round #{rounds.length - i}</div>
-              <div style={{ fontSize: 12, color: '#8FA3C0', wordBreak: 'break-all' }}>{r.imageUrl}</div>
-            </div>
-            <span style={S.badge('#C9A227')}>{r.correctRank}</span>
           </div>
         ))
       )}
