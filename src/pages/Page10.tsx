@@ -95,18 +95,20 @@ export default function Page10() {
     setSaving(true)
     setSaveError(null)
     try {
+      const body: { username: string; avatarUrl?: string } = { username: newName.trim() }
+      if (localAvatar) body.avatarUrl = localAvatar
       const updated = await apiPut<{ id: string; username: string; avatarUrl?: string }>(
         `/profile/${user.id}`,
-        { username: newName.trim() }
+        body,
       )
-      if (token) login(token, { ...user, username: updated.username })
+      if (token) login(token, { ...user, username: updated.username, avatarUrl: updated.avatarUrl ?? user.avatarUrl })
       setEditOpen(false)
     } catch {
       setSaveError('Failed to save. Try again.')
     } finally {
       setSaving(false)
     }
-  }, [user, token, newName, login])
+  }, [user, token, newName, localAvatar, login])
 
   const STATS = useMemo(() => [
     { src: StatFrame1, label: 'GTR Completed', value: profileLoading ? '…' : String(profile?.gtrCompleted ?? 0) },
