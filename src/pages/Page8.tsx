@@ -156,6 +156,19 @@ export default function Page8() {
 
     const socket = connectSocket()
 
+    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
+      const mine   = isHost ? data.hostScore : data.invitedScore
+      const theirs = isHost ? data.invitedScore : data.hostScore
+      setCurrentMatchQuestion(data.question)
+      setYourScore(mine)
+      setOppScore(theirs)
+      setSelectedAnswer(null)
+      setLocked(false)
+      setRoundResult(null)
+      setWaitingOpponent(false)
+      lockedAnswerRef.current = null
+    }
+
     const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
       setCurrentMatchQuestion(data.question)
       setSelectedAnswer(null)
@@ -194,11 +207,13 @@ export default function Page8() {
       navigate('/match-winner', { state: { ...data, isHost: capturedIsHost, gameType: 'trivia' } })
     }
 
+    socket.on('match:resume',   onMatchResume)
     socket.on('round:question', onRoundQuestion)
     socket.on('round:result',   onRoundResult)
     socket.on('match:end',      onMatchEnd)
 
     return () => {
+      socket.off('match:resume',   onMatchResume)
       socket.off('round:question', onRoundQuestion)
       socket.off('round:result',   onRoundResult)
       socket.off('match:end',      onMatchEnd)

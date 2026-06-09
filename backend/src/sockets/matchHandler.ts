@@ -15,8 +15,11 @@ import { invalidateLeaderboardCache } from '../services/leaderboardService'
 // socket.id → { userId, matchId }
 const socketMeta = new Map<string, { userId: string; matchId: string }>()
 
-// matchId → Set<socketId>
-const matchSockets = new Map<string, Set<string>>()
+// matchId → Set<userId> — tracks unique connected users (not socket instances)
+const matchUsers = new Map<string, Set<string>>()
+
+// socketId → userId — for disconnect cleanup
+const matchSocketToUser = new Map<string, string>()
 
 // Per-match async mutex — serialises concurrent round:answer writes to prevent lost-update
 const matchLocks = new Map<string, Promise<void>>()
@@ -253,19 +256,26 @@ export function registerMatchHandler(io: Server) {
     // ── disconnect ─────────────────────────────────────────────────────────
     socket.on('disconnect', () => {
       const meta = socketMeta.get(socket.id)
+      const userId = matchSocketToUser.get(socket.id)
       if (meta) {
-        const sockets = matchSockets.get(meta.matchId)
-        if (sockets) {
-          sockets.delete(socket.id)
-          if (sockets.size === 0) {
-            matchSockets.delete(meta.matchId)
-            // If both players disconnected, cancel any pending GTR vote timeout
-            if (gtrVoteTimeouts.has(meta.matchId)) {
-              clearTimeout(gtrVoteTimeouts.get(meta.matchId)!)
-              gtrVoteTimeouts.delete(meta.matchId)
+        // Only remove user from matchUsers if no other socket for the same user+match is active
+        if (userId) {
+          const hasOtherSocket = [...socketMeta.entries()].some(
+            ([sid, m]) => sid !== socket.id && m.matchId === meta.matchId && m.userId === userId,
+          )
+          if (!hasOtherSocket) {
+            matchUsers.get(meta.matchId)?.delete(userId)
+            if ((matchUsers.get(meta.matchId)?.size ?? 0) === 0) {
+              matchUsers.delete(meta.matchId)
+              // Both players disconnected — cancel any pending GTR vote timeout
+              if (gtrVoteTimeouts.has(meta.matchId)) {
+                clearTimeout(gtrVoteTimeouts.get(meta.matchId)!)
+                gtrVoteTimeouts.delete(meta.matchId)
+              }
+              gtrVotes.delete(meta.matchId)
             }
-            gtrVotes.delete(meta.matchId)
           }
+          matchSocketToUser.delete(socket.id)
         }
         socketMeta.delete(socket.id)
       }
@@ -290,29 +300,45 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
 
   socket.join(roomId(matchId))
   socketMeta.set(socket.id, { userId, matchId })
+  matchSocketToUser.set(socket.id, userId)
 
-  if (!matchSockets.has(matchId)) matchSockets.set(matchId, new Set())
-  matchSockets.get(matchId)!.add(socket.id)
+  if (!matchUsers.has(matchId)) matchUsers.set(matchId, new Set())
+  matchUsers.get(matchId)!.add(userId)
 
-  const connected = matchSockets.get(matchId)!.size
+  const connectedUsers = matchUsers.get(matchId)!.size
 
-  if (connected === 1) {
+  if (connectedUsers === 1) {
     socket.emit('match:waiting', { matchId })
     return
   }
 
-  // Both players connected — start or resume
-  let state = await loadState(matchId)
+  // Both unique users connected — check if resuming a game already in progress
+  const state = await loadState(matchId)
 
-  if (!state) {
+  if (state && state.status === 'active' && state.currentRound > 0) {
+    // Mid-game reconnect — restore state without restarting
+    const current = state.questions[state.currentRound]
+    io.to(roomId(matchId)).emit('match:resume', {
+      matchId,
+      currentRound: state.currentRound,
+      hostScore: state.hostScore,
+      invitedScore: state.invitedScore,
+      question: { id: current.id, text: current.text, options: current.options },
+    })
+    return
+  }
+
+  // Fresh start — init state if not already present
+  let freshState = state
+  if (!freshState) {
     if (!match.invitedId) {
       socket.emit('match:error', { message: 'Waiting for opponent to join via invite link' })
       return
     }
-    state = await initMatchState(matchId, match.hostId, match.invitedId, match.mode)
+    freshState = await initMatchState(matchId, match.hostId, match.invitedId, match.mode)
   }
 
-  const safeQuestions = state.questions.map((q) => ({
+  const safeQuestions = freshState.questions.map((q) => ({
     id: q.id,
     text: q.text,
     options: q.options,
@@ -321,14 +347,14 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
   io.to(roomId(matchId)).emit('match:start', {
     matchId,
     questions: safeQuestions,
-    gtrRoundIds: state.gtrRoundIds ?? [],
+    gtrRoundIds: freshState.gtrRoundIds ?? [],
   })
 
   // Only push round:question for trivia mode (GTR players fetch rounds via REST)
-  if (match.mode === 'trivia' && state.questions.length > 0) {
-    const current = state.questions[state.currentRound]
+  if (match.mode === 'trivia' && freshState.questions.length > 0) {
+    const current = freshState.questions[freshState.currentRound]
     io.to(roomId(matchId)).emit('round:question', {
-      roundIndex: state.currentRound,
+      roundIndex: freshState.currentRound,
       question: { id: current.id, text: current.text, options: current.options },
     })
   }
