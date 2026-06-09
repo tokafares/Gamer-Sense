@@ -112,7 +112,8 @@ export default function Page11() {
     socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
       clearMatch()
       disconnectSocket()
-      navigate('/match-winner', { state: { ...d, gameType: 'gtr' } })
+      const capturedIsHost = useGameStore.getState().isHost
+      navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost } })
     })
     return () => { socket.off('match:end') }
   // eslint-disable-next-line react-hooks/exhaustive-deps
