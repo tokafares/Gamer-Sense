@@ -8,7 +8,7 @@ import { useQuestions } from '../hooks/useQuestions'
 import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 import { useAuthStore } from '../store/authStore'
-import { getSocket, connectSocket } from '../lib/socket'
+import { connectSocket } from '../lib/socket'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -123,7 +123,7 @@ export default function Page8() {
   useEffect(() => {
     if (!isMatchMode) return
 
-    const socket = getSocket() ?? connectSocket()
+    const socket = connectSocket()
 
     // Backend sends round:question after match:start and after each round:result
     const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
@@ -186,7 +186,7 @@ export default function Page8() {
     if (isMatchMode) {
       lockedAnswerRef.current = selectedAnswer
       setWaitingOpponent(true)
-      const socket = getSocket() ?? connectSocket()
+      const socket = connectSocket()
       socket.emit('round:answer', { matchId, roundIndex: currentRound - 1, answer: selectedAnswer })
       return
     }
