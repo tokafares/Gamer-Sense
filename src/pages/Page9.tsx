@@ -84,23 +84,23 @@ export default function Page9() {
               <h1
                 className="font-beaufort font-bold"
                 style={{
-                  fontSize: 64, lineHeight: 1, margin: 0,
+                  fontSize: 72, lineHeight: 1, margin: 0,
+                  letterSpacing: '0.08em',
                   background: iWon
-                    ? 'linear-gradient(to right, #3AF9FF, #00C9A7)'
-                    : 'linear-gradient(to right, #8FA3C0, #4A5568)',
+                    ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
+                    : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                  letterSpacing: '0.06em',
                 }}
               >
-                {iWon ? 'VICTORY!' : 'DEFEAT'}
+                {iWon ? 'VICTORY!' : 'DEFEAT!'}
               </h1>
               <p style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 15, letterSpacing: '0.1em',
-                color: iWon ? '#00C9A7' : '#8FA3C0',
-                marginTop: 8, marginBottom: 0,
+                fontSize: 16, letterSpacing: '0.12em', textTransform: 'uppercase',
+                color: iWon ? '#3AF9FF' : '#8FA3C0',
+                marginTop: 10, marginBottom: 0,
               }}>
                 {iWon ? 'You outplayed your opponent!' : 'Better luck next time!'}
               </p>
@@ -245,33 +245,34 @@ export default function Page9() {
                         alignItems: 'center', justifyContent: 'center',
                         gap: 2, padding: '0 8px',
                       }}>
-                        {/* "WINNER" in teal / username in white */}
+                        {/* Main card label */}
                         <span
                           className="font-beaufort font-bold"
                           style={{
-                            fontSize: card.isWinner ? 17 : 15,
-                            letterSpacing: '0.06em',
+                            fontSize: card.isWinner ? 26 : 20,
+                            letterSpacing: '0.1em',
                             lineHeight: 1.1,
+                            textTransform: 'uppercase',
                             background: card.isWinner
                               ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
-                              : 'none',
-                            WebkitBackgroundClip: card.isWinner ? 'text' : undefined,
-                            WebkitTextFillColor:  card.isWinner ? 'transparent' : undefined,
-                            backgroundClip:       card.isWinner ? 'text' : undefined,
-                            color: card.isWinner ? undefined : '#E8EDF5',
+                              : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
                           }}
                         >
-                          {card.isWinner ? 'WINNER' : card.username}
+                          {card.isWinner ? 'WINNER' : 'CHALLENGER'}
                         </span>
-                        {/* Username below WINNER label */}
-                        {card.isWinner && (
-                          <span style={{
-                            fontFamily: "'Barlow Condensed', sans-serif",
-                            fontSize: 12, color: '#8FA3C0', letterSpacing: '0.06em',
-                          }}>
-                            {card.username}
-                          </span>
-                        )}
+                        {/* Username below label */}
+                        <span style={{
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          fontSize: 15,
+                          color: card.isWinner ? '#3AF9FF' : '#8FA3C0',
+                          letterSpacing: '0.08em',
+                          marginTop: 2,
+                        }}>
+                          {card.username}
+                        </span>
                       </div>
                     </div>
 
