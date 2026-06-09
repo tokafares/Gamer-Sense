@@ -18,6 +18,7 @@ export const stateKey = (matchId: string) => `match:state:${matchId}`
 export interface MatchQuestion {
   id: string
   text: string
+  imageUrl?: string | null
   options: unknown
   correctAnswer: string
   explanation: string
@@ -134,6 +135,7 @@ export async function initMatchState(
     questions = shuffled.map((q) => ({
       id: q.id,
       text: q.text,
+      imageUrl: q.imageUrl,
       options: q.options,
       correctAnswer: q.correctAnswer,
       explanation: q.explanation,

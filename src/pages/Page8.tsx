@@ -90,7 +90,7 @@ export default function Page8() {
   const isMatchMode = !!matchId
 
   // Current question in match mode — updated by round:question socket events
-  const [currentMatchQuestion, setCurrentMatchQuestion] = useState<{ id: string; text: string; options: { id: string; text: string }[] } | null>(
+  const [currentMatchQuestion, setCurrentMatchQuestion] = useState<{ id: string; text: string; imageUrl?: string | null; options: { id: string; text: string }[] } | null>(
     matchQuestions[0] ?? null
   )
 
@@ -156,7 +156,7 @@ export default function Page8() {
 
     const socket = connectSocket()
 
-    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
+    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; imageUrl?: string | null; options: { id: string; text: string }[] } }) => {
       const mine   = isHost ? data.hostScore : data.invitedScore
       const theirs = isHost ? data.invitedScore : data.hostScore
       setCurrentMatchQuestion(data.question)
@@ -169,7 +169,7 @@ export default function Page8() {
       lockedAnswerRef.current = null
     }
 
-    const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
+    const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; imageUrl?: string | null; options: { id: string; text: string }[] } }) => {
       setCurrentMatchQuestion(data.question)
       setSelectedAnswer(null)
       setLocked(false)
@@ -420,7 +420,7 @@ export default function Page8() {
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
               <div style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', overflow: 'hidden', borderRadius: 4 }}>
                 <QuestionMedia
-                  imageUrl={soloQuestion?.imageUrl}
+                  imageUrl={isMatchMode ? (currentMatchQuestion?.imageUrl ?? undefined) : soloQuestion?.imageUrl}
                   fallback={<div style={{ width: '100%', height: '100%', background: '#060F1E' }} />}
                 />
               </div>

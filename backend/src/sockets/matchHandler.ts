@@ -157,6 +157,7 @@ export function registerMatchHandler(io: Server) {
               question: {
                 id: next.id,
                 text: next.text,
+                imageUrl: next.imageUrl ?? null,
                 options: next.options,
               },
             })
@@ -323,7 +324,7 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
       currentRound: state.currentRound,
       hostScore: state.hostScore,
       invitedScore: state.invitedScore,
-      question: { id: current.id, text: current.text, options: current.options },
+      question: { id: current.id, text: current.text, imageUrl: current.imageUrl ?? null, options: current.options },
     })
     return
   }
@@ -341,6 +342,7 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
   const safeQuestions = freshState.questions.map((q) => ({
     id: q.id,
     text: q.text,
+    imageUrl: q.imageUrl ?? null,
     options: q.options,
   }))
 
@@ -355,7 +357,7 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
     const current = freshState.questions[freshState.currentRound]
     io.to(roomId(matchId)).emit('round:question', {
       roundIndex: freshState.currentRound,
-      question: { id: current.id, text: current.text, options: current.options },
+      question: { id: current.id, text: current.text, imageUrl: current.imageUrl ?? null, options: current.options },
     })
   }
 }
