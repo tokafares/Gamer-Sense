@@ -4,7 +4,6 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Header        from '../components/Header'
 import Footer        from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import GrayProfile   from '../assets/gray profile.webp'
 import WinnerCup     from '../assets/Group 323.png'
 import CardBg        from '../assets/DialogBg.svg'
 import BadgeWinner   from '../assets/Group 321.svg'
@@ -41,18 +40,19 @@ export default function Page9() {
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
 
   const myUsername = user?.username ?? 'You'
-  const myAvatar   = user?.avatarUrl ?? GrayProfile
+  const myAvatar   = user?.avatarUrl ?? null
 
   // Winner always on the left, loser on the right
+  // Opponent avatar is never known — use null to render a generic placeholder
   const cards = [
     {
-      avatar:   iWon ? myAvatar   : GrayProfile,
+      avatar:   iWon ? myAvatar : null,
       username: iWon ? myUsername : 'Opponent',
       score:    iWon ? myScore    : theirScore,
       isWinner: true,
     },
     {
-      avatar:   iWon ? GrayProfile : myAvatar,
+      avatar:   iWon ? null : myAvatar,
       username: iWon ? 'Opponent'  : myUsername,
       score:    iWon ? theirScore  : myScore,
       isWinner: false,
@@ -179,19 +179,33 @@ export default function Page9() {
                         width: IMG_W, height: IMG_H,
                         overflow: 'hidden',
                       }}>
-                        {/* Avatar — winner: blurred for trophy overlay; loser: grayscale */}
-                        <img
-                          src={card.avatar}
-                          alt={card.username}
-                          style={{
+                        {/* Avatar — winner: blurred for trophy overlay; loser: generic placeholder or grayscale */}
+                        {card.avatar ? (
+                          <img
+                            src={card.avatar}
+                            alt={card.username}
+                            style={{
+                              position: 'absolute', inset: 0,
+                              width: '100%', height: '100%',
+                              objectFit: 'cover', objectPosition: 'top center',
+                              filter: card.isWinner
+                                ? 'blur(4px) brightness(0.55)'
+                                : 'grayscale(60%) opacity(0.85)',
+                            }}
+                          />
+                        ) : (
+                          /* Generic placeholder when opponent avatar is unknown */
+                          <div style={{
                             position: 'absolute', inset: 0,
-                            width: '100%', height: '100%',
-                            objectFit: 'cover', objectPosition: 'top center',
-                            filter: card.isWinner
-                              ? 'blur(4px) brightness(0.55)'
-                              : 'grayscale(60%) opacity(0.85)',
-                          }}
-                        />
+                            background: 'linear-gradient(180deg, #0D1F3C 0%, #060F1E 100%)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}>
+                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                              <circle cx="12" cy="8" r="4" fill="#1E3A5F"/>
+                              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#1E3A5F" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                          </div>
+                        )}
 
                         {/* Trophy cup — winner card only */}
                         {card.isWinner && (
