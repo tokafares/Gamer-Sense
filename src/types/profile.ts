@@ -1,12 +1,19 @@
 export interface UserProfile {
   id: string
   username: string
-  avatarUrl: string
+  avatarUrl: string | null
   level: number
   membershipTier: string
-  // stats — populated when backend includes UserStats in profile response
+  totalPoints?: number
+  tier?: string
   gtrCompleted?: number
   triviaPlayed?: number
   quizCompleted?: number
-  quizTotal?: number
+  laneRanks?: {
+    top: string
+    jungle: string
+    mid: string
+    adc: string
+    support: string
+  } | null
 }

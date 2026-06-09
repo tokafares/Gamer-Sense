@@ -1,6 +1,11 @@
 import prisma from '../lib/prisma'
 import { tierFromPoints } from '../lib/tier'
 
+const TIER_ORDER = ['iron', 'bronze', 'silver', 'gold', 'platinum', 'emerald', 'diamond', 'master', 'grandmaster', 'challenger']
+function levelFromPoints(points: number): number {
+  return TIER_ORDER.indexOf(tierFromPoints(points)) + 1
+}
+
 export async function getProfile(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -20,23 +25,21 @@ export async function getProfile(userId: string) {
     username: user.username,
     email: user.email,
     avatarUrl: user.avatarUrl,
-    level: user.level,
+    level: stats ? levelFromPoints(stats.points) : 1,
     membershipTier: user.membershipTier,
     createdAt: user.createdAt,
-    stats: stats
+    totalPoints: stats?.points ?? 0,
+    tier: stats ? tierFromPoints(stats.points) : 'iron',
+    gtrCompleted: stats?.gtrCompleted ?? 0,
+    triviaPlayed: stats?.triviaPlayed ?? 0,
+    quizCompleted: stats?.quizCompleted ?? 0,
+    laneRanks: stats
       ? {
-          points: stats.points,
-          tier: tierFromPoints(stats.points),
-          quizCompleted: stats.quizCompleted,
-          triviaPlayed: stats.triviaPlayed,
-          gtrCompleted: stats.gtrCompleted,
-          laneRanks: {
-            top: stats.topLaneRank,
-            jungle: stats.jungleRank,
-            mid: stats.midLaneRank,
-            adc: stats.adcRank,
-            support: stats.supportRank,
-          },
+          top: stats.topLaneRank,
+          jungle: stats.jungleRank,
+          mid: stats.midLaneRank,
+          adc: stats.adcRank,
+          support: stats.supportRank,
         }
       : null,
   }

@@ -58,7 +58,7 @@ const LOCAL_AVATAR_KEY = 'gs_avatar'
 export default function Page10() {
   const reduced = useReducedMotion()
   const { user, login, token } = useAuthStore()
-  const { profile } = useProfile(user?.id ?? null)
+  const { profile, loading: profileLoading } = useProfile(user?.id ?? null)
 
   const [editOpen, setEditOpen]     = useState(false)
   const [newName, setNewName]       = useState('')
@@ -69,7 +69,8 @@ export default function Page10() {
 
   const avatarSrc = localAvatar ?? profile?.avatarUrl ?? user?.avatarUrl ?? DefaultAvatar
   const displayName = profile?.username ?? user?.username ?? 'PLAYER'
-  const displayLevel = profile?.level ?? user?.level ?? 0
+  const displayLevel = profile?.level ?? user?.level ?? 1
+  const displayPoints = profile?.totalPoints ?? null
 
   const openEdit = useCallback(() => {
     setNewName(displayName)
@@ -108,12 +109,10 @@ export default function Page10() {
   }, [user, token, newName, login])
 
   const STATS = useMemo(() => [
-    { src: StatFrame1, label: 'GTR Completed',  value: profile?.gtrCompleted  != null ? String(profile.gtrCompleted)  : '—' },
-    { src: StatFrame2, label: 'Trivia Played',   value: profile?.triviaPlayed   != null ? String(profile.triviaPlayed)   : '—' },
-    { src: StatFrame3, label: 'Quiz Completed',  value: profile?.quizCompleted  != null
-        ? `${profile.quizCompleted}${profile.quizTotal != null ? '/' + profile.quizTotal : ''}`
-        : '—' },
-  ], [profile])
+    { src: StatFrame1, label: 'GTR Completed', value: profileLoading ? '…' : String(profile?.gtrCompleted ?? 0) },
+    { src: StatFrame2, label: 'Trivia Played',  value: profileLoading ? '…' : String(profile?.triviaPlayed ?? 0) },
+    { src: StatFrame3, label: 'Quiz Completed', value: profileLoading ? '…' : String(profile?.quizCompleted ?? 0) },
+  ], [profile, profileLoading])
 
   return (
     <>
@@ -234,6 +233,14 @@ export default function Page10() {
                   >
                     LEVEL {displayLevel}
                   </span>
+                  {displayPoints !== null && (
+                    <span
+                      className="font-beaufort font-bold"
+                      style={{ fontSize: 10, color: '#8FA3C0', letterSpacing: '0.1em', lineHeight: 1 }}
+                    >
+                      {displayPoints.toLocaleString()} PTS
+                    </span>
+                  )}
                 </div>
               </div>
 

@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
-import { useQuestions } from '../hooks/useQuestions'
-import { apiPost } from '../lib/api'
+import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 import { useAuthStore } from '../store/authStore'
 import { connectSocket } from '../lib/socket'
 import QuestionMedia from '../components/QuestionMedia'
+import type { Question } from '../types/question'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -72,16 +72,22 @@ export default function Page8() {
   const [locked,          setLocked]          = useState(false)
   const [roundResult,     setRoundResult]     = useState<RoundResult | null>(null)
   const [waitingOpponent, setWaitingOpponent] = useState(false)
-  const [refreshKey,      setRefreshKey]      = useState(0)
-  // Live match scores — updated from round:result
+  // Live match scores
   const [yourScore,       setYourScore]       = useState(0)
   const [oppScore,        setOppScore]        = useState(0)
   const advanceRef      = useRef<ReturnType<typeof setTimeout> | null>(null)
-  // Captures the answer at the moment of lock-in so the result overlay can show it
   const lockedAnswerRef = useRef<string | null>(null)
 
+  // Solo mode — batch question state
+  const [laneQuestions,  setLaneQuestions]  = useState<Question[]>([])
+  const [questionIdx,    setQuestionIdx]    = useState(0)
+  const [fetchLoading,   setFetchLoading]   = useState(false)
+  const [fetchError,     setFetchError]     = useState<string | null>(null)
+  const [laneComplete,   setLaneComplete]   = useState(false)
+  const [sessionCorrect, setSessionCorrect] = useState(0)
+  const [sessionPoints,  setSessionPoints]  = useState(0)
+
   const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
-  // isMatchMode: true whenever we're inside a live 1v1 match (matchId set by setMatchStart before navigation)
   const isMatchMode = !!matchId
 
   // Current question in match mode — updated by round:question socket events
@@ -89,36 +95,61 @@ export default function Page8() {
     matchQuestions[0] ?? null
   )
 
-  // Ref so socket closures always see the latest selectedAnswer without being in deps
   const selectedAnswerRef = useRef<string | null>(null)
   useEffect(() => { selectedAnswerRef.current = selectedAnswer }, [selectedAnswer])
 
-  // Auto-advance 2 s after locking in — cycle to next lane (solo mode only)
+  // Solo mode: fetch all questions for the lane whenever lane changes
+  useEffect(() => {
+    if (isMatchMode || !import.meta.env.VITE_API_URL) return
+    let cancelled = false
+    setFetchLoading(true)
+    setFetchError(null)
+    setLaneQuestions([])
+    setQuestionIdx(0)
+    setSessionCorrect(0)
+    setSessionPoints(0)
+    setLaneComplete(false)
+    setSelectedAnswer(null)
+    setLocked(false)
+
+    apiGet<{ questions: Question[] }>(`/questions?type=trivia&lane=${activeLane}&limit=10`)
+      .then(data => {
+        if (!cancelled) {
+          setLaneQuestions(data.questions)
+          setFetchLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFetchError('Network error — check your connection')
+          setFetchLoading(false)
+        }
+      })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLane, isMatchMode])
+
+  // Derived question / loading for each mode
+  const soloQuestion = laneQuestions[questionIdx] ?? null
+  const loading  = !isMatchMode && fetchLoading
+  const question = isMatchMode ? currentMatchQuestion : soloQuestion
+
+  // Solo mode: advance to next question 2 s after locking in
   useEffect(() => {
     if (!locked || isMatchMode) return
     const t = setTimeout(() => {
-      setActiveLane(prev => {
-        const idx = LANES.findIndex(l => l.key === prev)
-        return LANES[(idx + 1) % LANES.length].key
-      })
-      setSelectedAnswer(null)
-      setLocked(false)
-      setRefreshKey(k => k + 1)
+      const nextIdx = questionIdx + 1
+      if (nextIdx >= laneQuestions.length && laneQuestions.length > 0) {
+        setLaneComplete(true)
+      } else {
+        setQuestionIdx(nextIdx)
+        setSelectedAnswer(null)
+        setLocked(false)
+      }
     }, 2000)
     return () => clearTimeout(t)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locked, isMatchMode])
-
-  // Solo mode question fetch — disabled when in match mode
-  const { question: soloQuestion, loading: soloLoading, error } = useQuestions(
-    isMatchMode ? '' : 'trivia',
-    isMatchMode ? '' : activeLane,
-    refreshKey
-  )
-
-  // In match mode useQuestions never clears loading, so gate only on solo
-  const loading  = !isMatchMode && soloLoading
-  const question = isMatchMode ? currentMatchQuestion : soloQuestion
+  }, [locked, isMatchMode, questionIdx, laneQuestions.length])
 
   // ── Socket setup for 1v1 match ──
   useEffect(() => {
@@ -126,7 +157,6 @@ export default function Page8() {
 
     const socket = connectSocket()
 
-    // Backend sends round:question after match:start and after each round:result
     const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
       setCurrentMatchQuestion(data.question)
       setSelectedAnswer(null)
@@ -146,7 +176,6 @@ export default function Page8() {
       setOppScore(theirs)
       addPoints(mine)
 
-      // Record answer after 2.5 s — next round:question from backend will reset state
       advanceRef.current = setTimeout(() => {
         const store = useGameStore.getState()
         recordAnswer({
@@ -161,7 +190,6 @@ export default function Page8() {
 
     const onMatchEnd = (data: { winnerId: string; hostScore: number; invitedScore: number }) => {
       if (advanceRef.current) clearTimeout(advanceRef.current)
-      // Capture isHost before clearMatch wipes it, then pass with state
       const capturedIsHost = useGameStore.getState().isHost
       clearMatch()
       navigate('/match-winner', { state: { ...data, isHost: capturedIsHost, gameType: 'trivia' } })
@@ -192,21 +220,48 @@ export default function Page8() {
       return
     }
 
-    // Solo mode — submit via REST
+    // Solo mode
+    let earned = 0
+    let correct = false
     if (import.meta.env.VITE_API_URL) {
       try {
         const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number }>('/answers/submit', {
           questionId: question.id,
           selectedAnswer,
         })
+        earned = res.pointsEarned
+        correct = res.correct
         addPoints(res.pointsEarned)
         recordAnswer({ round: currentRound, selectedId: selectedAnswer, correctId: res.correctAnswer, isCorrect: res.correct, pointsEarned: res.pointsEarned })
       } catch { /* silent */ }
+    } else {
+      correct = selectedAnswer === soloQuestion?.correctAnswer
+      earned = correct ? 100 : 10
     }
+    if (correct) setSessionCorrect(c => c + 1)
+    setSessionPoints(p => p + earned)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnswer, locked, question, isMatchMode, matchId, currentRound])
 
-  // Round progress indicator for match mode
+  const handleLaneSelect = (key: string) => {
+    if (isMatchMode) return
+    setActiveLane(key)
+  }
+
+  const handleTryAnother = () => {
+    setLaneComplete(false)
+    setQuestionIdx(0)
+    setSessionCorrect(0)
+    setSessionPoints(0)
+    setSelectedAnswer(null)
+    setLocked(false)
+    setLaneQuestions([])
+    setFetchLoading(true)
+    apiGet<{ questions: Question[] }>(`/questions?type=trivia&lane=${activeLane}&limit=10`)
+      .then(data => { setLaneQuestions(data.questions); setFetchLoading(false) })
+      .catch(() => { setFetchError('Network error'); setFetchLoading(false) })
+  }
+
   const roundLabel = isMatchMode ? `Round ${currentRound} / ${totalRounds}` : null
 
   return (
@@ -258,12 +313,8 @@ export default function Page8() {
                 marginBottom: '16px', gap: 0,
               }}
             >
-              {/* You */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-                <span style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0',
-                }}>YOU</span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0' }}>YOU</span>
                 <span className="font-beaufort font-bold" style={{
                   fontSize: 28, lineHeight: 1,
                   background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
@@ -271,28 +322,20 @@ export default function Page8() {
                 }}>
                   {user?.username ?? 'Player'}
                 </span>
-                <span style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
-                }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em' }}>
                   {yourScore} correct
                 </span>
               </div>
 
-              {/* VS + round */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 24px' }}>
                 <span className="font-beaufort font-bold" style={{
                   fontSize: 32, fontStyle: 'italic',
                   background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                 }}>VS</span>
-                <span style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em',
-                }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em' }}>
                   ROUND {currentRound}/{totalRounds}
                 </span>
-                {/* Dot indicators */}
                 <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
                   {Array.from({ length: totalRounds }, (_, i) => (
                     <div key={i} style={{
@@ -304,19 +347,12 @@ export default function Page8() {
                 </div>
               </div>
 
-              {/* Opponent */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-                <span style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0',
-                }}>OPPONENT</span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0' }}>OPPONENT</span>
                 <span className="font-beaufort font-bold" style={{ fontSize: 28, lineHeight: 1, color: '#E8EDF5' }}>
                   Challenger
                 </span>
-                <span style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
-                }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em' }}>
                   {oppScore} correct
                 </span>
               </div>
@@ -341,10 +377,7 @@ export default function Page8() {
                 <motion.button
                   key={key}
                   variants={cardItemAnim}
-                  onClick={() => {
-                    if (isMatchMode) return
-                    setActiveLane(key); setSelectedAnswer(null); setLocked(false)
-                  }}
+                  onClick={() => handleLaneSelect(key)}
                   aria-label={label}
                   style={{
                     position: 'relative',
@@ -402,9 +435,7 @@ export default function Page8() {
                     <motion.div
                       animate={reduced ? {} : { scale: [1, 1.15, 1] }}
                       transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-                      style={{
-                        width: 18, height: 18, borderRadius: '50%', background: '#3AF9FF',
-                      }}
+                      style={{ width: 18, height: 18, borderRadius: '50%', background: '#3AF9FF' }}
                     />
                     <span className="font-beaufort font-bold" style={{ color: '#3AF9FF', fontSize: 18, letterSpacing: '0.14em' }}>
                       ANSWER LOCKED IN
@@ -416,7 +447,7 @@ export default function Page8() {
                 )}
               </AnimatePresence>
 
-              {/* Round result overlay — covers entire center panel */}
+              {/* Round result overlay */}
               <AnimatePresence>
                 {roundResult && (
                   <motion.div
@@ -430,11 +461,9 @@ export default function Page8() {
                       background: 'rgba(6,15,30,0.95)',
                       display: 'flex', flexDirection: 'column',
                       alignItems: 'center', justifyContent: 'center', gap: 18,
-                      padding: '24px',
-                      boxSizing: 'border-box',
+                      padding: '24px', boxSizing: 'border-box',
                     }}
                   >
-                    {/* Correct / Wrong badge */}
                     <motion.div
                       initial={{ opacity: 0, y: -12 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -448,14 +477,12 @@ export default function Page8() {
                       </span>
                     </motion.div>
 
-                    {/* Correct answer */}
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.2 }}
                       style={{
-                        background: 'rgba(0,201,167,0.12)',
-                        border: '1px solid rgba(0,201,167,0.4)',
+                        background: 'rgba(0,201,167,0.12)', border: '1px solid rgba(0,201,167,0.4)',
                         borderRadius: 6, padding: '8px 16px', textAlign: 'center',
                       }}
                     >
@@ -467,7 +494,6 @@ export default function Page8() {
                       </span>
                     </motion.div>
 
-                    {/* Live score comparison */}
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -486,14 +512,10 @@ export default function Page8() {
                           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                         }}>{roundResult.yourScore}</div>
                       </div>
-                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, color: '#1E3A5F', padding: '0 12px', fontStyle: 'italic' }}>
-                        VS
-                      </div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, color: '#1E3A5F', padding: '0 12px', fontStyle: 'italic' }}>VS</div>
                       <div style={{ flex: 1, textAlign: 'right' }}>
                         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em' }}>OPP</div>
-                        <div className="font-beaufort font-bold" style={{ fontSize: 36, lineHeight: 1, color: '#E8EDF5' }}>
-                          {roundResult.opponentScore}
-                        </div>
+                        <div className="font-beaufort font-bold" style={{ fontSize: 36, lineHeight: 1, color: '#E8EDF5' }}>{roundResult.opponentScore}</div>
                       </div>
                     </motion.div>
 
@@ -516,10 +538,7 @@ export default function Page8() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.5 }}
-                      style={{
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontSize: 11, color: '#1E3A5F', letterSpacing: '0.1em',
-                      }}
+                      style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: '#1E3A5F', letterSpacing: '0.1em' }}
                     >
                       Next round loading…
                     </motion.span>
@@ -528,223 +547,283 @@ export default function Page8() {
               </AnimatePresence>
             </motion.div>
 
-            {/* RIGHT — Q&A panel */}
-            <motion.div
-              initial={reduced ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.2 }}
-              style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
-            >
-              <img src={Group270Svg} alt=""
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-
-              {/* Question text overlay */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0,
-                width: '100%', height: `${Q_H}px`,
-                padding: '14px 20px', boxSizing: 'border-box',
-              }}>
-                <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                  Question
+            {/* RIGHT — Q&A panel or Lane Complete panel */}
+            {!isMatchMode && laneComplete ? (
+              <motion.div
+                key="lane-complete"
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0,
+                  background: '#0D1F3C', border: '1px solid #1E3A5F',
+                  borderTop: '3px solid #00C9A7', borderRadius: 6,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  gap: 20, padding: '32px 24px', boxSizing: 'border-box',
+                }}
+              >
+                <h2
+                  className="font-beaufort font-bold"
+                  style={{
+                    fontSize: 32, margin: 0, textAlign: 'center',
+                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}
+                >
+                  Lane Complete!
+                </h2>
+                <p
+                  className="font-beaufort font-bold"
+                  style={{ fontSize: 16, color: '#8FA3C0', margin: 0, letterSpacing: '0.1em' }}
+                >
+                  {LANES.find(l => l.key === activeLane)?.label.toUpperCase()}
                 </p>
-                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                  {isMatchMode && !currentMatchQuestion ? 'Waiting for question…' : loading ? 'Loading question…' : error ? error : (question?.text ?? '')}
-                </p>
-              </div>
-
-              {/* Answer buttons */}
-              <div style={{
-                position: 'absolute', top: `${ANS_TOP}px`, left: 0,
-                width: '100%', height: `${ANS_H}px`,
-              }}>
-                <img src={AnswerBtnsSvg} alt=""
-                  style={{ display: 'block', width: '100%', height: '100%' }} />
-
-                {/* Dynamic answer text */}
-                {question && ANSWER_REGIONS.map(({ id, top, height }) => {
-                  const ans = question.options.find(a => a.id === id)
-                  if (!ans) return null
-                  const isSelected = selectedAnswer === id
-                  const isCorrect  = roundResult?.correctAnswer === id
-                  const isWrong    = roundResult && isSelected && !isCorrect
-
-                  return (
-                    <div
-                      key={`ans-text-${id}`}
-                      style={{
-                        position: 'absolute', top: `${top + 2}px`, left: '2px',
-                        width: 'calc(100% - 4px)', height: `${height - 4}px`,
-                        display: 'flex', alignItems: 'center',
-                        padding: '0 20px', pointerEvents: 'none',
-                        background: isCorrect && roundResult
-                          ? 'rgba(0,201,167,0.18)'
-                          : isWrong
-                            ? 'rgba(239,68,68,0.15)'
-                            : '#0D1F3C',
-                        transition: 'background 0.3s',
-                      }}
-                    >
-                      <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                        {id}.&nbsp;{ans.text}
-                        {isCorrect && roundResult ? ' ✓' : isWrong ? ' ✗' : ''}
-                      </p>
-                    </div>
-                  )
-                })}
-
-                {/* Staggered entrance */}
-                {!reduced && ANSWER_REGIONS.map(({ id, top, height }, i) => (
-                  <motion.div
-                    key={`entrance-${id}`}
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: 0 }}
-                    transition={{ duration: 0.38, delay: 0.32 + i * 0.13, ease: 'easeOut' }}
+                <div style={{ textAlign: 'center' }}>
+                  <p className="font-beaufort font-bold" style={{ fontSize: 22, color: '#E8EDF5', margin: '0 0 6px' }}>
+                    {sessionCorrect} / {laneQuestions.length} correct
+                  </p>
+                  <p className="font-beaufort font-bold" style={{ fontSize: 16, color: '#00C9A7', margin: 0 }}>
+                    +{sessionPoints} points earned
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+                  <button
+                    onClick={handleTryAnother}
                     style={{
-                      position: 'absolute', top: `${top}px`, left: 0,
-                      width: '100%', height: `${height}px`,
-                      background: '#060F1E', pointerEvents: 'none', zIndex: 1,
+                      background: 'linear-gradient(to right, #00C9A7, #0090A7)',
+                      border: 'none', borderRadius: 4, padding: '12px 0',
+                      color: '#060F1E', cursor: 'pointer', width: '100%',
+                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
+                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
                     }}
-                  />
-                ))}
-
-                {ANSWER_REGIONS.map(({ id, top, height }) => (
-                  <motion.div
-                    key={id}
-                    role="button"
-                    tabIndex={locked ? -1 : 0}
-                    onClick={() => !locked && !loading && setSelectedAnswer(id)}
-                    onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
-                    whileHover={reduced || locked ? {} : {
-                      borderColor: 'rgba(58,249,255,0.55)',
-                      boxShadow: '0 0 14px rgba(58,249,255,0.32)',
-                      transition: { duration: 0.25, ease: 'easeOut' },
-                    }}
-                    style={{
-                      position: 'absolute', top: `${top}px`, left: 0,
-                      width: '100%', height: `${height}px`,
-                      cursor: locked ? 'default' : 'pointer',
-                      outline: 'none', boxSizing: 'border-box', zIndex: 2,
-                      borderWidth: '2px', borderStyle: 'solid', borderColor: 'transparent',
-                      boxShadow: '0 0 0px rgba(58,249,255,0)',
-                    }}
-                    aria-label={`Answer ${id}`}
                   >
-                    <AnimatePresence>
-                      {selectedAnswer === id && (
-                        <motion.div
-                          key="sel"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.22 }}
-                          style={{
-                            position: 'absolute', inset: 0,
-                            border: `2px solid ${roundResult
-                              ? (roundResult.correctAnswer === id ? '#00C9A7' : '#ef4444')
-                              : '#3AF9FF'}`,
-                            background: roundResult
-                              ? (roundResult.correctAnswer === id ? 'rgba(0,201,167,0.12)' : 'rgba(239,68,68,0.12)')
-                              : 'rgba(58,249,255,0.07)',
-                            boxShadow: roundResult
-                              ? 'none'
-                              : '0 0 20px rgba(58,249,255,0.4), inset 0 0 8px rgba(58,249,255,0.06)',
-                            pointerEvents: 'none',
-                          }}
-                        />
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </div>
+                    TRY ANOTHER LANE
+                  </button>
+                  <button
+                    onClick={() => navigate('/page10')}
+                    style={{
+                      background: 'none', border: '1px solid #1E3A5F',
+                      borderRadius: 4, padding: '12px 0',
+                      color: '#8FA3C0', cursor: 'pointer', width: '100%',
+                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
+                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
+                    }}
+                  >
+                    VIEW PROFILE
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={reduced ? false : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.2 }}
+                style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
+              >
+                <img src={Group270Svg} alt=""
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
 
-              {/* Hint text overlay */}
-              {soloQuestion?.hint && !isMatchMode && (
                 <div style={{
-                  position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                  width: '100%', height: `${HINT_H}px`,
+                  position: 'absolute', top: 0, left: 0,
+                  width: '100%', height: `${Q_H}px`,
                   padding: '14px 20px', boxSizing: 'border-box',
                 }}>
                   <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                    Hint:
+                    {isMatchMode ? 'Question' : `Question ${laneQuestions.length > 0 ? `${questionIdx + 1} / ${laneQuestions.length}` : ''}`}
                   </p>
-                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
-                    "{soloQuestion.hint}"
+                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                    {isMatchMode && !currentMatchQuestion ? 'Waiting for question…' : loading ? 'Loading question…' : fetchError ? fetchError : (question?.text ?? '')}
                   </p>
                 </div>
-              )}
 
-              {/* Match mode: locked-in waiting state */}
-              {isMatchMode && locked && !roundResult && (
                 <div style={{
-                  position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                  width: '100%', height: `${HINT_H}px`,
-                  padding: '14px 20px', boxSizing: 'border-box',
-                  display: 'flex', alignItems: 'center', gap: 8,
+                  position: 'absolute', top: `${ANS_TOP}px`, left: 0,
+                  width: '100%', height: `${ANS_H}px`,
                 }}>
-                  <span style={{
-                    display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
-                    background: '#3AF9FF', flexShrink: 0,
-                    animation: 'pulse 1.2s ease-in-out infinite',
-                  }} />
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 12, letterSpacing: '0.1em', color: '#8FA3C0',
-                  }}>
-                    Answer locked — waiting for opponent…
-                  </span>
-                </div>
-              )}
+                  <img src={AnswerBtnsSvg} alt=""
+                    style={{ display: 'block', width: '100%', height: '100%' }} />
 
-              {/* Match mode: correct answer reveal in hint area */}
-              {isMatchMode && roundResult && (
-                <motion.div
-                  variants={scrollFadeIn}
-                  initial={reduced ? false : 'hidden'}
-                  animate="show"
-                  style={{
+                  {question && ANSWER_REGIONS.map(({ id, top, height }) => {
+                    const ans = question.options.find(a => a.id === id)
+                    if (!ans) return null
+                    const isSelected = selectedAnswer === id
+                    const isCorrect  = roundResult?.correctAnswer === id
+                    const isWrong    = roundResult && isSelected && !isCorrect
+
+                    return (
+                      <div
+                        key={`ans-text-${id}`}
+                        style={{
+                          position: 'absolute', top: `${top + 2}px`, left: '2px',
+                          width: 'calc(100% - 4px)', height: `${height - 4}px`,
+                          display: 'flex', alignItems: 'center',
+                          padding: '0 20px', pointerEvents: 'none',
+                          background: isCorrect && roundResult
+                            ? 'rgba(0,201,167,0.18)'
+                            : isWrong
+                              ? 'rgba(239,68,68,0.15)'
+                              : '#0D1F3C',
+                          transition: 'background 0.3s',
+                        }}
+                      >
+                        <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                          {id}.&nbsp;{ans.text}
+                          {isCorrect && roundResult ? ' ✓' : isWrong ? ' ✗' : ''}
+                        </p>
+                      </div>
+                    )
+                  })}
+
+                  {!reduced && ANSWER_REGIONS.map(({ id, top, height }, i) => (
+                    <motion.div
+                      key={`entrance-${id}`}
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: 0 }}
+                      transition={{ duration: 0.38, delay: 0.32 + i * 0.13, ease: 'easeOut' }}
+                      style={{
+                        position: 'absolute', top: `${top}px`, left: 0,
+                        width: '100%', height: `${height}px`,
+                        background: '#060F1E', pointerEvents: 'none', zIndex: 1,
+                      }}
+                    />
+                  ))}
+
+                  {ANSWER_REGIONS.map(({ id, top, height }) => (
+                    <motion.div
+                      key={id}
+                      role="button"
+                      tabIndex={locked ? -1 : 0}
+                      onClick={() => !locked && !loading && setSelectedAnswer(id)}
+                      onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
+                      whileHover={reduced || locked ? {} : {
+                        borderColor: 'rgba(58,249,255,0.55)',
+                        boxShadow: '0 0 14px rgba(58,249,255,0.32)',
+                        transition: { duration: 0.25, ease: 'easeOut' },
+                      }}
+                      style={{
+                        position: 'absolute', top: `${top}px`, left: 0,
+                        width: '100%', height: `${height}px`,
+                        cursor: locked ? 'default' : 'pointer',
+                        outline: 'none', boxSizing: 'border-box', zIndex: 2,
+                        borderWidth: '2px', borderStyle: 'solid', borderColor: 'transparent',
+                        boxShadow: '0 0 0px rgba(58,249,255,0)',
+                      }}
+                      aria-label={`Answer ${id}`}
+                    >
+                      <AnimatePresence>
+                        {selectedAnswer === id && (
+                          <motion.div
+                            key="sel"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            style={{
+                              position: 'absolute', inset: 0,
+                              border: `2px solid ${roundResult
+                                ? (roundResult.correctAnswer === id ? '#00C9A7' : '#ef4444')
+                                : '#3AF9FF'}`,
+                              background: roundResult
+                                ? (roundResult.correctAnswer === id ? 'rgba(0,201,167,0.12)' : 'rgba(239,68,68,0.12)')
+                                : 'rgba(58,249,255,0.07)',
+                              boxShadow: roundResult
+                                ? 'none'
+                                : '0 0 20px rgba(58,249,255,0.4), inset 0 0 8px rgba(58,249,255,0.06)',
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {soloQuestion?.hint && !isMatchMode && (
+                  <div style={{
                     position: 'absolute', top: `${HINT_TOP}px`, left: 0,
                     width: '100%', height: `${HINT_H}px`,
                     padding: '14px 20px', boxSizing: 'border-box',
-                  }}
-                >
-                  <p className={LABEL_CLS} style={{ fontSize: '14px', lineHeight: 1.25, margin: '0 0 4px' }}>
-                    Correct: {roundResult.correctAnswer} &nbsp;|&nbsp; You {roundResult.yourScore} — Opp {roundResult.opponentScore}
-                  </p>
-                  {roundResult.explanation && (
-                    <p className={PARA_CLS} style={{ fontSize: '12px', lineHeight: '16px', margin: 0, fontStyle: 'italic' }}>
-                      {roundResult.explanation}
+                  }}>
+                    <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
+                      Hint:
                     </p>
-                  )}
-                </motion.div>
-              )}
-            </motion.div>
+                    <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
+                      "{soloQuestion.hint}"
+                    </p>
+                  </div>
+                )}
+
+                {isMatchMode && locked && !roundResult && (
+                  <div style={{
+                    position: 'absolute', top: `${HINT_TOP}px`, left: 0,
+                    width: '100%', height: `${HINT_H}px`,
+                    padding: '14px 20px', boxSizing: 'border-box',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                  }}>
+                    <span style={{
+                      display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
+                      background: '#3AF9FF', flexShrink: 0,
+                      animation: 'pulse 1.2s ease-in-out infinite',
+                    }} />
+                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, letterSpacing: '0.1em', color: '#8FA3C0' }}>
+                      Answer locked — waiting for opponent…
+                    </span>
+                  </div>
+                )}
+
+                {isMatchMode && roundResult && (
+                  <motion.div
+                    variants={scrollFadeIn}
+                    initial={reduced ? false : 'hidden'}
+                    animate="show"
+                    style={{
+                      position: 'absolute', top: `${HINT_TOP}px`, left: 0,
+                      width: '100%', height: `${HINT_H}px`,
+                      padding: '14px 20px', boxSizing: 'border-box',
+                    }}
+                  >
+                    <p className={LABEL_CLS} style={{ fontSize: '14px', lineHeight: 1.25, margin: '0 0 4px' }}>
+                      Correct: {roundResult.correctAnswer} &nbsp;|&nbsp; You {roundResult.yourScore} — Opp {roundResult.opponentScore}
+                    </p>
+                    {roundResult.explanation && (
+                      <p className={PARA_CLS} style={{ fontSize: '12px', lineHeight: '16px', margin: 0, fontStyle: 'italic' }}>
+                        {roundResult.explanation}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
           </div>
 
-          {/* ── Lock-in button ── */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
-            style={{
-              marginTop: '16px',
-              opacity: selectedAnswer && !loading ? 1 : 0.45,
-            }}
-          >
-            <button
-              onClick={() => { void handleLockIn() }}
-              aria-label="Lock in answer"
+          {/* ── Lock-in button (hidden when lane is complete in solo mode) ── */}
+          {!((!isMatchMode) && laneComplete) && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
               style={{
-                background: 'none', border: 'none', padding: 0,
-                cursor: selectedAnswer && !locked && !loading ? 'pointer' : 'default',
-                display: 'block',
+                marginTop: '16px',
+                opacity: selectedAnswer && !loading ? 1 : 0.45,
               }}
             >
-              <img src={LockInBtnSvg} alt="Lock In Answer"
-                style={{ display: 'block', width: '300px', height: 'auto' }} />
-            </button>
-          </motion.div>
+              <button
+                onClick={() => { void handleLockIn() }}
+                aria-label="Lock in answer"
+                style={{
+                  background: 'none', border: 'none', padding: 0,
+                  cursor: selectedAnswer && !locked && !loading ? 'pointer' : 'default',
+                  display: 'block',
+                }}
+              >
+                <img src={LockInBtnSvg} alt="Lock In Answer"
+                  style={{ display: 'block', width: '300px', height: 'auto' }} />
+              </button>
+            </motion.div>
+          )}
 
-          {/* ── Solo mode answer reveal — auto-advances after 2 s ── */}
+          {/* ── Solo mode answer reveal ── */}
           {!isMatchMode && locked && soloQuestion && (() => {
             const correctAns = soloQuestion.options.find(a => a.id === soloQuestion.correctAnswer)
             return (

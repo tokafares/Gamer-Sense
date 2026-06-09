@@ -1,13 +1,14 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
-import { useQuestions } from '../hooks/useQuestions'
 import { useScenarioVideo } from '../hooks/useScenarioVideo'
-import { apiPost } from '../lib/api'
+import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 import QuestionMedia from '../components/QuestionMedia'
+import type { Question } from '../types/question'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
 
@@ -29,29 +30,24 @@ const LANES = [
   { key: 'support', label: 'Support',  svg: SupportSvg  },
 ]
 
-// Group 270.svg native: 557 × 702 — scale to PANEL_H
 const PANEL_H = 600
-const SCALE   = PANEL_H / 702              // ≈ 0.855
+const SCALE   = PANEL_H / 702
 
-const LANE_H   = Math.round(116 * SCALE)   // ≈  99 px
-const LANE_W   = Math.round(149 * SCALE)   // ≈ 127 px
-const LANE_GAP = Math.round((PANEL_H - 5 * LANE_H) / 4) // ≈ 26 px
+const LANE_H   = Math.round(116 * SCALE)
+const LANE_W   = Math.round(149 * SCALE)
+const LANE_GAP = Math.round((PANEL_H - 5 * LANE_H) / 4)
 
-const PANEL_W = Math.round(557 * SCALE)    // ≈ 476 px
+const PANEL_W = Math.round(557 * SCALE)
 
-// Question frame: native y = 0 → 163
-const Q_H       = Math.round(163 * SCALE)  // ≈ 139 px
+const Q_H       = Math.round(163 * SCALE)
 const Q_ANS_GAP = 16
-const ANS_TOP   = Q_H + Q_ANS_GAP          // ≈ 155 px
+const ANS_TOP   = Q_H + Q_ANS_GAP
 
-// Answer buttons — Group 269.svg native: 557 × 332
-const ANS_H = Math.round(332 * SCALE)      // ≈ 284 px
+const ANS_H = Math.round(332 * SCALE)
 
-// Hint frame: native y = 560 → 702
-const HINT_TOP = Math.round(560 * SCALE)   // ≈ 479 px
-const HINT_H   = PANEL_H - HINT_TOP        // ≈ 121 px
+const HINT_TOP = Math.round(560 * SCALE)
+const HINT_H   = PANEL_H - HINT_TOP
 
-// Click regions within Group 269.svg (native coords)
 const ANSWER_REGIONS = [
   { id: 'A', top: 0,                        height: Math.round(96  * SCALE) },
   { id: 'B', top: Math.round(118 * SCALE),  height: Math.round(96  * SCALE) },
@@ -62,49 +58,121 @@ const LABEL_CLS = 'font-beaufort font-bold bg-gradient-to-b from-[#FFFCF6] to-[#
 const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent'
 
 export default function Page3() {
-  const reduced = useReducedMotion()
+  const reduced  = useReducedMotion()
+  const navigate = useNavigate()
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
-  const [refreshKey,     setRefreshKey]     = useState(0)
   const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const { question, loading, error } = useQuestions('scenario', activeLane, refreshKey)
+
+  // Batch question state
+  const [laneQuestions,  setLaneQuestions]  = useState<Question[]>([])
+  const [questionIdx,    setQuestionIdx]    = useState(0)
+  const [fetchLoading,   setFetchLoading]   = useState(false)
+  const [fetchError,     setFetchError]     = useState<string | null>(null)
+  const [laneComplete,   setLaneComplete]   = useState(false)
+  const [sessionCorrect, setSessionCorrect] = useState(0)
+  const [sessionPoints,  setSessionPoints]  = useState(0)
+
   const { video: scenarioVideo } = useScenarioVideo(activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
   const isYouTube       = scenarioVideo?.url.startsWith('https://www.youtube.com/embed/') ?? false
   const isCloudinaryVid = scenarioVideo?.url.includes('cloudinary.com') && scenarioVideo?.url.endsWith('.mp4')
 
-  // Auto-advance 2 s after locking in — cycle to the next lane
+  // Fetch all questions for the active lane whenever lane changes
+  useEffect(() => {
+    if (!import.meta.env.VITE_API_URL) return
+    let cancelled = false
+    setFetchLoading(true)
+    setFetchError(null)
+    setLaneQuestions([])
+    setQuestionIdx(0)
+    setSessionCorrect(0)
+    setSessionPoints(0)
+    setLaneComplete(false)
+    setSelectedAnswer(null)
+    setLocked(false)
+
+    apiGet<{ questions: Question[] }>(`/questions?type=scenario&lane=${activeLane}&limit=10`)
+      .then(data => {
+        if (!cancelled) {
+          setLaneQuestions(data.questions)
+          setFetchLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFetchError('Network error — check your connection')
+          setFetchLoading(false)
+        }
+      })
+    return () => { cancelled = true }
+  }, [activeLane])
+
+  const question = laneQuestions[questionIdx] ?? null
+  const loading  = fetchLoading
+
+  // Advance to next question 2 s after lock-in
   useEffect(() => {
     if (!locked) return
     advanceRef.current = setTimeout(() => {
-      setActiveLane(prev => {
-        const idx = LANES.findIndex(l => l.key === prev)
-        return LANES[(idx + 1) % LANES.length].key
-      })
-      setSelectedAnswer(null)
-      setLocked(false)
-      setRefreshKey(k => k + 1)
+      const nextIdx = questionIdx + 1
+      if (nextIdx >= laneQuestions.length && laneQuestions.length > 0) {
+        setLaneComplete(true)
+      } else {
+        setQuestionIdx(nextIdx)
+        setSelectedAnswer(null)
+        setLocked(false)
+      }
     }, 2000)
     return () => { if (advanceRef.current) clearTimeout(advanceRef.current) }
-  }, [locked])
+  }, [locked, questionIdx, laneQuestions.length])
 
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || loading || !question) return
     setLocked(true)
+    let earned = 0
+    let correct = false
     if (import.meta.env.VITE_API_URL) {
       try {
         const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number; explanation: string }>('/answers/submit', {
           questionId: question.id,
           selectedAnswer,
         })
+        earned = res.pointsEarned
+        correct = res.correct
         addPoints(res.pointsEarned)
         recordAnswer({ round: currentRound, selectedId: selectedAnswer, correctId: res.correctAnswer, isCorrect: res.correct, pointsEarned: res.pointsEarned })
-      } catch { /* submit failed silently — locked state still shown */ }
+      } catch { /* submit failed silently */ }
+    } else {
+      correct = selectedAnswer === question.correctAnswer
+      earned = correct ? 100 : 10
     }
+    if (correct) setSessionCorrect(c => c + 1)
+    setSessionPoints(p => p + earned)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnswer, locked, loading, question, currentRound])
+
+  const handleLaneSelect = (key: string) => {
+    if (advanceRef.current) clearTimeout(advanceRef.current)
+    setActiveLane(key)
+  }
+
+  const handleTryAnother = () => {
+    setLaneComplete(false)
+    setQuestionIdx(0)
+    setSessionCorrect(0)
+    setSessionPoints(0)
+    setSelectedAnswer(null)
+    setLocked(false)
+    // Re-fetch by resetting laneQuestions (effect re-fires on activeLane change; force it here)
+    setLaneQuestions([])
+    setFetchLoading(true)
+    apiGet<{ questions: Question[] }>(`/questions?type=scenario&lane=${activeLane}&limit=10`)
+      .then(data => { setLaneQuestions(data.questions); setFetchLoading(false) })
+      .catch(() => { setFetchError('Network error'); setFetchLoading(false) })
+  }
 
   return (
     <>
@@ -153,7 +221,7 @@ export default function Page3() {
                 <motion.button
                   key={key}
                   variants={cardItemAnim}
-                  onClick={() => { setActiveLane(key); setSelectedAnswer(null); setLocked(false) }}
+                  onClick={() => handleLaneSelect(key)}
                   aria-label={label}
                   style={{
                     position: 'relative',
@@ -218,131 +286,200 @@ export default function Page3() {
               />
             </motion.div>
 
-            {/* RIGHT — Q&A panel (Group 270 as unified background) */}
-            <motion.div
-              initial={reduced ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.2 }}
-              style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
-            >
-              {/* Group 270.svg: single background covering Q box + Hint box */}
-              <img src={Group270Svg} alt=""
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-
-              {/* Question text overlay */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0,
-                width: '100%', height: `${Q_H}px`,
-                padding: '14px 20px', boxSizing: 'border-box',
-              }}>
-                <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                  Question
+            {/* RIGHT — Q&A panel or Lane Complete panel */}
+            {laneComplete ? (
+              <motion.div
+                key="lane-complete"
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0,
+                  background: '#0D1F3C', border: '1px solid #1E3A5F',
+                  borderTop: '3px solid #00C9A7', borderRadius: 6,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  gap: 20, padding: '32px 24px', boxSizing: 'border-box',
+                }}
+              >
+                <h2
+                  className="font-beaufort font-bold"
+                  style={{
+                    fontSize: 32, margin: 0, textAlign: 'center',
+                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}
+                >
+                  Lane Complete!
+                </h2>
+                <p
+                  className="font-beaufort font-bold"
+                  style={{ fontSize: 16, color: '#8FA3C0', margin: 0, letterSpacing: '0.1em' }}
+                >
+                  {LANES.find(l => l.key === activeLane)?.label.toUpperCase()}
                 </p>
-                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                  {loading ? 'Loading question…' : error ? error : (question?.text ?? '')}
-                </p>
-              </div>
-
-              {/* Answer buttons */}
-              <div style={{
-                position: 'absolute', top: `${ANS_TOP}px`, left: 0,
-                width: '100%', height: `${ANS_H}px`,
-              }}>
-                <img src={AnswerBtnsSvg} alt=""
-                  style={{ display: 'block', width: '100%', height: '100%' }} />
-
-                {/* Dynamic answer text overlaid on each button frame — background covers SVG placeholder text */}
-                {question && ANSWER_REGIONS.map(({ id, top, height }) => {
-                  const ans = question.options.find(a => a.id === id)
-                  if (!ans) return null
-                  return (
-                    <div
-                      key={`ans-text-${id}`}
-                      style={{
-                        position: 'absolute', top: `${top + 2}px`, left: '2px',
-                        width: 'calc(100% - 4px)', height: `${height - 4}px`,
-                        display: 'flex', alignItems: 'center',
-                        padding: '0 20px', pointerEvents: 'none',
-                        background: '#0D1F3C',
-                      }}
-                    >
-                      <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                        {id}.&nbsp;{ans.text}
-                      </p>
-                    </div>
-                  )
-                })}
-
-                {ANSWER_REGIONS.map(({ id, top, height }, i) => (
-                  <motion.div
-                    key={id}
-                    role="button"
-                    tabIndex={locked ? -1 : 0}
-                    onClick={() => !locked && !loading && setSelectedAnswer(id)}
-                    onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
-                    initial={reduced ? false : { opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.3 + i * 0.08 }}
+                <div style={{ textAlign: 'center' }}>
+                  <p className="font-beaufort font-bold" style={{ fontSize: 22, color: '#E8EDF5', margin: '0 0 6px' }}>
+                    {sessionCorrect} / {laneQuestions.length} correct
+                  </p>
+                  <p className="font-beaufort font-bold" style={{ fontSize: 16, color: '#00C9A7', margin: 0 }}>
+                    +{sessionPoints} points earned
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+                  <button
+                    onClick={handleTryAnother}
                     style={{
-                      position: 'absolute', top: `${top}px`, left: 0,
-                      width: '100%', height: `${height}px`,
-                      cursor: locked ? 'default' : 'pointer',
+                      background: 'linear-gradient(to right, #00C9A7, #0090A7)',
+                      border: 'none', borderRadius: 4, padding: '12px 0',
+                      color: '#060F1E', cursor: 'pointer', width: '100%',
+                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
+                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
                     }}
-                    aria-label={`Answer ${id}`}
                   >
-                    {selectedAnswer === id && (
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        border: '2px solid #3AF9FF',
-                        background: 'rgba(58,249,255,0.07)',
-                        pointerEvents: 'none',
-                      }} />
-                    )}
-                  </motion.div>
-                ))}
-              </div>
+                    TRY ANOTHER LANE
+                  </button>
+                  <button
+                    onClick={() => navigate('/page10')}
+                    style={{
+                      background: 'none', border: '1px solid #1E3A5F',
+                      borderRadius: 4, padding: '12px 0',
+                      color: '#8FA3C0', cursor: 'pointer', width: '100%',
+                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
+                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
+                    }}
+                  >
+                    VIEW PROFILE
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={reduced ? false : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.2 }}
+                style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
+              >
+                {/* Group 270.svg: single background covering Q box + Hint box */}
+                <img src={Group270Svg} alt=""
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
 
-              {/* Hint text overlay */}
-              <div style={{
-                position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                width: '100%', height: `${HINT_H}px`,
-                padding: '14px 20px', boxSizing: 'border-box',
-              }}>
-                <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                  Hint:
-                </p>
-                <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
-                  {question?.hint ? `"${question.hint}"` : ''}
-                </p>
-              </div>
-            </motion.div>
+                {/* Question text overlay */}
+                <div style={{
+                  position: 'absolute', top: 0, left: 0,
+                  width: '100%', height: `${Q_H}px`,
+                  padding: '14px 20px', boxSizing: 'border-box',
+                }}>
+                  <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
+                    Question {laneQuestions.length > 0 ? `${questionIdx + 1} / ${laneQuestions.length}` : ''}
+                  </p>
+                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                    {loading ? 'Loading question…' : fetchError ? fetchError : (question?.text ?? '')}
+                  </p>
+                </div>
+
+                {/* Answer buttons */}
+                <div style={{
+                  position: 'absolute', top: `${ANS_TOP}px`, left: 0,
+                  width: '100%', height: `${ANS_H}px`,
+                }}>
+                  <img src={AnswerBtnsSvg} alt=""
+                    style={{ display: 'block', width: '100%', height: '100%' }} />
+
+                  {question && ANSWER_REGIONS.map(({ id, top, height }) => {
+                    const ans = question.options.find(a => a.id === id)
+                    if (!ans) return null
+                    return (
+                      <div
+                        key={`ans-text-${id}`}
+                        style={{
+                          position: 'absolute', top: `${top + 2}px`, left: '2px',
+                          width: 'calc(100% - 4px)', height: `${height - 4}px`,
+                          display: 'flex', alignItems: 'center',
+                          padding: '0 20px', pointerEvents: 'none',
+                          background: '#0D1F3C',
+                        }}
+                      >
+                        <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
+                          {id}.&nbsp;{ans.text}
+                        </p>
+                      </div>
+                    )
+                  })}
+
+                  {ANSWER_REGIONS.map(({ id, top, height }, i) => (
+                    <motion.div
+                      key={id}
+                      role="button"
+                      tabIndex={locked ? -1 : 0}
+                      onClick={() => !locked && !loading && setSelectedAnswer(id)}
+                      onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
+                      initial={reduced ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.3 + i * 0.08 }}
+                      style={{
+                        position: 'absolute', top: `${top}px`, left: 0,
+                        width: '100%', height: `${height}px`,
+                        cursor: locked ? 'default' : 'pointer',
+                      }}
+                      aria-label={`Answer ${id}`}
+                    >
+                      {selectedAnswer === id && (
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          border: '2px solid #3AF9FF',
+                          background: 'rgba(58,249,255,0.07)',
+                          pointerEvents: 'none',
+                        }} />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Hint text overlay */}
+                <div style={{
+                  position: 'absolute', top: `${HINT_TOP}px`, left: 0,
+                  width: '100%', height: `${HINT_H}px`,
+                  padding: '14px 20px', boxSizing: 'border-box',
+                }}>
+                  <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
+                    Hint:
+                  </p>
+                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
+                    {question?.hint ? `"${question.hint}"` : ''}
+                  </p>
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          {/* ── Lock-in button ── */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
-            style={{
-              marginTop: '16px',
-              opacity: selectedAnswer && !loading ? 1 : 0.45,
-            }}
-          >
-            <button
-              onClick={() => { void handleLockIn() }}
-              aria-label="Lock in answer"
+          {/* ── Lock-in button (hidden when lane is complete) ── */}
+          {!laneComplete && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
               style={{
-                background: 'none', border: 'none', padding: 0,
-                cursor: selectedAnswer && !locked && !loading ? 'pointer' : 'default',
-                display: 'block',
+                marginTop: '16px',
+                opacity: selectedAnswer && !loading ? 1 : 0.45,
               }}
             >
-              <img src={LockInBtnSvg} alt="Lock In Answer"
-                style={{ display: 'block', width: '300px', height: 'auto' }} />
-            </button>
-          </motion.div>
+              <button
+                onClick={() => { void handleLockIn() }}
+                aria-label="Lock in answer"
+                style={{
+                  background: 'none', border: 'none', padding: 0,
+                  cursor: selectedAnswer && !locked && !loading ? 'pointer' : 'default',
+                  display: 'block',
+                }}
+              >
+                <img src={LockInBtnSvg} alt="Lock In Answer"
+                  style={{ display: 'block', width: '300px', height: 'auto' }} />
+              </button>
+            </motion.div>
+          )}
 
-          {/* ── Answer reveal — shown after lock-in, auto-advances after 2 s ── */}
+          {/* ── Answer reveal — shown after lock-in ── */}
           {locked && question && (() => {
             const correctAns = question.options.find(a => a.id === question.correctAnswer)
             return (
