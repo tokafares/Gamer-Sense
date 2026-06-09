@@ -40,20 +40,21 @@ export default function Page9() {
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
 
-  // Winner always on the left
+  const myUsername = user?.username ?? 'You'
+  const myAvatar   = user?.avatarUrl ?? GrayProfile
+
+  // Winner always on the left, loser on the right
   const cards = [
     {
-      avatar:   iWon ? (user?.avatarUrl ?? GrayProfile) : GrayProfile,
-      label:    'WINNER',
-      subLabel: iWon ? (user?.username ?? 'You') : 'Invited Player',
+      avatar:   iWon ? myAvatar   : GrayProfile,
+      username: iWon ? myUsername : 'Opponent',
       score:    iWon ? myScore    : theirScore,
       isWinner: true,
     },
     {
-      avatar:   iWon ? GrayProfile : (user?.avatarUrl ?? GrayProfile),
-      label:    iWon ? 'Invited Player Profile' : (user?.username ?? 'You'),
-      subLabel: '',
-      score:    iWon ? theirScore : myScore,
+      avatar:   iWon ? GrayProfile : myAvatar,
+      username: iWon ? 'Opponent'  : myUsername,
+      score:    iWon ? theirScore  : myScore,
       isWinner: false,
     },
   ]
@@ -157,8 +158,15 @@ export default function Page9() {
                     transition={{ duration: 0.45, delay: 0.25 + idx * 0.12 }}
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                   >
-                    {/* ── Card: DialogBg frame ── */}
-                    <div style={{ position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0 }}>
+                    {/* ── Card: DialogBg frame — winner elevated with glow ── */}
+                    <div style={{
+                      position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0,
+                      transform: card.isWinner ? 'scale(1.05)' : 'scale(1)',
+                      boxShadow: card.isWinner
+                        ? '0 0 32px rgba(0,201,167,0.45), 0 0 8px rgba(58,249,255,0.2)'
+                        : 'none',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    }}>
                       {/* Card background */}
                       <img
                         src={CardBg}
@@ -166,27 +174,28 @@ export default function Page9() {
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                       />
 
-                      {/* Image area: Group 282 frame + avatar inside */}
+                      {/* Image area: avatar + optional trophy + Group 282 border */}
                       <div style={{
                         position: 'absolute',
-                        top: IMG_TOP,
-                        left: IMG_LEFT,
-                        width: IMG_W,
-                        height: IMG_H,
+                        top: IMG_TOP, left: IMG_LEFT,
+                        width: IMG_W, height: IMG_H,
+                        overflow: 'hidden',
                       }}>
-                        {/* Avatar */}
+                        {/* Avatar — winner: blurred for trophy overlay; loser: grayscale */}
                         <img
                           src={card.avatar}
-                          alt={card.label}
+                          alt={card.username}
                           style={{
                             position: 'absolute', inset: 0,
                             width: '100%', height: '100%',
                             objectFit: 'cover', objectPosition: 'top center',
-                            filter: card.isWinner ? 'blur(4px) brightness(0.55)' : 'none',
+                            filter: card.isWinner
+                              ? 'blur(4px) brightness(0.55)'
+                              : 'grayscale(60%) opacity(0.85)',
                           }}
                         />
 
-                        {/* Trophy cup — winner only */}
+                        {/* Trophy cup — winner card only */}
                         {card.isWinner && (
                           <img
                             src={WinnerCup}
@@ -203,7 +212,7 @@ export default function Page9() {
                           />
                         )}
 
-                        {/* Group 282 decorative frame on top */}
+                        {/* Group 282 decorative border overlay */}
                         <img
                           src={CardFrame}
                           alt=""
@@ -217,32 +226,42 @@ export default function Page9() {
                         />
                       </div>
 
-                      {/* Label inside card at bottom */}
+                      {/* Bottom label area inside card */}
                       <div style={{
                         position: 'absolute',
                         bottom: 0, left: 0, right: 0,
                         height: CARD_H - IMG_TOP - IMG_H,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '0 8px',
+                        display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'center',
+                        gap: 2, padding: '0 8px',
                       }}>
+                        {/* "WINNER" in teal / username in white */}
                         <span
                           className="font-beaufort font-bold"
                           style={{
-                            fontSize: 18,
+                            fontSize: card.isWinner ? 17 : 15,
                             letterSpacing: '0.06em',
+                            lineHeight: 1.1,
                             background: card.isWinner
                               ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
                               : 'none',
                             WebkitBackgroundClip: card.isWinner ? 'text' : undefined,
-                            WebkitTextFillColor: card.isWinner ? 'transparent' : undefined,
-                            backgroundClip:      card.isWinner ? 'text' : undefined,
+                            WebkitTextFillColor:  card.isWinner ? 'transparent' : undefined,
+                            backgroundClip:       card.isWinner ? 'text' : undefined,
                             color: card.isWinner ? undefined : '#E8EDF5',
                           }}
                         >
-                          {card.label}
+                          {card.isWinner ? 'WINNER' : card.username}
                         </span>
+                        {/* Username below WINNER label */}
+                        {card.isWinner && (
+                          <span style={{
+                            fontFamily: "'Barlow Condensed', sans-serif",
+                            fontSize: 12, color: '#8FA3C0', letterSpacing: '0.06em',
+                          }}>
+                            {card.username}
+                          </span>
+                        )}
                       </div>
                     </div>
 
