@@ -18,14 +18,14 @@ interface MatchResultState {
   isHost?:      boolean
 }
 
-// DialogBg actual SVG: 783 × 702 — stretched to portrait card, fine since it's a filled polygon
-const CARD_W     = 260
-const CARD_H     = 340
+// DialogBg actual SVG: 783 × 702 — preserveAspectRatio="none" so it stretches to fill
+const CARD_W     = 320
+const CARD_H     = 440
 // Group 282 is a square frame — fits inside the card with space for the label below
-const FRAME_SIZE = 210
-const FRAME_TOP  = 16
-const FRAME_LEFT = Math.round((CARD_W - FRAME_SIZE) / 2)  // 25
-const LABEL_TOP  = FRAME_TOP + FRAME_SIZE + 10             // 236
+const FRAME_SIZE = 265
+const FRAME_TOP  = 18
+const FRAME_LEFT = Math.round((CARD_W - FRAME_SIZE) / 2)  // 27
+const LABEL_TOP  = FRAME_TOP + FRAME_SIZE + 12             // 295
 
 export default function Page9() {
   const reduced  = useReducedMotion()
@@ -66,7 +66,7 @@ export default function Page9() {
 
       <main style={{ paddingTop: '85.2px', background: 'transparent' }}>
         <div style={{
-          maxWidth: 760,
+          maxWidth: 820,
           marginLeft: 'auto',
           marginRight: 'auto',
           padding: '48px 24px 80px',
