@@ -73,7 +73,17 @@ export default function Page8() {
   const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
-  const isMatchMode = !!matchId && matchQuestions.length > 0
+  // isMatchMode: true whenever we're inside a live 1v1 match (matchId set by setMatchStart before navigation)
+  const isMatchMode = !!matchId
+
+  // Current question in match mode — updated by round:question socket events
+  const [currentMatchQuestion, setCurrentMatchQuestion] = useState<{ id: string; text: string; options: { id: string; text: string }[] } | null>(
+    matchQuestions[0] ?? null
+  )
+
+  // Ref so socket closures always see the latest selectedAnswer without being in deps
+  const selectedAnswerRef = useRef<string | null>(null)
+  useEffect(() => { selectedAnswerRef.current = selectedAnswer }, [selectedAnswer])
 
   // Auto-advance 2 s after locking in — cycle to next lane (solo mode only)
   useEffect(() => {
@@ -98,15 +108,22 @@ export default function Page8() {
     refreshKey
   )
 
-  // In match mode, derive question from store
-  const matchQuestion = isMatchMode ? (matchQuestions[currentRound - 1] ?? null) : null
-  const question = isMatchMode ? matchQuestion : soloQuestion
+  const question = isMatchMode ? currentMatchQuestion : soloQuestion
 
   // ── Socket setup for 1v1 match ──
   useEffect(() => {
     if (!isMatchMode) return
 
     const socket = getSocket() ?? connectSocket()
+
+    // Backend sends round:question after match:start and after each round:result
+    const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; options: { id: string; text: string }[] } }) => {
+      setCurrentMatchQuestion(data.question)
+      setSelectedAnswer(null)
+      setLocked(false)
+      setRoundResult(null)
+      setWaitingOpponent(false)
+    }
 
     const onRoundResult = (data: { roundIndex: number; correctAnswer: string; explanation: string; hostScore: number; invitedScore: number }) => {
       const yourScore     = isHost ? data.hostScore : data.invitedScore
@@ -116,46 +133,43 @@ export default function Page8() {
       setWaitingOpponent(false)
       addPoints(yourScore)
 
-      // Advance to next round after 2.5 s
+      // Record answer after 2.5 s — next round:question from backend will reset state
       advanceRef.current = setTimeout(() => {
         const store = useGameStore.getState()
-        if (store.currentRound < store.totalRounds) {
-          recordAnswer({
-            round:        store.currentRound,
-            selectedId:   selectedAnswer ?? '',
-            correctId:    data.correctAnswer,
-            isCorrect:    selectedAnswer === data.correctAnswer,
-            pointsEarned: yourScore,
-          })
-          setSelectedAnswer(null)
-          setLocked(false)
-          setRoundResult(null)
-        }
+        recordAnswer({
+          round:        store.currentRound,
+          selectedId:   selectedAnswerRef.current ?? '',
+          correctId:    data.correctAnswer,
+          isCorrect:    selectedAnswerRef.current === data.correctAnswer,
+          pointsEarned: yourScore,
+        })
       }, 2500)
     }
 
     const onMatchEnd = (data: { winnerId: string; hostScore: number; invitedScore: number }) => {
+      if (advanceRef.current) clearTimeout(advanceRef.current)
       clearMatch()
       navigate('/match-winner', { state: data })
     }
 
-    socket.on('round:result', onRoundResult)
-    socket.on('match:end',    onMatchEnd)
+    socket.on('round:question', onRoundQuestion)
+    socket.on('round:result',   onRoundResult)
+    socket.on('match:end',      onMatchEnd)
 
     return () => {
-      socket.off('round:result', onRoundResult)
-      socket.off('match:end',    onMatchEnd)
+      socket.off('round:question', onRoundQuestion)
+      socket.off('round:result',   onRoundResult)
+      socket.off('match:end',      onMatchEnd)
       if (advanceRef.current) clearTimeout(advanceRef.current)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMatchMode, matchId, selectedAnswer])
+  }, [isMatchMode, matchId])
 
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || !question) return
     setLocked(true)
 
     if (isMatchMode) {
-      // Emit answer to server — server fires round:result when both players answered
       setWaitingOpponent(true)
       const socket = getSocket() ?? connectSocket()
       socket.emit('round:answer', { matchId, roundIndex: currentRound - 1, answer: selectedAnswer })
@@ -163,7 +177,7 @@ export default function Page8() {
     }
 
     // Solo mode — submit via REST
-    if (import.meta.env.VITE_API_URL && !isMatchMode) {
+    if (import.meta.env.VITE_API_URL) {
       try {
         const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number }>('/answers/submit', {
           questionId: question.id,
@@ -316,7 +330,7 @@ export default function Page8() {
                   Question
                 </p>
                 <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                  {loading && !isMatchMode ? 'Loading question…' : error ? error : (question?.text ?? '')}
+                  {isMatchMode && !currentMatchQuestion ? 'Waiting for question…' : loading ? 'Loading question…' : error ? error : (question?.text ?? '')}
                 </p>
               </div>
 
