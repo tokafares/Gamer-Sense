@@ -156,12 +156,9 @@ export default function Page9() {
                   <motion.div
                     key={idx}
                     initial={reduced ? false : { opacity: 0, x: idx === 0 ? -80 : 80 }}
-                    animate={{ opacity: card.isWinner ? 1 : 0.55, x: 0 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.65, delay: 0.3 + idx * 0.15, ease: 'easeOut' }}
-                    style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
-                      filter: card.isWinner ? 'none' : 'grayscale(40%)',
-                    }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                   >
                     {/* ── Card: DialogBg frame — winner gets pulsing teal glow ── */}
                     <motion.div
@@ -286,19 +283,17 @@ export default function Page9() {
                         >
                           {card.isWinner ? 'WINNER' : 'CHALLENGER'}
                         </motion.span>
-                        {/* Username only on winner card */}
-                        {card.isWinner && (
-                          <span
+                        {/* Username on both cards */}
+                        <span
                             className="font-beaufort"
                             style={{
                               fontSize: 16,
-                              color: '#3AF9FF',
+                              color: card.isWinner ? '#3AF9FF' : '#8FA3C0',
                               marginTop: 4,
                             }}
                           >
                             {card.username}
                           </span>
-                        )}
                       </div>
                     </motion.div>
 
