@@ -208,20 +208,16 @@ export default function Page3() {
                   style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
-                /* No video configured for this lane yet */
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center', gap: 12,
-                }}>
-                  <span style={{ fontSize: 36, lineHeight: 1 }}>🎮</span>
-                  <span className="font-beaufort font-bold" style={{ fontSize: 16, color: '#8FA3C0', letterSpacing: '0.08em' }}>
-                    No Video Set
-                  </span>
-                  <span style={{ color: '#1E3A5F', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12 }}>
-                    Add one via Admin → Videos
-                  </span>
-                </div>
+                /* Fallback video shown when no lane-specific video is configured */
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  controls
+                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+                >
+                  <source src="https://res.cloudinary.com/dwyck7pzp/video/upload/v1780863160/WrEVCEHkaBzd6FlVB8_ugA_f3x5x0.mp4" type="video/mp4" />
+                </video>
               )}
             </motion.div>
 
