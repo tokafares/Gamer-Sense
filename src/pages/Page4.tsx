@@ -18,7 +18,6 @@ import ADCSvg        from '../assets/Group 261.svg'
 import SupportSvg    from '../assets/Group 262.svg'
 
 import DialogBgSvg   from '../assets/DialogBg.svg'
-import GameArtwork   from '../assets/Gemini_Generated_Image_hye8c0hye8c0hye8 1.webp'
 import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
@@ -319,10 +318,7 @@ export default function Page4() {
               <div style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', overflow: 'hidden', borderRadius: 4 }}>
                 <QuestionMedia
                   imageUrl={question?.imageUrl}
-                  fallback={
-                    <img src={GameArtwork} alt=""
-                      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
-                  }
+                  fallback={<div style={{ width: '100%', height: '100%', background: '#060F1E' }} />}
                 />
               </div>
             </motion.div>
