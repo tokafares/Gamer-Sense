@@ -306,14 +306,16 @@ export default function Page9() {
                         width: 220, height: 52, flexShrink: 0,
                         background: '#0F1E2D',
                         border: '2px solid',
-                        borderImageSource: 'linear-gradient(to bottom, #3AF9FF, #00A7AD)',
+                        borderImageSource: card.isWinner
+                          ? 'linear-gradient(to bottom, #3AF9FF, #00A7AD)'
+                          : 'linear-gradient(to bottom, #4A6080, #2A3F5F)',
                         borderImageSlice: 1,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     >
                       <span
                         className="font-beaufort font-bold"
-                        style={{ fontSize: 16, color: '#E8EDF5' }}
+                        style={{ fontSize: 16, color: card.isWinner ? '#E8EDF5' : '#8FA3C0' }}
                       >
                         {card.score} Correct Answers
                       </span>
