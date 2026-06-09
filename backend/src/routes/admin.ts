@@ -70,8 +70,12 @@ export async function adminRoutes(app: FastifyInstance) {
           data: request.body,
         })
         return reply.send(question)
-      } catch {
-        return reply.status(404).send({ error: 'Question not found' })
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : ''
+        if (msg.includes('Record to update not found') || msg.includes('P2025')) {
+          return reply.status(404).send({ error: 'Question not found' })
+        }
+        return reply.status(500).send({ error: msg || 'Failed to update question' })
       }
     },
   )

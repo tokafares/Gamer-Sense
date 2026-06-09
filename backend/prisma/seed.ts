@@ -696,16 +696,25 @@ const champions: ChampionInput[] = RAW_CHAMPIONS.map(([ddId, displayName, role])
 async function main() {
   console.log('🌱  Seeding database...')
 
-  // Clear existing data (GTRVote before GTRRound due to FK)
+  // Clear GTR votes + rounds (replaced wholesale on each deploy)
+  // Questions and champions use upsert so admin-created data is preserved
   await prisma.gTRVote.deleteMany()
   await prisma.gTRRound.deleteMany()
-  await prisma.question.deleteMany()
   await prisma.champion.deleteMany()
 
-  // Seed questions
+  // Seed questions — upsert on text so IDs survive redeployments
   for (const q of questions) {
-    await prisma.question.create({
-      data: {
+    await prisma.question.upsert({
+      where: { text: q.text },
+      update: {
+        type: q.type,
+        lane: q.lane,
+        hint: q.hint ?? null,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation,
+      },
+      create: {
         type: q.type,
         lane: q.lane,
         text: q.text,

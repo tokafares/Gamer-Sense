@@ -43,7 +43,7 @@ model Question {
   id            String   @id @default(uuid())
   type          String
   lane          String
-  text          String
+  text          String   @unique
   imageUrl      String?
   hint          String?
   options       Json
