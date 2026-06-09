@@ -18,7 +18,7 @@ const CARDS: Array<{ id: string; label: string; svg: string; to: string | null }
   { id: 'knowledge-hub', label: 'KNOWLEDGE HUB', svg: CoachingSvg,  to: '/knowledge-hub'  },
   { id: 'profile',       label: 'PROFILE',       svg: ProfileSvg,   to: '/profile' },
   { id: 'duels',         label: 'DUELS',         svg: GuessRankSvg, to: '/duels' },
-  { id: 'guess-rank',   label: 'GUESS RANK',    svg: GuessRankSvg, to: '/gtr-invite'    },
+  { id: 'guess-rank',   label: 'GUESS RANK',    svg: GuessRankSvg, to: '/match'         },
 ]
 
 const CARD_W = 210
