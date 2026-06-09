@@ -8,7 +8,8 @@ import GrayProfile   from '../assets/gray profile.webp'
 import WinnerCup     from '../assets/Group 323.png'
 import CardBg        from '../assets/DialogBg.svg'
 import CardFrame     from '../assets/Group 282.svg'
-import RematchBtn    from '../assets/Group 321 winner btn.svg'
+import BadgeWinner   from '../assets/Group 321.svg'
+import BadgeWide     from '../assets/Group 322.svg'
 import { useAuthStore } from '../store/authStore'
 
 interface MatchResultState {
@@ -158,14 +159,12 @@ export default function Page9() {
                     transition={{ duration: 0.45, delay: 0.25 + idx * 0.12 }}
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                   >
-                    {/* ── Card: DialogBg frame — winner elevated with glow ── */}
+                    {/* ── Card: DialogBg frame — winner gets teal glow ── */}
                     <div style={{
                       position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0,
-                      transform: card.isWinner ? 'scale(1.05)' : 'scale(1)',
                       boxShadow: card.isWinner
-                        ? '0 0 32px rgba(0,201,167,0.45), 0 0 8px rgba(58,249,255,0.2)'
+                        ? '0 0 24px rgba(58,249,255,0.3)'
                         : 'none',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                     }}>
                       {/* Card background */}
                       <img
@@ -220,8 +219,6 @@ export default function Page9() {
                             position: 'absolute', inset: 0,
                             width: '100%', height: '100%',
                             pointerEvents: 'none',
-                            mixBlendMode: 'screen',
-                            opacity: 0.18,
                           }}
                         />
                       </div>
@@ -265,10 +262,10 @@ export default function Page9() {
                       </div>
                     </div>
 
-                    {/* ── Correct answers badge — Group 321 with text overlay ── */}
+                    {/* ── Correct answers badge ── */}
                     <div style={{ position: 'relative', width: 160, height: 38, flexShrink: 0 }}>
                       <img
-                        src={RematchBtn}
+                        src={card.isWinner ? BadgeWinner : BadgeWide}
                         alt=""
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                       />
@@ -299,13 +296,13 @@ export default function Page9() {
                 <button
                   onClick={goTriviaInvite}
                   style={{
-                    position: 'relative', width: 225, height: 60,
+                    position: 'relative', width: 300, height: 60,
                     background: 'none', border: 'none', padding: 0,
                     cursor: 'pointer', display: 'block',
                   }}
                 >
                   <img
-                    src={RematchBtn}
+                    src={BadgeWide}
                     alt=""
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                   />
