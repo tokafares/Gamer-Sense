@@ -7,6 +7,7 @@ import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { useQuestions } from '../hooks/useQuestions'
 import { apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
+import { useAuthStore } from '../store/authStore'
 import { getSocket, connectSocket } from '../lib/socket'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
@@ -64,13 +65,19 @@ interface RoundResult {
 export default function Page8() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const [activeLane,      setActiveLane]      = useState('top')
   const [selectedAnswer,  setSelectedAnswer]  = useState<string | null>(null)
   const [locked,          setLocked]          = useState(false)
   const [roundResult,     setRoundResult]     = useState<RoundResult | null>(null)
   const [waitingOpponent, setWaitingOpponent] = useState(false)
   const [refreshKey,      setRefreshKey]      = useState(0)
-  const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Live match scores — updated from round:result
+  const [yourScore,       setYourScore]       = useState(0)
+  const [oppScore,        setOppScore]        = useState(0)
+  const advanceRef      = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Captures the answer at the moment of lock-in so the result overlay can show it
+  const lockedAnswerRef = useRef<string | null>(null)
 
   const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
   // isMatchMode: true whenever we're inside a live 1v1 match (matchId set by setMatchStart before navigation)
@@ -123,15 +130,18 @@ export default function Page8() {
       setLocked(false)
       setRoundResult(null)
       setWaitingOpponent(false)
+      lockedAnswerRef.current = null
     }
 
     const onRoundResult = (data: { roundIndex: number; correctAnswer: string; explanation: string; hostScore: number; invitedScore: number }) => {
-      const yourScore     = isHost ? data.hostScore : data.invitedScore
-      const opponentScore = isHost ? data.invitedScore : data.hostScore
-      const result: RoundResult = { correctAnswer: data.correctAnswer, yourScore, opponentScore, explanation: data.explanation }
+      const mine = isHost ? data.hostScore : data.invitedScore
+      const theirs = isHost ? data.invitedScore : data.hostScore
+      const result: RoundResult = { correctAnswer: data.correctAnswer, yourScore: mine, opponentScore: theirs, explanation: data.explanation }
       setRoundResult(result)
       setWaitingOpponent(false)
-      addPoints(yourScore)
+      setYourScore(mine)
+      setOppScore(theirs)
+      addPoints(mine)
 
       // Record answer after 2.5 s — next round:question from backend will reset state
       advanceRef.current = setTimeout(() => {
@@ -141,15 +151,17 @@ export default function Page8() {
           selectedId:   selectedAnswerRef.current ?? '',
           correctId:    data.correctAnswer,
           isCorrect:    selectedAnswerRef.current === data.correctAnswer,
-          pointsEarned: yourScore,
+          pointsEarned: mine,
         })
       }, 2500)
     }
 
     const onMatchEnd = (data: { winnerId: string; hostScore: number; invitedScore: number }) => {
       if (advanceRef.current) clearTimeout(advanceRef.current)
+      // Capture isHost before clearMatch wipes it, then pass with state
+      const capturedIsHost = useGameStore.getState().isHost
       clearMatch()
-      navigate('/match-winner', { state: data })
+      navigate('/match-winner', { state: { ...data, isHost: capturedIsHost } })
     }
 
     socket.on('round:question', onRoundQuestion)
@@ -170,6 +182,7 @@ export default function Page8() {
     setLocked(true)
 
     if (isMatchMode) {
+      lockedAnswerRef.current = selectedAnswer
       setWaitingOpponent(true)
       const socket = getSocket() ?? connectSocket()
       socket.emit('round:answer', { matchId, roundIndex: currentRound - 1, answer: selectedAnswer })
@@ -229,6 +242,84 @@ export default function Page8() {
             )}
           </div>
 
+          {/* ── 1v1 live scoreboard ── */}
+          {isMatchMode && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              style={{
+                display: 'flex', alignItems: 'center',
+                background: '#0D1F3C', border: '1px solid #1E3A5F',
+                borderRadius: 8, padding: '12px 24px',
+                marginBottom: '16px', gap: 0,
+              }}
+            >
+              {/* You */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                <span style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0',
+                }}>YOU</span>
+                <span className="font-beaufort font-bold" style={{
+                  fontSize: 28, lineHeight: 1,
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>
+                  {user?.username ?? 'Player'}
+                </span>
+                <span style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
+                }}>
+                  {yourScore} correct
+                </span>
+              </div>
+
+              {/* VS + round */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 24px' }}>
+                <span className="font-beaufort font-bold" style={{
+                  fontSize: 32, fontStyle: 'italic',
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>VS</span>
+                <span style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em',
+                }}>
+                  ROUND {currentRound}/{totalRounds}
+                </span>
+                {/* Dot indicators */}
+                <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                  {Array.from({ length: totalRounds }, (_, i) => (
+                    <div key={i} style={{
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: i < currentRound - 1 ? '#00C9A7' : i === currentRound - 1 ? '#3AF9FF' : '#1E3A5F',
+                      transition: 'background 0.3s',
+                    }} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Opponent */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                <span style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0',
+                }}>OPPONENT</span>
+                <span className="font-beaufort font-bold" style={{ fontSize: 28, lineHeight: 1, color: '#E8EDF5' }}>
+                  Challenger
+                </span>
+                <span style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
+                }}>
+                  {oppScore} correct
+                </span>
+              </div>
+            </motion.div>
+          )}
+
           {/* ── 3-column layout ── */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', height: `${PANEL_H}px` }}>
 
@@ -283,9 +374,9 @@ export default function Page8() {
               <img src={GameArtwork} alt=""
                 style={{ position: 'absolute', inset: '4%', width: '92%', height: '92%', objectFit: 'cover', borderRadius: 4 }} />
 
-              {/* Waiting overlay shown inside artwork panel */}
+              {/* Waiting overlay */}
               <AnimatePresence>
-                {waitingOpponent && (
+                {waitingOpponent && !roundResult && (
                   <motion.div
                     key="waiting"
                     initial={{ opacity: 0 }}
@@ -293,18 +384,135 @@ export default function Page8() {
                     exit={{ opacity: 0 }}
                     style={{
                       position: 'absolute', inset: 0,
-                      background: 'rgba(6,15,30,0.75)',
+                      background: 'rgba(6,15,30,0.82)',
                       display: 'flex', flexDirection: 'column',
-                      alignItems: 'center', justifyContent: 'center', gap: 12,
+                      alignItems: 'center', justifyContent: 'center', gap: 16,
                     }}
                   >
-                    <span style={{
-                      display: 'inline-block', width: 12, height: 12, borderRadius: '50%',
-                      background: '#3AF9FF', animation: 'pulse 1.2s ease-in-out infinite',
-                    }} />
-                    <span className="font-beaufort font-bold" style={{ color: '#3AF9FF', fontSize: 16, letterSpacing: '0.12em' }}>
-                      WAITING FOR OPPONENT…
+                    <motion.div
+                      animate={reduced ? {} : { scale: [1, 1.15, 1] }}
+                      transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                      style={{
+                        width: 18, height: 18, borderRadius: '50%', background: '#3AF9FF',
+                      }}
+                    />
+                    <span className="font-beaufort font-bold" style={{ color: '#3AF9FF', fontSize: 18, letterSpacing: '0.14em' }}>
+                      ANSWER LOCKED IN
                     </span>
+                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#8FA3C0', letterSpacing: '0.1em' }}>
+                      Waiting for opponent…
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Round result overlay — covers entire center panel */}
+              <AnimatePresence>
+                {roundResult && (
+                  <motion.div
+                    key="result"
+                    initial={{ opacity: 0, scale: 0.92 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.32 }}
+                    style={{
+                      position: 'absolute', inset: 0,
+                      background: 'rgba(6,15,30,0.95)',
+                      display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', justifyContent: 'center', gap: 18,
+                      padding: '24px',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    {/* Correct / Wrong badge */}
+                    <motion.div
+                      initial={{ opacity: 0, y: -12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      <span className="font-beaufort font-bold" style={{
+                        fontSize: 28, letterSpacing: '0.12em',
+                        color: lockedAnswerRef.current === roundResult.correctAnswer ? '#00C9A7' : '#ef4444',
+                      }}>
+                        {lockedAnswerRef.current === roundResult.correctAnswer ? '✓ CORRECT!' : '✗ WRONG'}
+                      </span>
+                    </motion.div>
+
+                    {/* Correct answer */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.2 }}
+                      style={{
+                        background: 'rgba(0,201,167,0.12)',
+                        border: '1px solid rgba(0,201,167,0.4)',
+                        borderRadius: 6, padding: '8px 16px', textAlign: 'center',
+                      }}
+                    >
+                      <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: '#8FA3C0', letterSpacing: '0.1em', display: 'block', marginBottom: 4 }}>
+                        CORRECT ANSWER
+                      </span>
+                      <span className="font-beaufort font-medium" style={{ fontSize: 15, color: '#00C9A7' }}>
+                        {roundResult.correctAnswer}
+                      </span>
+                    </motion.div>
+
+                    {/* Live score comparison */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.3 }}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 0, width: '100%',
+                        background: '#0D1F3C', border: '1px solid #1E3A5F',
+                        borderRadius: 8, padding: '12px 20px',
+                      }}
+                    >
+                      <div style={{ flex: 1, textAlign: 'left' }}>
+                        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em' }}>YOU</div>
+                        <div className="font-beaufort font-bold" style={{
+                          fontSize: 36, lineHeight: 1,
+                          background: 'linear-gradient(to right, #3AF9FF, #00C9A7)',
+                          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                        }}>{roundResult.yourScore}</div>
+                      </div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, color: '#1E3A5F', padding: '0 12px', fontStyle: 'italic' }}>
+                        VS
+                      </div>
+                      <div style={{ flex: 1, textAlign: 'right' }}>
+                        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em' }}>OPP</div>
+                        <div className="font-beaufort font-bold" style={{ fontSize: 36, lineHeight: 1, color: '#E8EDF5' }}>
+                          {roundResult.opponentScore}
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {roundResult.explanation && (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.4 }}
+                        style={{
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          fontSize: 12, color: '#8FA3C0', fontStyle: 'italic',
+                          textAlign: 'center', margin: 0, lineHeight: 1.5,
+                        }}
+                      >
+                        {roundResult.explanation}
+                      </motion.p>
+                    )}
+
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.5 }}
+                      style={{
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        fontSize: 11, color: '#1E3A5F', letterSpacing: '0.1em',
+                      }}
+                    >
+                      Next round loading…
+                    </motion.span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -452,6 +660,28 @@ export default function Page8() {
                   <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
                     "{soloQuestion.hint}"
                   </p>
+                </div>
+              )}
+
+              {/* Match mode: locked-in waiting state */}
+              {isMatchMode && locked && !roundResult && (
+                <div style={{
+                  position: 'absolute', top: `${HINT_TOP}px`, left: 0,
+                  width: '100%', height: `${HINT_H}px`,
+                  padding: '14px 20px', boxSizing: 'border-box',
+                  display: 'flex', alignItems: 'center', gap: 8,
+                }}>
+                  <span style={{
+                    display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
+                    background: '#3AF9FF', flexShrink: 0,
+                    animation: 'pulse 1.2s ease-in-out infinite',
+                  }} />
+                  <span style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontSize: 12, letterSpacing: '0.1em', color: '#8FA3C0',
+                  }}>
+                    Answer locked — waiting for opponent…
+                  </span>
                 </div>
               )}
 
