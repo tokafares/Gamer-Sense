@@ -249,9 +249,9 @@ export default function Page9() {
                         <span
                           className="font-beaufort font-bold"
                           style={{
-                            fontSize: card.isWinner ? 26 : 20,
+                            fontSize: card.isWinner ? 42 : 28,
                             letterSpacing: '0.1em',
-                            lineHeight: 1.1,
+                            lineHeight: 1,
                             textTransform: 'uppercase',
                             background: card.isWinner
                               ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
@@ -263,36 +263,42 @@ export default function Page9() {
                         >
                           {card.isWinner ? 'WINNER' : 'CHALLENGER'}
                         </span>
-                        {/* Username below label */}
-                        <span style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: 15,
-                          color: card.isWinner ? '#3AF9FF' : '#8FA3C0',
-                          letterSpacing: '0.08em',
-                          marginTop: 2,
-                        }}>
-                          {card.username}
-                        </span>
+                        {/* Username only on winner card */}
+                        {card.isWinner && (
+                          <span
+                            className="font-beaufort"
+                            style={{
+                              fontSize: 16,
+                              color: '#3AF9FF',
+                              letterSpacing: '0.08em',
+                              marginTop: 4,
+                            }}
+                          >
+                            {card.username}
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     {/* ── Correct answers badge ── */}
-                    <div style={{ position: 'relative', width: 160, height: 38, flexShrink: 0 }}>
+                    <div style={{ position: 'relative', width: 220, height: 52, flexShrink: 0 }}>
                       <img
                         src={card.isWinner ? BadgeWinner : BadgeWide}
                         alt=""
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                       />
-                      {/* cover baked-in SVG text */}
-                      <div style={{ position: 'absolute', inset: '5px', background: '#0F1E2D' }} />
+                      {/* cover baked-in SVG text — inset matches stroke width so border stays visible */}
+                      <div style={{ position: 'absolute', inset: '4px 5px', background: '#0F1E2D' }} />
                       <div style={{
                         position: 'absolute', inset: 0,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
-                        <span style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em',
-                        }}>
+                        <span
+                          className="font-beaufort font-bold"
+                          style={{
+                            fontSize: 16, color: '#E8EDF5', letterSpacing: '0.08em',
+                          }}
+                        >
                           {card.score} Correct Answers
                         </span>
                       </div>
