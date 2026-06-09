@@ -78,7 +78,6 @@ export default function Page4() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
-  const [refetchKey,     setRefetchKey]     = useState(0)
 
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
@@ -123,7 +122,7 @@ export default function Page4() {
       })
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLane, refetchKey])
+  }, [activeLane])
 
   // Advance after lock-in or timeout
   const advanceQuestion = useCallback(() => {
@@ -204,6 +203,7 @@ export default function Page4() {
   }
 
   const handleTryAnother = () => {
+    const nextKey = LANES[(LANES.findIndex(l => l.key === activeLane) + 1) % LANES.length].key
     setLaneComplete(false)
     setQuestionIdx(0)
     setSessionCorrect(0)
@@ -211,7 +211,7 @@ export default function Page4() {
     setSelectedAnswer(null)
     setLocked(false)
     setTimeLeft(TIMER_SECONDS)
-    setRefetchKey(k => k + 1)
+    setActiveLane(nextKey)
   }
 
   const timerDanger = timeLeft <= 3

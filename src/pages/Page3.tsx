@@ -73,7 +73,6 @@ export default function Page3() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
-  const [refetchKey,     setRefetchKey]     = useState(0)
 
   const { video: scenarioVideo } = useScenarioVideo(activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
@@ -109,7 +108,7 @@ export default function Page3() {
         }
       })
     return () => { cancelled = true }
-  }, [activeLane, refetchKey])
+  }, [activeLane])
 
   const question = laneQuestions[questionIdx] ?? null
   const loading  = fetchLoading
@@ -161,13 +160,14 @@ export default function Page3() {
   }
 
   const handleTryAnother = () => {
+    const nextKey = LANES[(LANES.findIndex(l => l.key === activeLane) + 1) % LANES.length].key
     setLaneComplete(false)
     setQuestionIdx(0)
     setSessionCorrect(0)
     setSessionPoints(0)
     setSelectedAnswer(null)
     setLocked(false)
-    setRefetchKey(k => k + 1)
+    setActiveLane(nextKey)   // triggers useEffect → fetches next lane's questions
   }
 
   return (

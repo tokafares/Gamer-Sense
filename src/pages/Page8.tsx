@@ -86,7 +86,6 @@ export default function Page8() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
-  const [refetchKey,     setRefetchKey]     = useState(0)
 
   const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
   const isMatchMode = !!matchId
@@ -128,7 +127,7 @@ export default function Page8() {
       })
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLane, isMatchMode, refetchKey])
+  }, [activeLane, isMatchMode])
 
   // Derived question / loading for each mode
   const soloQuestion = laneQuestions[questionIdx] ?? null
@@ -250,13 +249,14 @@ export default function Page8() {
   }
 
   const handleTryAnother = () => {
+    const nextKey = LANES[(LANES.findIndex(l => l.key === activeLane) + 1) % LANES.length].key
     setLaneComplete(false)
     setQuestionIdx(0)
     setSessionCorrect(0)
     setSessionPoints(0)
     setSelectedAnswer(null)
     setLocked(false)
-    setRefetchKey(k => k + 1)
+    setActiveLane(nextKey)
   }
 
   const roundLabel = isMatchMode ? `Round ${currentRound} / ${totalRounds}` : null
