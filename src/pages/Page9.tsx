@@ -4,31 +4,46 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import GrayProfile from '../assets/gray profile.webp'
-import PlayerProfileBg from '../assets/Player Profile Bg.svg'
+import GrayProfile   from '../assets/gray profile.webp'
+import WinnerCup     from '../assets/Group 323.png'
 import { useAuthStore } from '../store/authStore'
 
 interface MatchResultState {
-  winnerId: string
-  hostScore: number
+  winnerId:     string
+  hostScore:    number
   invitedScore: number
-  isHost?: boolean
+  isHost?:      boolean
 }
+
+const CARD_W = 260
+const CARD_H = 280
 
 export default function Page9() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useAuthStore()
+  const { user }  = useAuthStore()
 
   const goTriviaInvite = useCallback(() => navigate('/trivia-invite'), [navigate])
 
-  const result   = (location.state as MatchResultState | null)
-  const iWon     = result?.winnerId === user?.id
-
-  // Use isHost passed through nav state to map backend scores correctly
+  const result     = (location.state as MatchResultState | null)
+  const iWon       = result?.winnerId === user?.id
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
+
+  // Winner card is always shown first (left), loser second (right)
+  const winnerCard = {
+    avatar:  iWon ? (user?.avatarUrl ?? GrayProfile) : GrayProfile,
+    label:   iWon ? (user?.username ?? 'You')        : 'Invited Player Profile',
+    score:   iWon ? myScore                          : theirScore,
+    isWinner: true,
+  }
+  const loserCard = {
+    avatar:  iWon ? GrayProfile                      : (user?.avatarUrl ?? GrayProfile),
+    label:   iWon ? 'Invited Player Profile'         : (user?.username ?? 'You'),
+    score:   iWon ? theirScore                       : myScore,
+    isWinner: false,
+  }
 
   return (
     <>
@@ -36,12 +51,63 @@ export default function Page9() {
 
       <main style={{ paddingTop: '85.2px', background: 'transparent' }}>
         <div style={{
-          maxWidth: 900,
+          maxWidth: 800,
           marginLeft: 'auto',
           marginRight: 'auto',
           padding: '48px 24px 80px',
           textAlign: 'center',
         }}>
+
+          {/* ── VICTORY / DEFEAT heading (kept from previous design) ── */}
+          {result && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              style={{ marginBottom: 32 }}
+            >
+              <h1
+                className="font-beaufort font-bold"
+                style={{
+                  fontSize: 64, lineHeight: 1, margin: 0,
+                  background: iWon
+                    ? 'linear-gradient(to right, #3AF9FF, #00C9A7)'
+                    : 'linear-gradient(to right, #8FA3C0, #4A5568)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  letterSpacing: '0.06em',
+                }}
+              >
+                {iWon ? 'VICTORY!' : 'DEFEAT'}
+              </h1>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 15, letterSpacing: '0.1em',
+                color: iWon ? '#00C9A7' : '#8FA3C0',
+                marginTop: 8, marginBottom: 0,
+              }}>
+                {iWon ? 'You outplayed your opponent!' : 'Better luck next time!'}
+              </p>
+            </motion.div>
+          )}
+
+          {/* ── "Winner of the Trivia Match" heading ── */}
+          <motion.h2
+            className="font-beaufort font-bold"
+            initial={reduced ? false : { opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: result ? 0.15 : 0 }}
+            style={{
+              fontSize: 36, lineHeight: 1, margin: '0 0 32px',
+              background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            Winner of the Trivia Match
+          </motion.h2>
 
           {!result ? (
             <motion.div
@@ -52,7 +118,11 @@ export default function Page9() {
                 borderRadius: 10, padding: '48px 32px',
               }}
             >
-              <p style={{ color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, marginBottom: 24 }}>
+              <p style={{
+                color: '#8FA3C0',
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 16, marginBottom: 24,
+              }}>
                 No match result available.
               </p>
               <button
@@ -60,239 +130,160 @@ export default function Page9() {
                 style={{
                   padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                   border: 'none', borderRadius: 6, cursor: 'pointer',
-                  fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
-                  fontSize: 15, letterSpacing: '0.1em',
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontWeight: 700, fontSize: 15, letterSpacing: '0.1em',
                 }}
               >
                 PLAY 1v1
               </button>
             </motion.div>
           ) : (
-            <>
-              {/* Victory / Defeat heading */}
-              <motion.div
-                initial={reduced ? false : { opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.55, ease: 'easeOut' }}
-                style={{ marginBottom: 40 }}
-              >
-                <h1
-                  className="font-beaufort font-bold"
-                  style={{
-                    fontSize: 72, lineHeight: 1, margin: 0,
-                    background: iWon
-                      ? 'linear-gradient(to right, #3AF9FF, #00C9A7)'
-                      : 'linear-gradient(to right, #8FA3C0, #4A5568)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    letterSpacing: '0.06em',
-                  }}
-                >
-                  {iWon ? 'VICTORY!' : 'DEFEAT'}
-                </h1>
-                <p style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 16, letterSpacing: '0.12em',
-                  color: iWon ? '#00C9A7' : '#8FA3C0',
-                  marginTop: 8,
-                }}>
-                  {iWon ? 'You outplayed your opponent!' : 'Better luck next time!'}
-                </p>
-              </motion.div>
-
-              {/* Score comparison bar */}
-              <motion.div
-                initial={reduced ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.15 }}
-                style={{
-                  display: 'flex', alignItems: 'center',
-                  background: '#0D1F3C', border: '1px solid #1E3A5F',
-                  borderRadius: 10, padding: '20px 32px',
-                  marginBottom: 32, gap: 0,
-                }}
-              >
-                {/* Your side */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 11, letterSpacing: '0.14em', color: '#8FA3C0',
-                  }}>YOU</span>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                    <span className="font-beaufort font-bold" style={{
-                      fontSize: 52, lineHeight: 1,
-                      background: iWon
-                        ? 'linear-gradient(to right, #3AF9FF, #00C9A7)'
-                        : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
-                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                    }}>{myScore}</span>
-                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, color: '#8FA3C0' }}>
-                      correct
-                    </span>
-                  </div>
-                  <span className="font-beaufort font-bold" style={{
-                    fontSize: 18,
-                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                  }}>
-                    {user?.username ?? 'You'}
-                  </span>
-                </div>
-
-                {/* VS divider */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 24px' }}>
-                  <span className="font-beaufort font-bold" style={{
-                    fontSize: 36, fontStyle: 'italic', color: '#1E3A5F',
-                  }}>VS</span>
-                  {iWon && (
-                    <span style={{
-                      fontFamily: "'Barlow Condensed', sans-serif",
-                      fontSize: 11, color: '#00C9A7', letterSpacing: '0.12em', marginTop: 4,
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.2 }}
+            >
+              {/* ── Two player cards ── */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                gap: 40,
+                marginBottom: 36,
+                flexWrap: 'wrap',
+              }}>
+                {[winnerCard, loserCard].map((card, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={reduced ? false : { opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, delay: 0.25 + idx * 0.1 }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
+                  >
+                    {/* Card frame */}
+                    <div style={{
+                      width: CARD_W,
+                      height: CARD_H,
+                      background: '#0D1F3C',
+                      border: '2px solid #1E3A5F',
+                      position: 'relative',
+                      overflow: 'hidden',
                     }}>
-                      ◆ WINNER ◆
-                    </span>
-                  )}
-                </div>
-
-                {/* Opponent side */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 11, letterSpacing: '0.14em', color: '#8FA3C0',
-                  }}>OPPONENT</span>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, color: '#8FA3C0' }}>
-                      correct
-                    </span>
-                    <span className="font-beaufort font-bold" style={{
-                      fontSize: 52, lineHeight: 1,
-                      background: !iWon
-                        ? 'linear-gradient(to right, #3AF9FF, #00C9A7)'
-                        : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
-                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                    }}>{theirScore}</span>
-                  </div>
-                  <span className="font-beaufort font-bold" style={{ fontSize: 18, color: '#8FA3C0' }}>
-                    Challenger
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* Player cards */}
-              <motion.div
-                initial={reduced ? false : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.25 }}
-                style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 32, marginBottom: 36, flexWrap: 'wrap' }}
-              >
-                {/* Your card */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                  <div style={{
-                    position: 'relative', width: 180,
-                    filter: iWon ? 'drop-shadow(0 0 20px rgba(0,201,167,0.5))' : 'none',
-                    transition: 'filter 0.4s',
-                  }}>
-                    <img src={PlayerProfileBg} alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {/* Avatar — blurred for winner, normal for loser */}
                       <img
-                        src={user?.avatarUrl ?? GrayProfile}
-                        alt="You"
-                        style={{ width: '80%', height: '80%', objectFit: 'cover', borderRadius: 4 }}
+                        src={card.avatar}
+                        alt={card.label}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'top center',
+                          filter: card.isWinner ? 'blur(4px) brightness(0.6)' : 'none',
+                        }}
                       />
-                    </div>
-                    {iWon && (
-                      <div style={{
-                        position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)',
-                        background: 'linear-gradient(to right, #3AF9FF, #00C9A7)',
-                        borderRadius: 4, padding: '2px 10px',
-                      }}>
-                        <span style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: 11, fontWeight: 700, color: '#060F1E', letterSpacing: '0.12em',
-                        }}>WINNER</span>
-                      </div>
-                    )}
-                  </div>
-                  <span className="font-beaufort font-bold" style={{
-                    fontSize: 16,
-                    background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                  }}>
-                    {user?.username ?? 'You'}
-                  </span>
-                </div>
 
-                {/* Opponent card */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                  <div style={{
-                    position: 'relative', width: 180,
-                    filter: !iWon ? 'drop-shadow(0 0 20px rgba(0,201,167,0.5))' : 'none',
-                    transition: 'filter 0.4s',
-                  }}>
-                    <img src={PlayerProfileBg} alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img
-                        src={GrayProfile}
-                        alt="Opponent"
-                        style={{ width: '80%', height: '80%', objectFit: 'cover', borderRadius: 4 }}
-                      />
+                      {/* Trophy cup overlay — winner card only */}
+                      {card.isWinner && (
+                        <img
+                          src={WinnerCup}
+                          alt="Winner Trophy"
+                          style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '68%',
+                            height: 'auto',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0 0 18px rgba(0,201,167,0.55))',
+                            pointerEvents: 'none',
+                          }}
+                        />
+                      )}
                     </div>
-                    {!iWon && (
-                      <div style={{
-                        position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)',
-                        background: 'linear-gradient(to right, #3AF9FF, #00C9A7)',
-                        borderRadius: 4, padding: '2px 10px',
-                      }}>
-                        <span style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: 11, fontWeight: 700, color: '#060F1E', letterSpacing: '0.12em',
-                        }}>WINNER</span>
-                      </div>
-                    )}
-                  </div>
-                  <span className="font-beaufort font-bold" style={{ fontSize: 16, color: '#8FA3C0' }}>
-                    Challenger
-                  </span>
-                </div>
-              </motion.div>
 
-              {/* Rematch / leave buttons */}
+                    {/* Name label */}
+                    <span
+                      className="font-beaufort font-bold"
+                      style={{
+                        fontSize: 18,
+                        letterSpacing: '0.06em',
+                        background: card.isWinner
+                          ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
+                          : 'none',
+                        WebkitBackgroundClip: card.isWinner ? 'text' : undefined,
+                        WebkitTextFillColor: card.isWinner ? 'transparent' : undefined,
+                        backgroundClip: card.isWinner ? 'text' : undefined,
+                        color: card.isWinner ? undefined : '#E8EDF5',
+                      }}
+                    >
+                      {card.isWinner ? 'WINNER' : card.label}
+                    </span>
+
+                    {/* Correct answers pill */}
+                    <div style={{
+                      background: '#0D1F3C',
+                      border: '1px solid #1E3A5F',
+                      borderRadius: 4,
+                      padding: '5px 16px',
+                    }}>
+                      <span style={{
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        fontSize: 13,
+                        color: '#E8EDF5',
+                        letterSpacing: '0.04em',
+                      }}>
+                        {card.score} Correct Answers
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* ── Rematch button ── */}
               <motion.div
-                initial={reduced ? false : { opacity: 0, y: 10 }}
+                initial={reduced ? false : { opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-                style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}
+                transition={{ duration: 0.4, delay: 0.45 }}
+                style={{ display: 'flex', justifyContent: 'center', gap: 12 }}
               >
                 <button
                   onClick={goTriviaInvite}
                   style={{
-                    padding: '14px 40px',
-                    background: 'linear-gradient(to right, #00C9A7, #00A7AD)',
-                    color: '#060F1E', border: 'none', borderRadius: 6,
+                    padding: '12px 48px',
+                    background: '#060F1E',
+                    color: '#E8EDF5',
+                    border: '1px solid #1E3A5F',
+                    borderRadius: 4,
                     cursor: 'pointer',
                     fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 700, fontSize: 16, letterSpacing: '0.12em',
+                    fontWeight: 700,
+                    fontSize: 16,
+                    letterSpacing: '0.1em',
                   }}
                 >
-                  REMATCH
+                  Rematch
                 </button>
                 <button
                   onClick={() => navigate('/duels')}
                   style={{
-                    padding: '14px 40px',
+                    padding: '12px 32px',
                     background: 'transparent',
                     color: '#8FA3C0',
                     border: '1px solid #1E3A5F',
-                    borderRadius: 6, cursor: 'pointer',
+                    borderRadius: 4,
+                    cursor: 'pointer',
                     fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 700, fontSize: 16, letterSpacing: '0.12em',
+                    fontWeight: 700,
+                    fontSize: 16,
+                    letterSpacing: '0.1em',
                   }}
                 >
-                  BACK TO DUELS
+                  Back to Duels
                 </button>
               </motion.div>
-            </>
+            </motion.div>
           )}
 
         </div>
