@@ -39,29 +39,41 @@ function isCloudinaryVideo(url: string): boolean {
   return url.includes('cloudinary.com') && url.endsWith('.mp4')
 }
 
+const TOTAL_GTR_ROUNDS = 3
+
 export default function Page11() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
-  const [selected, setSelected] = useState<number | null>(null)
-  const { currentRound, totalRounds, points, opponentScore, gtrResult, matchId, setGTRResult, clearMatch } = useGameStore()
+  const [selected,    setSelected]    = useState<number | null>(null)
+  const [localRound,  setLocalRound]  = useState(1)
+  const [advancing,   setAdvancing]   = useState(false)
+  const { points, opponentScore, gtrResult, matchId, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
   const isDuel = !!matchId
   const voteEmitted = useRef(false)
 
-  const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound()
+  // Reset game state on first mount for solo mode
+  useEffect(() => {
+    if (!isDuel) resetGame()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound(localRound)
 
   const handleSubmit = useCallback(() => {
     if (selected === null || !round || voted) return
     void submitVote(RANKS_ORDER[selected])
   }, [selected, round, voted, submitVote])
 
-  // Reset image error state when a new round loads
-  useEffect(() => { setImgError(false) }, [round?.id])
+  // Reset selection + image error when a new round loads
+  useEffect(() => { setImgError(false); setSelected(null) }, [round?.id])
 
-  // When vote + stats both arrive
+  // When vote + stats both arrive — update store, then advance or finish
   useEffect(() => {
     if (!voteResult || !stats || !round) return
+
+    addPoints(voteResult.pointsEarned)
     setGTRResult({
       roundId:     round.id,
       imageUrl:    round.imageUrl,
@@ -72,12 +84,21 @@ export default function Page11() {
     })
 
     if (isDuel && matchId && !voteEmitted.current) {
-      // Emit vote result via socket — backend resolves match:end when both players vote
       voteEmitted.current = true
       connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
-      // Don't navigate yet — wait for match:end
+      // Wait for match:end — backend drives next round in duel mode
     } else if (!isDuel) {
-      navigate('/results')
+      if (localRound < TOTAL_GTR_ROUNDS) {
+        // Show result briefly, then advance to next round
+        setAdvancing(true)
+        setTimeout(() => {
+          setAdvancing(false)
+          setLocalRound(r => r + 1)
+        }, 2500)
+      } else {
+        // All 3 rounds done — go to results
+        setTimeout(() => navigate('/results'), 2500)
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
@@ -99,6 +120,8 @@ export default function Page11() {
     if (voted) return
     setSelected(prev => (prev === i ? null : i))
   }, [voted])
+
+  const totalRounds = TOTAL_GTR_ROUNDS
 
   const isYouTube = round?.imageUrl?.startsWith('https://www.youtube.com/embed/') ?? false
   const isPlaceholderUrl = !round?.imageUrl ||
@@ -197,10 +220,10 @@ export default function Page11() {
                 padding: '0 16px', boxSizing: 'border-box',
               }}>
                 <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#E8EDF5', lineHeight: 1 }}>
-                  Round {currentRound}/{totalRounds}
+                  Round {localRound}/{totalRounds}
                 </span>
                 <span style={{ color: '#C9A227', fontSize: 18, letterSpacing: 4, lineHeight: 1 }}>
-                  {Array.from({ length: totalRounds }, (_, i) => i < currentRound ? '◆' : '◇').join(' ')}
+                  {Array.from({ length: totalRounds }, (_, i) => i < localRound ? '◆' : '◇').join(' ')}
                 </span>
                 <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#00C9A7', lineHeight: 1 }}>
                   Points {points}
@@ -362,6 +385,28 @@ export default function Page11() {
               })}
             </div>
           </motion.div>
+
+          {/* ── Next round countdown — solo mode, after voting, before advancing ── */}
+          {voted && !isDuel && advancing && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                gap: 10, marginTop: 24, padding: '20px 0',
+              }}
+            >
+              <motion.div
+                animate={reduced ? {} : { opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ width: 10, height: 10, borderRadius: '50%', background: '#3AF9FF' }}
+              />
+              <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#3AF9FF' }}>
+                {localRound < TOTAL_GTR_ROUNDS ? `Round ${localRound + 1} incoming…` : 'Calculating results…'}
+              </span>
+            </motion.div>
+          )}
 
           {/* ── Waiting for opponent — duel mode, after voting ── */}
           {voted && isDuel && (

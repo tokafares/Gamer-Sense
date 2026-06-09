@@ -23,7 +23,8 @@ export interface VoteResult {
   tier: string
 }
 
-export function useGTRRound() {
+// roundIndex (1-based) triggers a new fetch whenever it changes
+export function useGTRRound(roundIndex: number) {
   const [round,   setRound]   = useState<GTRRound | null>(null)
   const [stats,   setStats]   = useState<GTRStats | null>(null)
   const [voted,   setVoted]   = useState(false)
@@ -32,11 +33,16 @@ export function useGTRRound() {
   const [error,   setError]   = useState<string | null>(null)
 
   useEffect(() => {
+    setRound(null)
+    setStats(null)
+    setVoted(false)
+    setResult(null)
+    setError(null)
+
     if (!import.meta.env.VITE_API_URL) { setLoading(false); return }
 
     let cancelled = false
     setLoading(true)
-    setError(null)
 
     apiGet<GTRRound>('/gtr/round')
       .then(data => { if (!cancelled) { setRound(data); setLoading(false) } })
@@ -48,7 +54,7 @@ export function useGTRRound() {
       })
 
     return () => { cancelled = true }
-  }, [])
+  }, [roundIndex])
 
   const submitVote = useCallback(async (votedRank: string) => {
     if (!round || voted) return
@@ -60,7 +66,6 @@ export function useGTRRound() {
       setStats(s)
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
-        // Already voted this round — fetch stats and proceed to results
         setVoted(true)
         setResult({
           correct: false,
