@@ -75,9 +75,9 @@ export default function Page9() {
           {/* ── VICTORY / DEFEAT heading ── */}
           {result && (
             <motion.div
-              initial={reduced ? false : { opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              initial={reduced ? false : { opacity: 0, scale: 1.6, y: -24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               style={{ marginBottom: 40 }}
             >
               <h1
@@ -152,18 +152,25 @@ export default function Page9() {
                 {cards.map((card, idx) => (
                   <motion.div
                     key={idx}
-                    initial={reduced ? false : { opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45, delay: 0.25 + idx * 0.12 }}
+                    initial={reduced ? false : { opacity: 0, x: card.isWinner ? -80 : 80 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.65, delay: 0.3 + idx * 0.15, ease: 'easeOut' }}
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
                   >
-                    {/* ── Card: DialogBg frame — winner gets teal glow ── */}
-                    <div style={{
-                      position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0,
-                      boxShadow: card.isWinner
-                        ? '0 0 24px rgba(58,249,255,0.3)'
-                        : 'none',
-                    }}>
+                    {/* ── Card: DialogBg frame — winner gets pulsing teal glow ── */}
+                    <motion.div
+                      animate={reduced ? {} : card.isWinner ? {
+                        boxShadow: [
+                          '0 0 24px rgba(58,249,255,0.3)',
+                          '0 0 44px rgba(58,249,255,0.6)',
+                          '0 0 24px rgba(58,249,255,0.3)',
+                        ],
+                      } : {}}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
+                      style={{
+                        position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0,
+                        boxShadow: card.isWinner ? '0 0 24px rgba(58,249,255,0.3)' : 'none',
+                      }}>
                       {/* Card background */}
                       <img
                         src={CardBg}
@@ -205,15 +212,19 @@ export default function Page9() {
                           </div>
                         )}
 
-                        {/* Trophy cup — winner card only */}
+                        {/* Trophy cup — winner card only, bounces in */}
                         {card.isWinner && (
-                          <img
+                          <motion.img
                             src={WinnerCup}
                             alt="Trophy"
+                            initial={reduced ? false : { opacity: 0, scale: 0.3, y: 30 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.9, type: 'spring', bounce: 0.5 }}
                             style={{
                               position: 'absolute',
                               top: '50%', left: '50%',
-                              transform: 'translate(-50%, -50%)',
+                              marginTop: '-37.5%',
+                              marginLeft: '-37.5%',
                               width: '75%', height: 'auto',
                               objectFit: 'contain',
                               filter: 'drop-shadow(0 0 16px rgba(0,201,167,0.6))',
@@ -244,10 +255,18 @@ export default function Page9() {
                         gap: 2, padding: '0 8px',
                       }}>
                         {/* Main card label */}
-                        <span
+                        <motion.span
                           className="font-beaufort font-bold"
+                          animate={reduced ? {} : card.isWinner ? {
+                            filter: [
+                              'drop-shadow(0 0 6px rgba(58,249,255,0.5))',
+                              'drop-shadow(0 0 18px rgba(58,249,255,0.9))',
+                              'drop-shadow(0 0 6px rgba(58,249,255,0.5))',
+                            ],
+                          } : {}}
+                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 1.4 }}
                           style={{
-                            fontSize: card.isWinner ? 42 : 28,
+                            fontSize: card.isWinner ? 48 : 28,
                             lineHeight: 1,
                             textTransform: 'uppercase',
                             background: card.isWinner
@@ -256,10 +275,11 @@ export default function Page9() {
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text',
+                            filter: card.isWinner ? 'drop-shadow(0 0 6px rgba(58,249,255,0.5))' : 'none',
                           }}
                         >
                           {card.isWinner ? 'WINNER' : 'CHALLENGER'}
-                        </span>
+                        </motion.span>
                         {/* Username only on winner card */}
                         {card.isWinner && (
                           <span
@@ -274,24 +294,29 @@ export default function Page9() {
                           </span>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* ── Correct answers badge ── */}
-                    <div style={{
-                      width: 220, height: 52, flexShrink: 0,
-                      background: '#0F1E2D',
-                      border: '2px solid',
-                      borderImageSource: 'linear-gradient(to bottom, #3AF9FF, #00A7AD)',
-                      borderImageSlice: 1,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
+                    <motion.div
+                      initial={reduced ? false : { opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.65 + idx * 0.1 }}
+                      style={{
+                        width: 220, height: 52, flexShrink: 0,
+                        background: '#0F1E2D',
+                        border: '2px solid',
+                        borderImageSource: 'linear-gradient(to bottom, #3AF9FF, #00A7AD)',
+                        borderImageSlice: 1,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
                       <span
                         className="font-beaufort font-bold"
                         style={{ fontSize: 16, color: '#E8EDF5' }}
                       >
                         {card.score} Correct Answers
                       </span>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
@@ -324,7 +349,7 @@ export default function Page9() {
                     style={{
                       position: 'absolute', inset: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 18, letterSpacing: '0.12em',
+                      fontSize: 18,
                       background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
