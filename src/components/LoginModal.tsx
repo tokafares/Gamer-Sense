@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import type { CSSProperties } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useAuthStore } from '../store/authStore'
 import type { AuthUser } from '../store/authStore'
@@ -10,6 +11,23 @@ interface LoginResponse {
 }
 
 const BARLOW_COND = "'Barlow Condensed', sans-serif"
+
+const INPUT_BASE: CSSProperties = {
+  width: '100%',
+  background: '#060F1E',
+  border: '1px solid #1E3A5F',
+  padding: '11px 14px',
+  color: '#E8EDF5',
+  fontSize: '14px',
+  fontFamily: BARLOW_COND,
+  fontWeight: 400,
+  outline: 'none',
+  boxSizing: 'border-box',
+  transition: 'border-color 0.2s',
+  borderRadius: 4,
+}
+
+const INPUT_FOCUSED: CSSProperties = { ...INPUT_BASE, border: '1px solid #00C9A7' }
 
 export default function LoginModal() {
   const { loginModalOpen, closeLoginModal, login } = useAuthStore()
@@ -78,21 +96,6 @@ export default function LoginModal() {
       setLoading(false)
     }
   }
-
-  const inputStyle = (focused: boolean): React.CSSProperties => ({
-    width: '100%',
-    background: '#060F1E',
-    border: `1px solid ${focused ? '#00C9A7' : '#1E3A5F'}`,
-    padding: '11px 14px',
-    color: '#E8EDF5',
-    fontSize: '14px',
-    fontFamily: BARLOW_COND,
-    fontWeight: 400,
-    outline: 'none',
-    boxSizing: 'border-box',
-    transition: 'border-color 0.2s',
-    borderRadius: 4,
-  })
 
   return (
     <AnimatePresence>
@@ -217,7 +220,7 @@ export default function LoginModal() {
                     value={username} onChange={e => setUsername(e.target.value)}
                     onFocus={() => setFocusedField('username')} onBlur={() => setFocusedField(null)}
                     placeholder="summoner_name" required minLength={3} maxLength={32}
-                    disabled={loading} style={inputStyle(focusedField === 'username')}
+                    disabled={loading} style={focusedField === 'username' ? INPUT_FOCUSED : INPUT_BASE}
                   />
                 </div>
               )}
@@ -248,7 +251,7 @@ export default function LoginModal() {
                   placeholder="you@example.com"
                   required
                   disabled={loading}
-                  style={inputStyle(focusedField === 'email')}
+                  style={focusedField === 'email' ? INPUT_FOCUSED : INPUT_BASE}
                 />
               </div>
 
@@ -279,7 +282,7 @@ export default function LoginModal() {
                   placeholder="••••••••"
                   required
                   disabled={loading}
-                  style={inputStyle(focusedField === 'password')}
+                  style={focusedField === 'password' ? INPUT_FOCUSED : INPUT_BASE}
                 />
               </div>
 

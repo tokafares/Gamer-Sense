@@ -1,12 +1,15 @@
+import { memo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import PrizeDraw from '../assets/Group 391.svg'
 import ViewBtn   from '../assets/Group 390.svg'
 import { scrollFadeUp, scrollFadeIn, staggerContainer, slideFromLeft } from '../lib/animations'
 import { useLeaderboard } from '../hooks/useLeaderboard'
 
-export default function Leaderboard() {
+const VP = { once: true }
+const SKELETON_WIDTHS = [28, 55, 35, 45]
+
+export default memo(function Leaderboard() {
   const reduced = useReducedMotion()
-  const vp = { once: true }
   const { entries, loading, error } = useLeaderboard()
 
   return (
@@ -18,7 +21,7 @@ export default function Leaderboard() {
         variants={scrollFadeUp}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
-        viewport={vp}
+        viewport={VP}
       >
         <h2
           className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
@@ -41,7 +44,7 @@ export default function Leaderboard() {
         variants={scrollFadeIn}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
-        viewport={vp}
+        viewport={VP}
         transition={{ delay: 0.2 }}
       >
         {/* Column headers */}
@@ -77,7 +80,7 @@ export default function Leaderboard() {
                     background: i % 2 === 0 ? '#0D1F3C' : '#112040',
                   }}
                 >
-                  {[28, 55, 35, 45].map((w, j) => (
+                  {SKELETON_WIDTHS.map((w, j) => (
                     <div key={j} style={{ display: 'flex', justifyContent: 'center' }}>
                       <div style={{
                         height: '20px',
@@ -106,7 +109,7 @@ export default function Leaderboard() {
               variants={staggerContainer}
               initial={reduced ? false : 'hidden'}
               whileInView="show"
-              viewport={vp}
+              viewport={VP}
             >
               {entries.map((row, i) => (
                 <motion.div
@@ -139,7 +142,7 @@ export default function Leaderboard() {
         variants={scrollFadeIn}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
-        viewport={vp}
+        viewport={VP}
         transition={{ delay: 0.35 }}
       />
 
@@ -151,7 +154,7 @@ export default function Leaderboard() {
         variants={scrollFadeIn}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
-        viewport={vp}
+        viewport={VP}
         transition={{ delay: 0.5 }}
         whileHover={reduced ? {} : { scale: 1.04, filter: 'brightness(1.1)' }}
         whileTap={reduced ? {} : { scale: 0.97 }}
@@ -159,4 +162,4 @@ export default function Leaderboard() {
 
     </section>
   )
-}
+})
