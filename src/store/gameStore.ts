@@ -20,6 +20,8 @@ export interface GTRResultData {
 export interface MatchQuestion {
   id: string
   text: string
+  imageUrl?: string | null
+  lane: string
   options: { id: string; text: string }[]
 }
 

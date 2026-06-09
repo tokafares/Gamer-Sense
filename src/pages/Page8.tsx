@@ -90,7 +90,7 @@ export default function Page8() {
   const isMatchMode = !!matchId
 
   // Current question in match mode — updated by round:question socket events
-  const [currentMatchQuestion, setCurrentMatchQuestion] = useState<{ id: string; text: string; imageUrl?: string | null; options: { id: string; text: string }[] } | null>(
+  const [currentMatchQuestion, setCurrentMatchQuestion] = useState<{ id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } | null>(
     matchQuestions[0] ?? null
   )
 
@@ -156,10 +156,11 @@ export default function Page8() {
 
     const socket = connectSocket()
 
-    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; imageUrl?: string | null; options: { id: string; text: string }[] } }) => {
+    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } }) => {
       const mine   = isHost ? data.hostScore : data.invitedScore
       const theirs = isHost ? data.invitedScore : data.hostScore
       setCurrentMatchQuestion(data.question)
+      setActiveLane(data.question.lane)
       setYourScore(mine)
       setOppScore(theirs)
       setSelectedAnswer(null)
@@ -169,8 +170,9 @@ export default function Page8() {
       lockedAnswerRef.current = null
     }
 
-    const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; imageUrl?: string | null; options: { id: string; text: string }[] } }) => {
+    const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } }) => {
       setCurrentMatchQuestion(data.question)
+      setActiveLane(data.question.lane)
       setSelectedAnswer(null)
       setLocked(false)
       setRoundResult(null)
@@ -399,7 +401,7 @@ export default function Page8() {
                   }}
                 >
                   <img src={svg} alt="" style={{ display: 'block', width: '100%', height: '100%' }} />
-                  {activeLane === key && !isMatchMode && (
+                  {activeLane === key && (
                     <div style={{
                       position: 'absolute', inset: 0,
                       border: '2px solid #3AF9FF', pointerEvents: 'none',

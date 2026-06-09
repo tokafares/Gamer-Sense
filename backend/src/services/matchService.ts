@@ -19,6 +19,7 @@ export interface MatchQuestion {
   id: string
   text: string
   imageUrl?: string | null
+  lane: string
   options: unknown
   correctAnswer: string
   explanation: string
@@ -136,6 +137,7 @@ export async function initMatchState(
       id: q.id,
       text: q.text,
       imageUrl: q.imageUrl,
+      lane: q.lane,
       options: q.options,
       correctAnswer: q.correctAnswer,
       explanation: q.explanation,
