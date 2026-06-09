@@ -163,7 +163,7 @@ export default function Page8() {
       // Capture isHost before clearMatch wipes it, then pass with state
       const capturedIsHost = useGameStore.getState().isHost
       clearMatch()
-      navigate('/match-winner', { state: { ...data, isHost: capturedIsHost } })
+      navigate('/match-winner', { state: { ...data, isHost: capturedIsHost, gameType: 'trivia' } })
     }
 
     socket.on('round:question', onRoundQuestion)

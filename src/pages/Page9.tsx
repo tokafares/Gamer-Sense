@@ -34,10 +34,9 @@ export default function Page9() {
   const { user } = useAuthStore()
 
   const result     = (location.state as MatchResultState | null)
-  const isGTR = result?.gameType === 'gtr'
   const goRematch = useCallback(
-    () => navigate(isGTR ? '/gtr-invite' : '/trivia-invite'),
-    [navigate, isGTR]
+    () => navigate(result?.gameType === 'trivia' ? '/trivia-invite' : '/gtr-invite'),
+    [navigate, result?.gameType]
   )
   const iWon       = result?.winnerId === user?.id
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
@@ -157,9 +156,12 @@ export default function Page9() {
                   <motion.div
                     key={idx}
                     initial={reduced ? false : { opacity: 0, x: card.isWinner ? -80 : 80 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: card.isWinner ? 1 : 0.55, x: 0 }}
                     transition={{ duration: 0.65, delay: 0.3 + idx * 0.15, ease: 'easeOut' }}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
+                      filter: card.isWinner ? 'none' : 'grayscale(40%)',
+                    }}
                   >
                     {/* ── Card: DialogBg frame — winner gets pulsing teal glow ── */}
                     <motion.div
