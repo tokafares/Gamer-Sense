@@ -15,6 +15,7 @@ interface MatchResultState {
   hostScore:    number
   invitedScore: number
   isHost?:      boolean
+  gameType?:    'trivia' | 'gtr'
 }
 
 // DialogBg actual SVG: 783 × 702 — preserveAspectRatio="none" so it stretches to fill
@@ -32,9 +33,12 @@ export default function Page9() {
   const location = useLocation()
   const { user } = useAuthStore()
 
-  const goTriviaInvite = useCallback(() => navigate('/trivia-invite'), [navigate])
-
   const result     = (location.state as MatchResultState | null)
+  const isGTR = result?.gameType === 'gtr'
+  const goRematch = useCallback(
+    () => navigate(isGTR ? '/gtr-invite' : '/trivia-invite'),
+    [navigate, isGTR]
+  )
   const iWon       = result?.winnerId === user?.id
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
@@ -123,7 +127,7 @@ export default function Page9() {
                 No match result available.
               </p>
               <button
-                onClick={goTriviaInvite}
+                onClick={goRematch}
                 style={{
                   padding: '12px 32px', background: '#00C9A7', color: '#060F1E',
                   border: 'none', borderRadius: 6, cursor: 'pointer',
@@ -330,7 +334,7 @@ export default function Page9() {
               >
                 {/* Rematch */}
                 <button
-                  onClick={goTriviaInvite}
+                  onClick={goRematch}
                   style={{
                     position: 'relative', width: 300, height: 60,
                     background: 'none', border: 'none', padding: 0,

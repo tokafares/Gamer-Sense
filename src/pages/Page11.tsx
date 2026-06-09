@@ -85,22 +85,23 @@ export default function Page11() {
       percentages: stats.percentages,
     })
 
-    if (isDuel && matchId && !voteEmitted.current) {
-      voteEmitted.current = true
-      connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
-    }
-
-    // Both solo and duel advance rounds locally; duel waits for match:end only after final round
     if (localRound < TOTAL_GTR_ROUNDS) {
+      // Rounds 1-2: advance locally, no socket emit yet
       setAdvancing(true)
       setTimeout(() => {
         setAdvancing(false)
         setLocalRound(r => r + 1)
       }, 2500)
-    } else if (!isDuel) {
-      setTimeout(() => navigate('/results'), 2500)
+    } else {
+      // Final round — emit score then navigate
+      if (isDuel && matchId && !voteEmitted.current) {
+        voteEmitted.current = true
+        connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
+        // Wait for match:end socket event
+      } else if (!isDuel) {
+        setTimeout(() => navigate('/results'), 2500)
+      }
     }
-    // duel final round: stay put and wait for match:end socket event
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
 
@@ -111,7 +112,7 @@ export default function Page11() {
     socket.on('match:end', (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
       clearMatch()
       disconnectSocket()
-      navigate('/match-winner', { state: d })
+      navigate('/match-winner', { state: { ...d, gameType: 'gtr' } })
     })
     return () => { socket.off('match:end') }
   // eslint-disable-next-line react-hooks/exhaustive-deps
