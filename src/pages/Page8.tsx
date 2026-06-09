@@ -86,6 +86,7 @@ export default function Page8() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
+  const [refetchKey,     setRefetchKey]     = useState(0)
 
   const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
   const isMatchMode = !!matchId
@@ -127,7 +128,7 @@ export default function Page8() {
       })
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLane, isMatchMode])
+  }, [activeLane, isMatchMode, refetchKey])
 
   // Derived question / loading for each mode
   const soloQuestion = laneQuestions[questionIdx] ?? null
@@ -255,11 +256,7 @@ export default function Page8() {
     setSessionPoints(0)
     setSelectedAnswer(null)
     setLocked(false)
-    setLaneQuestions([])
-    setFetchLoading(true)
-    apiGet<{ questions: Question[] }>(`/questions?type=trivia&lane=${activeLane}&limit=10`)
-      .then(data => { setLaneQuestions(data.questions); setFetchLoading(false) })
-      .catch(() => { setFetchError('Network error'); setFetchLoading(false) })
+    setRefetchKey(k => k + 1)
   }
 
   const roundLabel = isMatchMode ? `Round ${currentRound} / ${totalRounds}` : null
@@ -601,7 +598,7 @@ export default function Page8() {
                     TRY ANOTHER LANE
                   </button>
                   <button
-                    onClick={() => navigate('/page10')}
+                    onClick={() => navigate('/profile')}
                     style={{
                       background: 'none', border: '1px solid #1E3A5F',
                       borderRadius: 4, padding: '12px 0',

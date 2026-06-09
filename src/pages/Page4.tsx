@@ -78,6 +78,7 @@ export default function Page4() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
+  const [refetchKey,     setRefetchKey]     = useState(0)
 
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
@@ -122,7 +123,7 @@ export default function Page4() {
       })
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLane])
+  }, [activeLane, refetchKey])
 
   // Advance after lock-in or timeout
   const advanceQuestion = useCallback(() => {
@@ -210,11 +211,7 @@ export default function Page4() {
     setSelectedAnswer(null)
     setLocked(false)
     setTimeLeft(TIMER_SECONDS)
-    setLaneQuestions([])
-    setFetchLoading(true)
-    apiGet<{ questions: Question[] }>(`/questions?type=blitz&lane=${activeLane}&limit=10`)
-      .then(data => { setLaneQuestions(data.questions); setFetchLoading(false) })
-      .catch(() => { setFetchError('Network error'); setFetchLoading(false) })
+    setRefetchKey(k => k + 1)
   }
 
   const timerDanger = timeLeft <= 3
@@ -384,7 +381,7 @@ export default function Page4() {
                     TRY ANOTHER LANE
                   </button>
                   <button
-                    onClick={() => navigate('/page10')}
+                    onClick={() => navigate('/profile')}
                     style={{
                       background: 'none', border: '1px solid #1E3A5F',
                       borderRadius: 4, padding: '12px 0',

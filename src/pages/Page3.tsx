@@ -73,6 +73,7 @@ export default function Page3() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
+  const [refetchKey,     setRefetchKey]     = useState(0)
 
   const { video: scenarioVideo } = useScenarioVideo(activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
@@ -108,7 +109,7 @@ export default function Page3() {
         }
       })
     return () => { cancelled = true }
-  }, [activeLane])
+  }, [activeLane, refetchKey])
 
   const question = laneQuestions[questionIdx] ?? null
   const loading  = fetchLoading
@@ -166,12 +167,7 @@ export default function Page3() {
     setSessionPoints(0)
     setSelectedAnswer(null)
     setLocked(false)
-    // Re-fetch by resetting laneQuestions (effect re-fires on activeLane change; force it here)
-    setLaneQuestions([])
-    setFetchLoading(true)
-    apiGet<{ questions: Question[] }>(`/questions?type=scenario&lane=${activeLane}&limit=10`)
-      .then(data => { setLaneQuestions(data.questions); setFetchLoading(false) })
-      .catch(() => { setFetchError('Network error'); setFetchLoading(false) })
+    setRefetchKey(k => k + 1)
   }
 
   return (
@@ -340,7 +336,7 @@ export default function Page3() {
                     TRY ANOTHER LANE
                   </button>
                   <button
-                    onClick={() => navigate('/page10')}
+                    onClick={() => navigate('/profile')}
                     style={{
                       background: 'none', border: '1px solid #1E3A5F',
                       borderRadius: 4, padding: '12px 0',
