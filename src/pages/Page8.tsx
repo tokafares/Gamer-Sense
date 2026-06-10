@@ -76,8 +76,12 @@ export default function Page8() {
   // Live match scores
   const [yourScore,       setYourScore]       = useState(0)
   const [oppScore,        setOppScore]        = useState(0)
-  const advanceRef      = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lockedAnswerRef = useRef<string | null>(null)
+  const advanceRef        = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lockedAnswerRef   = useRef<string | null>(null)
+  // Tracks the current 0-based round index as told by the server, used for round:answer emit.
+  // Must NOT use the store's currentRound because it increments 2500ms after round:result,
+  // causing answers for the next round to be sent with the wrong (already-used) index.
+  const matchRoundIndexRef = useRef<number>(0)
 
   // Solo mode — batch question state
   const [laneQuestions,  setLaneQuestions]  = useState<Question[]>([])
@@ -158,6 +162,7 @@ export default function Page8() {
     const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } }) => {
       const mine   = isHost ? data.hostScore : data.invitedScore
       const theirs = isHost ? data.invitedScore : data.hostScore
+      matchRoundIndexRef.current = data.currentRound
       setCurrentMatchQuestion(data.question)
       setActiveLane(data.question.lane)
       setYourScore(mine)
@@ -170,6 +175,7 @@ export default function Page8() {
     }
 
     const onRoundQuestion = (data: { roundIndex: number; question: { id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } }) => {
+      matchRoundIndexRef.current = data.roundIndex
       setCurrentMatchQuestion(data.question)
       setActiveLane(data.question.lane)
       setSelectedAnswer(null)
@@ -231,7 +237,7 @@ export default function Page8() {
       lockedAnswerRef.current = selectedAnswer
       setWaitingOpponent(true)
       const socket = connectSocket()
-      socket.emit('round:answer', { matchId, roundIndex: currentRound - 1, answer: selectedAnswer })
+      socket.emit('round:answer', { matchId, roundIndex: matchRoundIndexRef.current, answer: selectedAnswer })
       return
     }
 
