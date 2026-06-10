@@ -38,9 +38,10 @@ export default function Page9() {
     () => navigate(result?.gameType === 'trivia' ? '/trivia-invite' : '/gtr-invite'),
     [navigate, result?.gameType]
   )
-  const iWon       = result?.winnerId === user?.id
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
+  const isDraw     = !!result && myScore === theirScore
+  const iWon       = !isDraw && result?.winnerId === user?.id
 
   const myUsername = user?.username ?? 'You'
   const myAvatar   = user?.avatarUrl ?? null
@@ -53,14 +54,16 @@ export default function Page9() {
       username: myUsername,
       score:    myScore,
       isWinner: iWon,
+      isDraw,
     },
     {
       avatar:   null,
       username: 'Opponent',
       score:    theirScore,
-      isWinner: !iWon,
+      isWinner: !isDraw && !iWon,
+      isDraw,
     },
-  ], [myAvatar, myUsername, myScore, iWon, theirScore])
+  ], [myAvatar, myUsername, myScore, iWon, isDraw, theirScore])
 
   return (
     <>
@@ -87,23 +90,25 @@ export default function Page9() {
                 className="font-beaufort font-bold"
                 style={{
                   fontSize: 72, lineHeight: 1, margin: 0,
-                  background: iWon
-                    ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
-                    : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
+                  background: isDraw
+                    ? 'linear-gradient(to right, #C9A227, #F0C94A)'
+                    : iWon
+                      ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
+                      : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                 }}
               >
-                {iWon ? 'VICTORY!' : 'DEFEAT!'}
+                {isDraw ? 'DRAW!' : iWon ? 'VICTORY!' : 'DEFEAT!'}
               </h1>
               <p style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 16, textTransform: 'uppercase',
-                color: iWon ? '#3AF9FF' : '#8FA3C0',
+                color: isDraw ? '#C9A227' : iWon ? '#3AF9FF' : '#8FA3C0',
                 marginTop: 10, marginBottom: 0,
               }}>
-                {iWon ? 'You outplayed your opponent!' : 'Better luck next time!'}
+                {isDraw ? 'An equal match — well played!' : iWon ? 'You outplayed your opponent!' : 'Better luck next time!'}
               </p>
             </motion.div>
           )}
@@ -162,8 +167,12 @@ export default function Page9() {
                   >
                     {/* ── Card: DialogBg frame — winner gets pulsing teal glow ── */}
                     <motion.div
-                      animate={reduced ? {} : card.isWinner ? {
-                        boxShadow: [
+                      animate={reduced ? {} : (card.isWinner || card.isDraw) ? {
+                        boxShadow: card.isDraw ? [
+                          '0 0 24px rgba(201,162,39,0.3)',
+                          '0 0 44px rgba(201,162,39,0.6)',
+                          '0 0 24px rgba(201,162,39,0.3)',
+                        ] : [
                           '0 0 24px rgba(58,249,255,0.3)',
                           '0 0 44px rgba(58,249,255,0.6)',
                           '0 0 24px rgba(58,249,255,0.3)',
@@ -172,7 +181,9 @@ export default function Page9() {
                       transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
                       style={{
                         position: 'relative', width: CARD_W, height: CARD_H, flexShrink: 0,
-                        boxShadow: card.isWinner ? '0 0 24px rgba(58,249,255,0.3)' : 'none',
+                        boxShadow: card.isDraw
+                          ? '0 0 24px rgba(201,162,39,0.3)'
+                          : card.isWinner ? '0 0 24px rgba(58,249,255,0.3)' : 'none',
                       }}>
                       {/* Card background */}
                       <img
@@ -197,9 +208,11 @@ export default function Page9() {
                               position: 'absolute', inset: 0,
                               width: '100%', height: '100%',
                               objectFit: 'cover', objectPosition: 'top center',
-                              filter: card.isWinner
-                                ? 'blur(4px) brightness(0.55)'
-                                : 'grayscale(60%) opacity(0.85)',
+                              filter: card.isDraw
+                                ? 'brightness(0.75)'
+                                : card.isWinner
+                                  ? 'blur(4px) brightness(0.55)'
+                                  : 'grayscale(60%) opacity(0.85)',
                             }}
                           />
                         ) : (
@@ -260,8 +273,12 @@ export default function Page9() {
                         {/* Main card label */}
                         <motion.span
                           className="font-beaufort font-bold"
-                          animate={reduced ? {} : card.isWinner ? {
-                            filter: [
+                          animate={reduced ? {} : (card.isWinner || card.isDraw) ? {
+                            filter: card.isDraw ? [
+                              'drop-shadow(0 0 6px rgba(201,162,39,0.5))',
+                              'drop-shadow(0 0 18px rgba(201,162,39,0.9))',
+                              'drop-shadow(0 0 6px rgba(201,162,39,0.5))',
+                            ] : [
                               'drop-shadow(0 0 6px rgba(58,249,255,0.5))',
                               'drop-shadow(0 0 18px rgba(58,249,255,0.9))',
                               'drop-shadow(0 0 6px rgba(58,249,255,0.5))',
@@ -269,26 +286,30 @@ export default function Page9() {
                           } : {}}
                           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 1.4 }}
                           style={{
-                            fontSize: card.isWinner ? 48 : 28,
+                            fontSize: (card.isWinner || card.isDraw) ? 48 : 28,
                             lineHeight: 1,
                             textTransform: 'uppercase',
-                            background: card.isWinner
-                              ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
-                              : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
+                            background: card.isDraw
+                              ? 'linear-gradient(to right, #C9A227, #F0C94A)'
+                              : card.isWinner
+                                ? 'linear-gradient(to right, #3AF9FF, #00A7AD)'
+                                : 'linear-gradient(to right, #E8EDF5, #8FA3C0)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text',
-                            filter: card.isWinner ? 'drop-shadow(0 0 6px rgba(58,249,255,0.5))' : 'none',
+                            filter: card.isDraw
+                              ? 'drop-shadow(0 0 6px rgba(201,162,39,0.5))'
+                              : card.isWinner ? 'drop-shadow(0 0 6px rgba(58,249,255,0.5))' : 'none',
                           }}
                         >
-                          {card.isWinner ? 'WINNER' : 'CHALLENGER'}
+                          {card.isDraw ? 'DRAW' : card.isWinner ? 'WINNER' : 'CHALLENGER'}
                         </motion.span>
                         {/* Username on both cards */}
                         <span
                             className="font-beaufort"
                             style={{
                               fontSize: 16,
-                              color: card.isWinner ? '#3AF9FF' : '#8FA3C0',
+                              color: card.isDraw ? '#C9A227' : card.isWinner ? '#3AF9FF' : '#8FA3C0',
                               marginTop: 4,
                             }}
                           >
@@ -306,16 +327,18 @@ export default function Page9() {
                         width: 220, height: 52, flexShrink: 0,
                         background: '#0F1E2D',
                         border: '2px solid',
-                        borderImageSource: card.isWinner
-                          ? 'linear-gradient(to bottom, #3AF9FF, #00A7AD)'
-                          : 'linear-gradient(to bottom, #4A6080, #2A3F5F)',
+                        borderImageSource: card.isDraw
+                          ? 'linear-gradient(to bottom, #C9A227, #F0C94A)'
+                          : card.isWinner
+                            ? 'linear-gradient(to bottom, #3AF9FF, #00A7AD)'
+                            : 'linear-gradient(to bottom, #4A6080, #2A3F5F)',
                         borderImageSlice: 1,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     >
                       <span
                         className="font-beaufort font-bold"
-                        style={{ fontSize: 16, color: card.isWinner ? '#E8EDF5' : '#8FA3C0' }}
+                        style={{ fontSize: 16, color: (card.isWinner || card.isDraw) ? '#E8EDF5' : '#8FA3C0' }}
                       >
                         {card.score} Correct Answers
                       </span>
