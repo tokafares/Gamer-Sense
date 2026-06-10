@@ -102,7 +102,7 @@ export default function Page11() {
         // Fallback: if match:end never arrives within 12s, navigate anyway
         matchEndTimeout.current = setTimeout(() => {
           const capturedIsHost = useGameStore.getState().isHost
-          clearMatch()
+          clearMatch()   // read isHost BEFORE clear — clearMatch sets isHost: undefined
           disconnectSocket()
           navigate('/match-winner', {
             state: {
@@ -128,9 +128,9 @@ export default function Page11() {
     const socket = connectSocket()
     const onMatchEnd = (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
       if (matchEndTimeout.current) clearTimeout(matchEndTimeout.current)
+      const capturedIsHost = useGameStore.getState().isHost
       clearMatch()
       disconnectSocket()
-      const capturedIsHost = useGameStore.getState().isHost
       navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost } })
     }
     socket.on('match:end', onMatchEnd)
