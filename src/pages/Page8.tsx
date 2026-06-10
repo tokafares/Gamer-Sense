@@ -66,7 +66,9 @@ export default function Page8() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const [activeLane,      setActiveLane]      = useState('top')
+  const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
+  const isMatchMode = !!matchId
+  const [activeLane,      setActiveLane]      = useState(() => isMatchMode ? (matchQuestions[0]?.lane ?? 'top') : 'top')
   const [selectedAnswer,  setSelectedAnswer]  = useState<string | null>(null)
   const [locked,          setLocked]          = useState(false)
   const [roundResult,     setRoundResult]     = useState<RoundResult | null>(null)
@@ -85,9 +87,6 @@ export default function Page8() {
   const [laneComplete,   setLaneComplete]   = useState(false)
   const [sessionCorrect, setSessionCorrect] = useState(0)
   const [sessionPoints,  setSessionPoints]  = useState(0)
-
-  const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
-  const isMatchMode = !!matchId
 
   // Current question in match mode — updated by round:question socket events
   const [currentMatchQuestion, setCurrentMatchQuestion] = useState<{ id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } | null>(
