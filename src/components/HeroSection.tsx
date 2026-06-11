@@ -21,7 +21,10 @@ export default function HeroSection() {
   return (
     <section
       className="relative w-full h-[calc(100vh-86.4px)] min-h-[500px] bg-[#091528] mt-[86.4px]"
-      style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 120px), 0 100%)' }}
+      style={{
+        clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% calc(100% - 60px), 0 100%)' : 'polygon(0 0, 100% 0, 100% calc(100% - 120px), 0 100%)',
+        ...(isMobile ? { height: '440px', minHeight: '440px' } : {}),
+      }}
     >
 
       {/* Background container — overflow-hidden here so images never bleed */}

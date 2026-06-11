@@ -1,6 +1,7 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, lazy, Suspense } from 'react'
 import RequireAuth from './components/RequireAuth'
+import { useIsMobile } from './hooks/useIsMobile'
 import { prefetchPageImages } from './lib/prefetch'
 import patternBg from './assets/Group 249.webp'
 import Header from './components/Header'
@@ -49,12 +50,13 @@ function NotFound() {
 }
 
 function Landing() {
+  const isMobile = useIsMobile()
   return (
     <>
       <Header />
       <div className="w-full h-[1.2px] bg-gradient-to-r from-[#FFFCF6] to-[#969696]" />
       <HeroSection />
-      <div style={{ marginTop: '-120px', paddingTop: '120px' }}>
+      <div style={isMobile ? { marginTop: '12px' } : { marginTop: '-120px', paddingTop: '120px' }}>
         <WhatWeOffer />
       </div>
       <Leaderboard />
