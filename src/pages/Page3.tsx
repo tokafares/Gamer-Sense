@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { useScenarioVideo } from '../hooks/useScenarioVideo'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { toYouTubeEmbed } from '../lib/youtube'
 import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
@@ -60,6 +61,7 @@ const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-
 
 export default function Page3() {
   const reduced  = useReducedMotion()
+  const isMobile = useIsMobile()
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
@@ -175,7 +177,7 @@ export default function Page3() {
 
         <div style={{
           maxWidth: '1440px', margin: '0 auto',
-          padding: '16px 79px 80px',
+          padding: isMobile ? '16px 14px 56px' : '16px 79px 80px',
           position: 'relative', zIndex: 1,
         }}>
 
@@ -185,7 +187,7 @@ export default function Page3() {
               className="font-beaufort font-bold"
               style={{
                 display: 'inline-block',
-                fontSize: '54px', lineHeight: 1, margin: 0, paddingBottom: '6px',
+                fontSize: isMobile ? '36px' : '54px', lineHeight: 1, margin: 0, paddingBottom: '6px',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -196,18 +198,18 @@ export default function Page3() {
             </h1>
           </div>
 
-          {/* ── 3-column layout ── */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', height: `${PANEL_H}px` }}>
+          {/* ── 3-column layout (stacks vertically on mobile) ── */}
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'flex-start', gap: isMobile ? '12px' : '16px', height: isMobile ? 'auto' : `${PANEL_H}px` }}>
 
-            {/* LEFT — lane buttons */}
+            {/* LEFT — lane buttons (horizontal row on mobile) */}
             <motion.div
               variants={staggerCards}
               initial={reduced ? false : 'hidden'}
               animate="show"
               style={{
-                display: 'flex', flexDirection: 'column',
-                gap: `${LANE_GAP}px`, flexShrink: 0,
-                width: `${LANE_W}px`, height: '100%',
+                display: 'flex', flexDirection: isMobile ? 'row' : 'column',
+                gap: isMobile ? '6px' : `${LANE_GAP}px`, flexShrink: 0,
+                width: isMobile ? '100%' : `${LANE_W}px`, height: isMobile ? 'auto' : '100%',
               }}
             >
               {LANES.map(({ key, label, svg }) => (
@@ -218,12 +220,15 @@ export default function Page3() {
                   aria-label={label}
                   style={{
                     position: 'relative',
-                    width: '100%', height: `${LANE_H}px`,
+                    width: isMobile ? 'auto' : '100%',
+                    flex: isMobile ? 1 : undefined,
+                    height: isMobile ? '46px' : `${LANE_H}px`,
                     padding: 0, background: 'none', border: 'none',
-                    cursor: 'pointer', outline: 'none', flexShrink: 0,
+                    cursor: 'pointer', outline: 'none', flexShrink: isMobile ? 1 : 0,
+                    minWidth: 0,
                   }}
                 >
-                  <img src={svg} alt="" style={{ display: 'block', width: '100%', height: '100%' }} />
+                  <img src={svg} alt="" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }} />
                   {activeLane === key && (
                     <div style={{
                       position: 'absolute', inset: 0,
@@ -239,7 +244,7 @@ export default function Page3() {
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: '#060F1E', borderRadius: 6, overflow: 'hidden', border: '1px solid #1E3A5F' }}
+              style={{ flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, minWidth: 0, height: isMobile ? '210px' : '100%', position: 'relative', background: '#060F1E', borderRadius: 6, overflow: 'hidden', border: '1px solid #1E3A5F' }}
             >
               <QuestionMedia
                 imageUrl={question?.imageUrl}
@@ -284,7 +289,7 @@ export default function Page3() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
                 style={{
-                  width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0,
+                  width: isMobile ? '100%' : `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0,
                   background: '#0D1F3C', border: '1px solid #1E3A5F',
                   borderTop: '3px solid #00C9A7', borderRadius: 6,
                   display: 'flex', flexDirection: 'column',
@@ -336,7 +341,7 @@ export default function Page3() {
                 initial={reduced ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.2 }}
-                style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
+                style={{ width: isMobile ? '100%' : `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
               >
                 {/* Group 270.svg: single background covering Q box + Hint box */}
                 <img src={Group270Svg} alt=""
