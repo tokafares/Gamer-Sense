@@ -4,6 +4,7 @@ import type { Variants } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useIsMobile } from '../hooks/useIsMobile'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import Group245 from '../assets/Group 245.webp'
 import ScenarioSvg from '../assets/Scenario.svg'
@@ -47,6 +48,7 @@ const illustrationVariants: Variants = {
 const KnowledgeHub = () => {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
   const handleHoverStart = useCallback((id: string) => { if (!reduced) setHoveredCard(id) }, [reduced])
@@ -61,28 +63,31 @@ const KnowledgeHub = () => {
       {/* Inner layout container — height excludes navbar band; overflow clips at this boundary */}
       <div
         style={{
-          height: 'calc(100vh - 90px)',
-          overflow: 'hidden',
+          height: isMobile ? 'auto' : 'calc(100vh - 90px)',
+          overflow: isMobile ? 'visible' : 'hidden',
           display: 'flex',
-          flexDirection: 'row',
+          flexDirection: isMobile ? 'column' : 'row',
           position: 'relative',
         }}
       >
         {/* LEFT — title + card grid, stacked at bottom */}
         <div
           style={{
-            width: '42%',
+            width: isMobile ? '100%' : '42%',
             flexShrink: 0,
-            height: '100%',
-            overflow: 'hidden',
+            height: isMobile ? 'auto' : '100%',
+            overflow: isMobile ? 'visible' : 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            paddingLeft: '100px',
-            paddingBottom: '190px',
+            paddingLeft: isMobile ? '20px' : '100px',
+            paddingRight: isMobile ? '20px' : '0',
+            paddingTop: isMobile ? '24px' : '0',
+            paddingBottom: isMobile ? '24px' : '190px',
+            alignItems: isMobile ? 'center' : 'stretch',
           }}
         >
           {/* Spacer — caps at 100px so content is never pinned to very bottom on large screens */}
-          <div style={{ flex: 1, minHeight: '30px', maxHeight: '100px' }} />
+          {!isMobile && <div style={{ flex: 1, minHeight: '30px', maxHeight: '100px' }} />}
 
           {/* Title */}
           <motion.h1
@@ -114,8 +119,10 @@ const KnowledgeHub = () => {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: `repeat(2, ${CARD_W}px)`,
+                gridTemplateColumns: isMobile ? '1fr 1fr' : `repeat(2, ${CARD_W}px)`,
                 gap: '14px',
+                width: isMobile ? '100%' : undefined,
+                maxWidth: isMobile ? '440px' : undefined,
               }}
             >
               {CARDS.map((card) => (
@@ -149,6 +156,8 @@ const KnowledgeHub = () => {
                           loading="lazy"
                           style={{
                             display: 'block',
+                            width: isMobile ? '100%' : `${CARD_W}px`,
+                            height: 'auto',
                             filter: hoveredCard === card.id ? 'brightness(1.3)' : 'brightness(1)',
                             transition: 'filter 0.3s ease',
                           }}
@@ -174,15 +183,23 @@ const KnowledgeHub = () => {
           </motion.div>
         </div>
 
-        {/* RIGHT — hero illustration, slides in from right */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {/* RIGHT — hero illustration (below the grid on mobile) */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', width: isMobile ? '100%' : undefined, minHeight: isMobile ? '200px' : undefined }}>
           <motion.img
             src={Group245}
             alt=""
             variants={illustrationVariants}
             initial={reduced ? false : 'hidden'}
             animate="show"
-            style={{
+            style={isMobile ? {
+              position: 'relative',
+              width: '100%',
+              height: 'auto',
+              objectFit: 'cover',
+              display: 'block',
+              pointerEvents: 'none',
+              userSelect: 'none',
+            } : {
               position: 'absolute',
               bottom: 0,
               right: 0,

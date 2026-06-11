@@ -5,16 +5,20 @@ import ViewBtn   from '../assets/Group 390.svg'
 import { scrollFadeUp, scrollFadeIn, staggerContainer, slideFromLeft } from '../lib/animations'
 import { useLeaderboard } from '../hooks/useLeaderboard'
 import { levelFromPoints } from '../lib/level'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const VP = { once: true }
 const SKELETON_WIDTHS = [22, 48, 30, 32, 40]
 
 export default memo(function Leaderboard() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const { entries, loading, error } = useLeaderboard()
+  const cellPad = isMobile ? '12px 12px' : '20px 32px'
+  const rowPad  = isMobile ? '12px 12px' : '16px 32px'
 
   return (
-    <section className="w-full py-[80px] flex flex-col items-center">
+    <section className="w-full flex flex-col items-center" style={{ padding: isMobile ? '48px 16px' : '80px 0' }}>
 
       {/* ── Heading ── */}
       <motion.div
@@ -26,12 +30,13 @@ export default memo(function Leaderboard() {
       >
         <h2
           className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-          style={{ mixBlendMode: 'multiply' as const }}
+          style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '44px' : undefined }}
         >
           Leaderboard
         </h2>
         <h2
           className="absolute inset-0 font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
+          style={{ fontSize: isMobile ? '44px' : undefined }}
           aria-hidden="true"
         >
           Leaderboard
@@ -40,8 +45,8 @@ export default memo(function Leaderboard() {
 
       {/* ── Table ── */}
       <motion.div
-        className="w-[1111px] mt-[40px] overflow-hidden"
-        style={{ border: '1px solid #1E3A5F' }}
+        className="mt-[40px] overflow-hidden"
+        style={{ border: '1px solid #1E3A5F', width: isMobile ? '100%' : '1111px', maxWidth: '1111px' }}
         variants={scrollFadeIn}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
@@ -51,13 +56,13 @@ export default memo(function Leaderboard() {
         {/* Column headers */}
         <div
           className="bg-gs-card grid grid-cols-5"
-          style={{ borderBottom: '1px solid #1E3A5F', padding: '20px 32px' }}
+          style={{ borderBottom: '1px solid #1E3A5F', padding: cellPad }}
         >
           {['Rank', 'Player Name', 'Level', 'Points', 'Tier'].map(h => (
             <span
               key={h}
               className="text-gs-teal font-bold text-center uppercase"
-              style={{ fontSize: '14px', letterSpacing: '1.5px' }}
+              style={{ fontSize: isMobile ? '10px' : '14px', letterSpacing: isMobile ? '0.5px' : '1.5px' }}
             >
               {h}
             </span>
@@ -77,7 +82,7 @@ export default memo(function Leaderboard() {
                   key={i}
                   className="grid grid-cols-5 text-center"
                   style={{
-                    padding: '16px 32px',
+                    padding: rowPad,
                     background: i % 2 === 0 ? '#0D1F3C' : '#112040',
                   }}
                 >
@@ -119,8 +124,8 @@ export default memo(function Leaderboard() {
                   transition={{ duration: 0.35, ease: 'easeOut' }}
                   className="grid grid-cols-5 text-center"
                   style={{
-                    padding: '16px 32px',
-                    fontSize: '14px',
+                    padding: rowPad,
+                    fontSize: isMobile ? '11px' : '14px',
                     background: i % 2 === 0 ? '#0D1F3C' : '#112040',
                   }}
                 >

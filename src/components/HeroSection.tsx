@@ -11,9 +11,12 @@ import {
   heroSubtitleAnim,
   heroButtonAnim,
 } from '../lib/animations'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function HeroSection() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
+  const LEFT = isMobile ? '20px' : '79px'
 
   return (
     <section
@@ -107,7 +110,8 @@ export default function HeroSection() {
 
         {/* "Master" */}
         <motion.h2
-          className="absolute left-[79px] top-[20%] font-beaufort text-[53.58px] font-bold leading-none bg-gradient-to-b from-[#FFFCF6] to-[#CCCCCC] bg-clip-text text-transparent whitespace-nowrap"
+          className="absolute font-beaufort font-bold leading-none bg-gradient-to-b from-[#FFFCF6] to-[#CCCCCC] bg-clip-text text-transparent whitespace-nowrap"
+          style={{ left: LEFT, top: isMobile ? '15%' : '20%', fontSize: isMobile ? '30px' : '53.58px' }}
           variants={heroTitle}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -119,12 +123,12 @@ export default function HeroSection() {
         <motion.h1
           className="absolute font-beaufort font-bold"
           style={{
-            left: '79px',
-            top: '30%',
-            fontSize: '90px',
-            lineHeight: 1,
-            whiteSpace: 'nowrap',
-            width: 'max-content',
+            left: LEFT,
+            top: isMobile ? '21%' : '30%',
+            fontSize: isMobile ? '40px' : '90px',
+            lineHeight: 1.04,
+            whiteSpace: isMobile ? 'normal' : 'nowrap',
+            width: isMobile ? 'calc(100% - 40px)' : 'max-content',
             paddingRight: '6px',
             paddingBottom: '8px',
             background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
@@ -142,7 +146,8 @@ export default function HeroSection() {
 
         {/* Subtitle */}
         <motion.p
-          className="absolute left-[79px] top-[46%] font-['Inter',sans-serif] text-[17px] font-normal leading-snug w-[400px] h-auto pb-[8px] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent"
+          className="absolute font-['Inter',sans-serif] font-normal leading-snug h-auto pb-[8px] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent"
+          style={{ left: LEFT, top: isMobile ? '50%' : '46%', fontSize: isMobile ? '14px' : '17px', width: isMobile ? 'calc(100% - 40px)' : '400px' }}
           variants={heroSubtitleAnim}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -151,11 +156,12 @@ export default function HeroSection() {
         </motion.p>
 
         {/* GET STARTED button */}
-        <Link to="/features" style={{ position: 'absolute', left: '79px', top: '62%', lineHeight: 0 }}>
+        <Link to="/features" style={{ position: 'absolute', left: LEFT, top: isMobile ? '66%' : '62%', lineHeight: 0 }}>
           <motion.img
             src={GetStartedBtn}
             alt="Get Started"
-            className="w-[345px] h-[65px] cursor-pointer flex-shrink-0"
+            className="cursor-pointer flex-shrink-0"
+            style={{ width: isMobile ? '230px' : '345px', height: 'auto' }}
             variants={heroButtonAnim}
             initial={reduced ? false : 'hidden'}
             animate="show"
