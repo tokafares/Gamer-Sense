@@ -558,6 +558,35 @@ function UsersTab() {
     }
   }
 
+  async function renameUser(user: AdminUser) {
+    const name = prompt('New username:', user.username)
+    if (name === null) return
+    const trimmed = name.trim()
+    if (!trimmed || trimmed === user.username) return
+    try {
+      await apiPut(`/admin/users/${user.id}/username`, { username: trimmed })
+      setMsg(`Renamed to ${trimmed}`)
+      await load()
+    } catch {
+      setMsg('Failed to rename (name too short or already taken)')
+    }
+  }
+
+  async function deleteUser(user: AdminUser) {
+    if (!confirm(`Delete user "${user.username}"? This permanently removes their account, stats and matches.`)) return
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/admin/users/${user.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${getToken() ?? ''}` },
+      })
+      if (!res.ok && res.status !== 204) throw new Error('Failed to delete')
+      setMsg(`Deleted ${user.username}`)
+      await load()
+    } catch {
+      setMsg('Failed to delete user')
+    }
+  }
+
   return (
     <div>
       <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Users ({users.length})</h2>
@@ -568,7 +597,7 @@ function UsersTab() {
         <div>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr 80px',
+            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr 260px',
             gap: 8,
             padding: '8px 12px',
             fontSize: 11,
@@ -588,7 +617,7 @@ function UsersTab() {
           {users.map(u => (
             <div key={u.id} style={{
               display: 'grid',
-              gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr 80px',
+              gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr 260px',
               gap: 8,
               padding: '10px 12px',
               background: '#0D1F3C',
@@ -609,9 +638,17 @@ function UsersTab() {
               <span style={{ color: '#8FA3C0', fontSize: 11 }}>
                 {new Date(u.createdAt).toLocaleDateString()}
               </span>
-              <button style={S.btn('ghost')} onClick={() => { void toggleRole(u) }}>
-                {u.role === 'admin' ? 'Demote' : 'Promote'}
-              </button>
+              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                <button style={{ ...S.btn('ghost'), padding: '4px 8px', fontSize: 11 }} onClick={() => { void renameUser(u) }}>
+                  EDIT NAME
+                </button>
+                <button style={{ ...S.btn('ghost'), padding: '4px 8px', fontSize: 11 }} onClick={() => { void toggleRole(u) }}>
+                  {u.role === 'admin' ? 'Demote' : 'Promote'}
+                </button>
+                <button style={{ ...S.btn('danger'), padding: '4px 8px', fontSize: 11 }} onClick={() => { void deleteUser(u) }}>
+                  DELETE
+                </button>
+              </div>
             </div>
           ))}
         </div>
