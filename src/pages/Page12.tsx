@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import { useGameStore } from '../store/gameStore'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 // ── Round Results dialog SVG frames ────────────────────────────────────────
 import ResultsBar      from '../assets/Group 370.svg'
@@ -71,6 +72,7 @@ const BAR_RENDER_MAX = 290
 
 const GTRResults = memo(function GTRResults() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const navigate = useNavigate()
   const { points, answers, currentRound, totalRounds, gtrResult, advanceRound, resetGame } = useGameStore()
   const completedRound = answers.length || currentRound
@@ -144,13 +146,13 @@ const GTRResults = memo(function GTRResults() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '20px 0' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: isMobile ? '12px' : '20px', padding: '20px 0' }}>
           {/* Your Answer */}
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.2 }}
-            style={{ flex: 1, minWidth: 0, position: 'relative' }}
+            style={{ flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, maxWidth: isMobile ? '360px' : undefined, minWidth: 0, position: 'relative' }}
           >
             <img src={CardFrame} alt="Your Answer" style={{ display: 'block', width: '100%', height: 'auto' }} />
             {/* Voted-rank emblem inside the pill (dynamic per round) */}
@@ -188,7 +190,7 @@ const GTRResults = memo(function GTRResults() {
             initial={reduced ? false : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.45, delay: 0.28 }}
-            style={{ flex: 1, minWidth: 0, position: 'relative' }}
+            style={{ flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, maxWidth: isMobile ? '360px' : undefined, minWidth: 0, position: 'relative' }}
           >
             <img src={PointsCard} alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
             <div style={{
@@ -215,7 +217,7 @@ const GTRResults = memo(function GTRResults() {
             initial={reduced ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.36 }}
-            style={{ flex: 1, minWidth: 0, position: 'relative' }}
+            style={{ flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, maxWidth: isMobile ? '360px' : undefined, minWidth: 0, position: 'relative' }}
           >
             <img src={CardFrame} alt="Correct Answer" style={{ display: 'block', width: '100%', height: 'auto' }} />
             {/* Correct-rank emblem inside the pill (dynamic per round) */}
@@ -353,6 +355,7 @@ const GTRResults = memo(function GTRResults() {
 // ── Page12 ──────────────────────────────────────────────────────────────────
 
 export default function Page12() {
+  const isMobile = useIsMobile()
   return (
     <>
       <Header />
@@ -362,7 +365,7 @@ export default function Page12() {
           maxWidth: '1440px',
           marginLeft: 'auto',
           marginRight: 'auto',
-          padding: '16px 79px 48px',
+          padding: isMobile ? '16px 14px 40px' : '16px 79px 48px',
           position: 'relative',
           zIndex: 1,
         }}>

@@ -23,6 +23,7 @@ import { useAuthStore } from '../store/authStore'
 import { useGTRRound }  from '../hooks/useGTRRound'
 import { connectSocket } from '../lib/socket'
 import { toYouTubeEmbed } from '../lib/youtube'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const RANK_TILES = [
   RankTile1, RankTile2, RankTile3, RankTile4, RankTile5,
@@ -45,6 +46,7 @@ const TOTAL_GTR_ROUNDS = 3
 
 export default function Page11() {
   const reduced  = useReducedMotion()
+  const isMobile = useIsMobile()
   const navigate = useNavigate()
   const location = useLocation()
   // Solo mode returns here for rounds 2-3 from the results page with this flag,
@@ -195,7 +197,7 @@ export default function Page11() {
           maxWidth: '1440px',
           marginLeft: 'auto',
           marginRight: 'auto',
-          padding: '16px 79px 48px',
+          padding: isMobile ? '16px 14px 40px' : '16px 79px 48px',
           position: 'relative',
           zIndex: 1,
         }}>
@@ -377,16 +379,20 @@ export default function Page11() {
             )}
           </motion.div>
 
-          {/* ── Rank picker container + tiles ── */}
+          {/* ── Rank picker container + tiles (3×3 grid on mobile) ── */}
           <motion.div
-            style={{ position: 'relative', width: '100%', paddingTop: `${RANK_RATIO * 100}%`, marginTop: '8px' }}
+            style={{ position: 'relative', width: '100%', paddingTop: isMobile ? 0 : `${RANK_RATIO * 100}%`, marginTop: '8px' }}
             initial={reduced ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.35 }}
           >
-            <img src={RankContainer} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+            {!isMobile && <img src={RankContainer} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />}
 
-            <div style={{
+            <div style={isMobile ? {
+              position: 'relative',
+              display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '8px', padding: '4px', boxSizing: 'border-box',
+            } : {
               position: 'absolute', inset: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '4% 1%', boxSizing: 'border-box', gap: '0.5%',
