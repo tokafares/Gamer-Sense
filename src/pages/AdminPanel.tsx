@@ -705,6 +705,19 @@ function UsersTab() {
     }
   }, [load])
 
+  const renameUser = useCallback(async (id: string, current: string) => {
+    const name = window.prompt('New username:', current)
+    if (name === null) return
+    const trimmed = name.trim()
+    if (!trimmed || trimmed === current) return
+    try {
+      await apiPut(`/admin/users/${id}/username`, { username: trimmed })
+      await load()
+    } catch {
+      setError('Failed to rename user (name may be too short or already taken)')
+    }
+  }, [load])
+
   const deleteUser = useCallback(async (id: string, username: string) => {
     if (!window.confirm(`Delete user "${username}"? This permanently removes their account, stats and matches.`)) return
     try {
@@ -739,6 +752,9 @@ function UsersTab() {
                   <td style={tableCell}>{u.membershipTier}</td>
                   <td style={tableCell}>
                     <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={() => { void renameUser(u.id, u.username) }} style={ghostBtn}>
+                        EDIT NAME
+                      </button>
                       <button onClick={() => { void toggleRole(u.id, u.role) }} style={ghostBtn}>
                         {u.role === 'admin' ? 'REMOVE ADMIN' : 'MAKE ADMIN'}
                       </button>

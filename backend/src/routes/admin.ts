@@ -19,6 +19,7 @@ interface QuestionParams { id: string }
 interface UserParams { id: string }
 interface RoleBody { role: string }
 interface PasswordBody { password: string }
+interface UsernameBody { username: string }
 
 interface GTRRoundBody {
   imageUrl: string
@@ -218,6 +219,42 @@ export async function adminRoutes(app: FastifyInstance) {
           select: { id: true, username: true, email: true },
         })
         return reply.send({ ...user, message: 'Password updated' })
+      } catch {
+        return reply.status(404).send({ error: 'User not found' })
+      }
+    },
+  )
+
+  // ── Change a user's username (admin override; bypasses owner check) ────────
+  app.put<{ Params: UserParams; Body: UsernameBody }>(
+    '/admin/users/:id/username',
+    {
+      preHandler: adminGuard,
+      schema: {
+        body: {
+          type: 'object',
+          required: ['username'],
+          properties: { username: { type: 'string', minLength: 2, maxLength: 32 } },
+        },
+      },
+    },
+    async (request, reply) => {
+      const username = request.body.username.trim()
+      const conflict = await prisma.user.findFirst({
+        where: { username, NOT: { id: request.params.id } },
+        select: { id: true },
+      })
+      if (conflict) {
+        return reply.status(409).send({ error: 'Username already taken' })
+      }
+      try {
+        const user = await prisma.user.update({
+          where: { id: request.params.id },
+          data: { username },
+          select: { id: true, username: true, email: true, role: true },
+        })
+        await invalidateLeaderboardCache()
+        return reply.send(user)
       } catch {
         return reply.status(404).send({ error: 'User not found' })
       }
