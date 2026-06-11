@@ -1,10 +1,6 @@
 import prisma from '../lib/prisma'
 import { tierFromPoints } from '../lib/tier'
-
-const TIER_ORDER = ['iron', 'bronze', 'silver', 'gold', 'platinum', 'emerald', 'diamond', 'master', 'grandmaster', 'challenger']
-function levelFromPoints(points: number): number {
-  return TIER_ORDER.indexOf(tierFromPoints(points)) + 1
-}
+import { levelProgress } from '../lib/level'
 
 export async function getProfile(userId: string) {
   const user = await prisma.user.findUnique({
@@ -19,13 +15,18 @@ export async function getProfile(userId: string) {
   }
 
   const stats = user.stats
+  const prog = levelProgress(stats?.points ?? 0)
 
   return {
     id: user.id,
     username: user.username,
     email: user.email,
     avatarUrl: user.avatarUrl,
-    level: stats ? levelFromPoints(stats.points) : 1,
+    level: prog.level,
+    xp: prog.xp,
+    xpIntoLevel: prog.xpIntoLevel,
+    xpForNextLevel: prog.xpForNextLevel,
+    xpToNextLevel: prog.xpToNextLevel,
     membershipTier: user.membershipTier,
     createdAt: user.createdAt,
     totalPoints: stats?.points ?? 0,

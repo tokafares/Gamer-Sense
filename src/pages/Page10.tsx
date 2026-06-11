@@ -71,6 +71,10 @@ export default function Page10() {
   const displayName = profile?.username ?? user?.username ?? 'PLAYER'
   const displayLevel = profile?.level ?? user?.level ?? 1
   const displayPoints = profile?.totalPoints ?? null
+  // XP progress within the current level (for the bar under LEVEL)
+  const xpInto = profile?.xpIntoLevel ?? 0
+  const xpSpan = profile?.xpForNextLevel ?? 0
+  const xpPct  = xpSpan > 0 ? Math.min(100, Math.round((xpInto / xpSpan) * 100)) : 0
 
   const openEdit = useCallback(() => {
     setNewName(displayName)
@@ -235,6 +239,17 @@ export default function Page10() {
                   >
                     LEVEL {displayLevel}
                   </span>
+                  {/* XP progress bar within the current level */}
+                  {profile?.xpForNextLevel != null && (
+                    <div style={{ width: '78%', marginTop: 2 }}>
+                      <div style={{ height: 5, borderRadius: 3, background: '#0A1628', border: '1px solid #1E3A5F', overflow: 'hidden' }}>
+                        <div style={{ width: `${xpPct}%`, height: '100%', background: 'linear-gradient(to right, #3AF9FF, #00A7AD)' }} />
+                      </div>
+                      <span style={{ display: 'block', textAlign: 'center', marginTop: 2, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color: '#8FA3C0', letterSpacing: '0.06em' }}>
+                        {xpInto} / {xpSpan} XP
+                      </span>
+                    </div>
+                  )}
                   {displayPoints !== null && (
                     <span
                       className="font-beaufort font-bold"

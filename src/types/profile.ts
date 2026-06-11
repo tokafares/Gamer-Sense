@@ -3,6 +3,10 @@ export interface UserProfile {
   username: string
   avatarUrl: string | null
   level: number
+  xp?: number
+  xpIntoLevel?: number
+  xpForNextLevel?: number
+  xpToNextLevel?: number
   membershipTier: string
   totalPoints?: number
   tier?: string
