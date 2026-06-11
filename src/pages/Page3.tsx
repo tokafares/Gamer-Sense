@@ -1,6 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
@@ -59,11 +58,9 @@ const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-
 
 export default function Page3() {
   const reduced  = useReducedMotion()
-  const navigate = useNavigate()
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
-  const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Batch question state
   const [laneQuestions,  setLaneQuestions]  = useState<Question[]>([])
@@ -113,21 +110,18 @@ export default function Page3() {
   const question = laneQuestions[questionIdx] ?? null
   const loading  = fetchLoading
 
-  // Advance to next question 2 s after lock-in
-  useEffect(() => {
-    if (!locked) return
-    advanceRef.current = setTimeout(() => {
-      const nextIdx = questionIdx + 1
-      if (nextIdx >= laneQuestions.length && laneQuestions.length > 0) {
-        setLaneComplete(true)
-      } else {
-        setQuestionIdx(nextIdx)
-        setSelectedAnswer(null)
-        setLocked(false)
-      }
-    }, 2000)
-    return () => { if (advanceRef.current) clearTimeout(advanceRef.current) }
-  }, [locked, questionIdx, laneQuestions.length])
+  // Manual advance — the player controls when to move on (no slow auto-advance),
+  // so the correct/incorrect highlight + explanation stay visible until they're ready.
+  const goNext = useCallback(() => {
+    const nextIdx = questionIdx + 1
+    if (nextIdx >= laneQuestions.length && laneQuestions.length > 0) {
+      setLaneComplete(true)
+    } else {
+      setQuestionIdx(nextIdx)
+      setSelectedAnswer(null)
+      setLocked(false)
+    }
+  }, [questionIdx, laneQuestions.length])
 
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || loading || !question) return
@@ -155,7 +149,6 @@ export default function Page3() {
   }, [selectedAnswer, locked, loading, question, currentRound])
 
   const handleLaneSelect = (key: string) => {
-    if (advanceRef.current) clearTimeout(advanceRef.current)
     setActiveLane(key)
   }
 
@@ -330,19 +323,7 @@ export default function Page3() {
                       fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
                     }}
                   >
-                    TRY ANOTHER LANE
-                  </button>
-                  <button
-                    onClick={() => navigate('/profile')}
-                    style={{
-                      background: 'none', border: '1px solid #1E3A5F',
-                      borderRadius: 4, padding: '12px 0',
-                      color: '#8FA3C0', cursor: 'pointer', width: '100%',
-                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
-                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
-                    }}
-                  >
-                    VIEW PROFILE
+                    NEXT SCENARIO
                   </button>
                 </div>
               </motion.div>
@@ -382,6 +363,8 @@ export default function Page3() {
                   {question && ANSWER_REGIONS.map(({ id, top, height }) => {
                     const ans = question.options.find(a => a.id === id)
                     if (!ans) return null
+                    const isCorrect = locked && question.correctAnswer === id
+                    const isWrong   = locked && selectedAnswer === id && question.correctAnswer !== id
                     return (
                       <div
                         key={`ans-text-${id}`}
@@ -390,17 +373,21 @@ export default function Page3() {
                           width: 'calc(100% - 4px)', height: `${height - 4}px`,
                           display: 'flex', alignItems: 'center',
                           padding: '0 20px', pointerEvents: 'none',
-                          background: '#0D1F3C',
+                          background: isCorrect ? 'rgba(0,201,167,0.18)' : isWrong ? 'rgba(239,68,68,0.15)' : '#0D1F3C',
+                          transition: 'background 0.3s',
                         }}
                       >
                         <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                          {id}.&nbsp;{ans.text}
+                          {id}.&nbsp;{ans.text}{isCorrect ? '  ✓' : isWrong ? '  ✗' : ''}
                         </p>
                       </div>
                     )
                   })}
 
-                  {ANSWER_REGIONS.map(({ id, top, height }, i) => (
+                  {question && ANSWER_REGIONS.map(({ id, top, height }, i) => {
+                    const isCorrect = locked && question.correctAnswer === id
+                    const isWrong   = locked && selectedAnswer === id && question.correctAnswer !== id
+                    return (
                     <motion.div
                       key={id}
                       role="button"
@@ -417,7 +404,7 @@ export default function Page3() {
                       }}
                       aria-label={`Answer ${id}`}
                     >
-                      {selectedAnswer === id && (
+                      {!locked && selectedAnswer === id && (
                         <div style={{
                           position: 'absolute', inset: 0,
                           border: '2px solid #3AF9FF',
@@ -425,8 +412,15 @@ export default function Page3() {
                           pointerEvents: 'none',
                         }} />
                       )}
+                      {isCorrect && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #00C9A7', pointerEvents: 'none' }} />
+                      )}
+                      {isWrong && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #ef4444', pointerEvents: 'none' }} />
+                      )}
                     </motion.div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Hint text overlay */}
@@ -446,8 +440,8 @@ export default function Page3() {
             )}
           </div>
 
-          {/* ── Lock-in button (hidden when lane is complete) ── */}
-          {!laneComplete && (
+          {/* ── Lock-in button → Next Scenario button after answering (hidden when lane complete) ── */}
+          {!laneComplete && !locked && (
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -468,6 +462,28 @@ export default function Page3() {
               >
                 <img src={LockInBtnSvg} alt="Lock In Answer"
                   style={{ display: 'block', width: '300px', height: 'auto' }} />
+              </button>
+            </motion.div>
+          )}
+
+          {!laneComplete && locked && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{ marginTop: '16px' }}
+            >
+              <button
+                onClick={goNext}
+                className="font-beaufort font-bold"
+                style={{
+                  display: 'block', cursor: 'pointer',
+                  padding: '14px 48px', border: 'none', borderRadius: 6,
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  color: '#060F1E', fontSize: 17, letterSpacing: '0.08em',
+                }}
+              >
+                Next Scenario →
               </button>
             </motion.div>
           )}

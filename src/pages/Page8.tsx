@@ -136,22 +136,17 @@ export default function Page8() {
   const loading  = !isMatchMode && fetchLoading
   const question = isMatchMode ? currentMatchQuestion : soloQuestion
 
-  // Solo mode: advance to next question 2 s after locking in
-  useEffect(() => {
-    if (!locked || isMatchMode) return
-    const t = setTimeout(() => {
-      const nextIdx = questionIdx + 1
-      if (nextIdx >= laneQuestions.length && laneQuestions.length > 0) {
-        setLaneComplete(true)
-      } else {
-        setQuestionIdx(nextIdx)
-        setSelectedAnswer(null)
-        setLocked(false)
-      }
-    }, 2000)
-    return () => clearTimeout(t)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locked, isMatchMode, questionIdx, laneQuestions.length])
+  // Solo mode: manual advance (no auto-advance) so the green/red reveal stays visible.
+  const goNextSolo = useCallback(() => {
+    const nextIdx = questionIdx + 1
+    if (nextIdx >= laneQuestions.length && laneQuestions.length > 0) {
+      setLaneComplete(true)
+    } else {
+      setQuestionIdx(nextIdx)
+      setSelectedAnswer(null)
+      setLocked(false)
+    }
+  }, [questionIdx, laneQuestions.length])
 
   // ── Socket setup for 1v1 match ──
   useEffect(() => {
@@ -613,19 +608,7 @@ export default function Page8() {
                       fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
                     }}
                   >
-                    TRY ANOTHER LANE
-                  </button>
-                  <button
-                    onClick={() => navigate('/profile')}
-                    style={{
-                      background: 'none', border: '1px solid #1E3A5F',
-                      borderRadius: 4, padding: '12px 0',
-                      color: '#8FA3C0', cursor: 'pointer', width: '100%',
-                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
-                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
-                    }}
-                  >
-                    VIEW PROFILE
+                    NEXT
                   </button>
                 </div>
               </motion.div>
@@ -663,8 +646,11 @@ export default function Page8() {
                     const ans = question.options.find(a => a.id === id)
                     if (!ans) return null
                     const isSelected = selectedAnswer === id
-                    const isCorrect  = roundResult?.correctAnswer === id
-                    const isWrong    = roundResult && isSelected && !isCorrect
+                    // Reveal correctness: match mode on round result, solo mode on lock-in
+                    const reveal    = isMatchMode ? !!roundResult : locked
+                    const correctId = isMatchMode ? roundResult?.correctAnswer : soloQuestion?.correctAnswer
+                    const isCorrect = reveal && correctId === id
+                    const isWrong   = reveal && isSelected && correctId !== id
 
                     return (
                       <div
@@ -674,7 +660,7 @@ export default function Page8() {
                           width: 'calc(100% - 4px)', height: `${height - 4}px`,
                           display: 'flex', alignItems: 'center',
                           padding: '0 20px', pointerEvents: 'none',
-                          background: isCorrect && roundResult
+                          background: isCorrect
                             ? 'rgba(0,201,167,0.18)'
                             : isWrong
                               ? 'rgba(239,68,68,0.15)'
@@ -684,7 +670,7 @@ export default function Page8() {
                       >
                         <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
                           {id}.&nbsp;{ans.text}
-                          {isCorrect && roundResult ? ' ✓' : isWrong ? ' ✗' : ''}
+                          {isCorrect ? ' ✓' : isWrong ? ' ✗' : ''}
                         </p>
                       </div>
                     )
@@ -704,7 +690,12 @@ export default function Page8() {
                     />
                   ))}
 
-                  {ANSWER_REGIONS.map(({ id, top, height }) => (
+                  {ANSWER_REGIONS.map(({ id, top, height }) => {
+                    const reveal    = isMatchMode ? !!roundResult : locked
+                    const correctId = isMatchMode ? roundResult?.correctAnswer : soloQuestion?.correctAnswer
+                    const isCorrect = reveal && correctId === id
+                    const isWrong   = reveal && selectedAnswer === id && correctId !== id
+                    return (
                     <motion.div
                       key={id}
                       role="button"
@@ -727,7 +718,7 @@ export default function Page8() {
                       aria-label={`Answer ${id}`}
                     >
                       <AnimatePresence>
-                        {selectedAnswer === id && (
+                        {!reveal && selectedAnswer === id && (
                           <motion.div
                             key="sel"
                             initial={{ opacity: 0 }}
@@ -736,38 +727,24 @@ export default function Page8() {
                             transition={{ duration: 0.22 }}
                             style={{
                               position: 'absolute', inset: 0,
-                              border: `2px solid ${roundResult
-                                ? (roundResult.correctAnswer === id ? '#00C9A7' : '#ef4444')
-                                : '#3AF9FF'}`,
-                              background: roundResult
-                                ? (roundResult.correctAnswer === id ? 'rgba(0,201,167,0.12)' : 'rgba(239,68,68,0.12)')
-                                : 'rgba(58,249,255,0.07)',
-                              boxShadow: roundResult
-                                ? 'none'
-                                : '0 0 20px rgba(58,249,255,0.4), inset 0 0 8px rgba(58,249,255,0.06)',
+                              border: '2px solid #3AF9FF',
+                              background: 'rgba(58,249,255,0.07)',
+                              boxShadow: '0 0 20px rgba(58,249,255,0.4), inset 0 0 8px rgba(58,249,255,0.06)',
                               pointerEvents: 'none',
                             }}
                           />
                         )}
                       </AnimatePresence>
+                      {isCorrect && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #00C9A7', background: 'rgba(0,201,167,0.12)', pointerEvents: 'none' }} />
+                      )}
+                      {isWrong && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #ef4444', background: 'rgba(239,68,68,0.12)', pointerEvents: 'none' }} />
+                      )}
                     </motion.div>
-                  ))}
+                    )
+                  })}
                 </div>
-
-                {soloQuestion?.hint && !isMatchMode && (
-                  <div style={{
-                    position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                    width: '100%', height: `${HINT_H}px`,
-                    padding: '14px 20px', boxSizing: 'border-box',
-                  }}>
-                    <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                      Hint:
-                    </p>
-                    <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
-                      "{soloQuestion.hint}"
-                    </p>
-                  </div>
-                )}
 
                 {isMatchMode && locked && !roundResult && (
                   <div style={{
@@ -812,8 +789,8 @@ export default function Page8() {
             )}
           </div>
 
-          {/* ── Lock-in button (hidden when lane is complete in solo mode) ── */}
-          {!((!isMatchMode) && laneComplete) && (
+          {/* ── Lock-in button (hidden when solo lane complete or solo answer locked) ── */}
+          {!(!isMatchMode && laneComplete) && !(!isMatchMode && locked) && (
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -834,6 +811,29 @@ export default function Page8() {
               >
                 <img src={LockInBtnSvg} alt="Lock In Answer"
                   style={{ display: 'block', width: '300px', height: 'auto' }} />
+              </button>
+            </motion.div>
+          )}
+
+          {/* ── Solo Next button after answering ── */}
+          {!isMatchMode && locked && !laneComplete && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{ marginTop: '16px' }}
+            >
+              <button
+                onClick={goNextSolo}
+                className="font-beaufort font-bold"
+                style={{
+                  display: 'block', cursor: 'pointer',
+                  padding: '14px 48px', border: 'none', borderRadius: 6,
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  color: '#060F1E', fontSize: 17, letterSpacing: '0.08em',
+                }}
+              >
+                Next →
               </button>
             </motion.div>
           )}

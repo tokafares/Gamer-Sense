@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
@@ -22,7 +21,7 @@ import Group270Svg   from '../assets/Group 270.svg'
 import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
 
-const TIMER_SECONDS = 10
+const TIMER_SECONDS = 25
 
 const LANES = [
   { key: 'top',     label: 'Top Lane', svg: TopLaneSvg  },
@@ -61,13 +60,11 @@ const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-
 
 export default function Page4() {
   const reduced  = useReducedMotion()
-  const navigate = useNavigate()
   const [activeLane,     setActiveLane]     = useState('top')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [locked,         setLocked]         = useState(false)
   const [timeLeft,       setTimeLeft]       = useState(TIMER_SECONDS)
   const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null)
-  const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Batch question state
   const [laneQuestions,  setLaneQuestions]  = useState<Question[]>([])
@@ -139,10 +136,9 @@ export default function Page4() {
   const handleTimeout = useCallback(() => {
     stopTimer()
     setLocked(true)
-    // Count timeout as incorrect answer — advance after 1.5s
+    // Time ran out — reveal the answer and let the player advance manually.
     setSessionPoints(p => p + 10)
-    advanceRef.current = setTimeout(advanceQuestion, 1500)
-  }, [stopTimer, advanceQuestion])
+  }, [stopTimer])
 
   // Start timer when a new question loads and is not yet locked
   useEffect(() => {
@@ -162,12 +158,7 @@ export default function Page4() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question?.id, loading, activeLane, laneComplete])
 
-  // Auto-advance 2 s after locking in
-  useEffect(() => {
-    if (!locked || laneComplete) return
-    advanceRef.current = setTimeout(advanceQuestion, 2000)
-    return () => { if (advanceRef.current) clearTimeout(advanceRef.current) }
-  }, [locked, laneComplete, advanceQuestion])
+  // No auto-advance — the player proceeds manually via the Next Question button.
 
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || loading || !question) return
@@ -197,7 +188,6 @@ export default function Page4() {
 
   const handleLaneSelect = (key: string) => {
     stopTimer()
-    if (advanceRef.current) clearTimeout(advanceRef.current)
     setActiveLane(key)
   }
 
@@ -374,19 +364,7 @@ export default function Page4() {
                       fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
                     }}
                   >
-                    TRY ANOTHER LANE
-                  </button>
-                  <button
-                    onClick={() => navigate('/profile')}
-                    style={{
-                      background: 'none', border: '1px solid #1E3A5F',
-                      borderRadius: 4, padding: '12px 0',
-                      color: '#8FA3C0', cursor: 'pointer', width: '100%',
-                      fontFamily: "'Beaufort for LOL', 'Beaufort', serif",
-                      fontWeight: 700, fontSize: 14, letterSpacing: '0.1em',
-                    }}
-                  >
-                    VIEW PROFILE
+                    NEXT
                   </button>
                 </div>
               </motion.div>
@@ -423,6 +401,8 @@ export default function Page4() {
                   {question && ANSWER_REGIONS.map(({ id, top, height }) => {
                     const ans = question.options.find(a => a.id === id)
                     if (!ans) return null
+                    const isCorrect = locked && question.correctAnswer === id
+                    const isWrong   = locked && selectedAnswer === id && question.correctAnswer !== id
                     return (
                       <div
                         key={`ans-text-${id}`}
@@ -431,17 +411,21 @@ export default function Page4() {
                           width: 'calc(100% - 4px)', height: `${height - 4}px`,
                           display: 'flex', alignItems: 'center',
                           padding: '0 20px', pointerEvents: 'none',
-                          background: '#0D1F3C',
+                          background: isCorrect ? 'rgba(0,201,167,0.18)' : isWrong ? 'rgba(239,68,68,0.15)' : '#0D1F3C',
+                          transition: 'background 0.3s',
                         }}
                       >
                         <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                          {id}.&nbsp;{ans.text}
+                          {id}.&nbsp;{ans.text}{isCorrect ? '  ✓' : isWrong ? '  ✗' : ''}
                         </p>
                       </div>
                     )
                   })}
 
-                  {ANSWER_REGIONS.map(({ id, top, height }, i) => (
+                  {question && ANSWER_REGIONS.map(({ id, top, height }, i) => {
+                    const isCorrect = locked && question.correctAnswer === id
+                    const isWrong   = locked && selectedAnswer === id && question.correctAnswer !== id
+                    return (
                     <motion.div
                       key={id}
                       role="button"
@@ -458,7 +442,7 @@ export default function Page4() {
                       }}
                       aria-label={`Answer ${id}`}
                     >
-                      {selectedAnswer === id && (
+                      {!locked && selectedAnswer === id && (
                         <div style={{
                           position: 'absolute', inset: 0,
                           border: '2px solid #3AF9FF',
@@ -466,8 +450,15 @@ export default function Page4() {
                           pointerEvents: 'none',
                         }} />
                       )}
+                      {isCorrect && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #00C9A7', pointerEvents: 'none' }} />
+                      )}
+                      {isWrong && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #ef4444', pointerEvents: 'none' }} />
+                      )}
                     </motion.div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {question?.hint && (
@@ -488,8 +479,8 @@ export default function Page4() {
             )}
           </div>
 
-          {/* ── Lock-in button (hidden when lane is complete) ── */}
-          {!laneComplete && (
+          {/* ── Lock-in button → Next Question button after lock/timeout (hidden when lane complete) ── */}
+          {!laneComplete && !locked && (
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -510,6 +501,28 @@ export default function Page4() {
               >
                 <img src={LockInBtnSvg} alt="Lock In Answer"
                   style={{ display: 'block', width: '300px', height: 'auto' }} />
+              </button>
+            </motion.div>
+          )}
+
+          {!laneComplete && locked && (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{ marginTop: '16px' }}
+            >
+              <button
+                onClick={advanceQuestion}
+                className="font-beaufort font-bold"
+                style={{
+                  display: 'block', cursor: 'pointer',
+                  padding: '14px 48px', border: 'none', borderRadius: 6,
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  color: '#060F1E', fontSize: 17, letterSpacing: '0.08em',
+                }}
+              >
+                Next Question →
               </button>
             </motion.div>
           )}
