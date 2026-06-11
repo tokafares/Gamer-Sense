@@ -166,11 +166,11 @@ const EMPTY_QUESTION = {
   text: '',
   hint: '',
   imageUrl: '',
+  // Gameplay UI shows exactly 3 answers (A/B/C) — keep questions 3-option.
   options: [
     { id: 'A', text: '' },
     { id: 'B', text: '' },
     { id: 'C', text: '' },
-    { id: 'D', text: '' },
   ],
   correctAnswer: 'A',
   explanation: '',
@@ -197,14 +197,17 @@ function QuestionsTab() {
   useEffect(() => { void load() }, [load])
 
   function startEdit(q: AdminQuestion) {
+    // Normalise legacy 4-option questions down to 3 (A/B/C) to match the gameplay UI
+    const opts = (q.options as typeof EMPTY_QUESTION.options).slice(0, 3)
+    const validIds = opts.map(o => o.id)
     setForm({
       type: q.type,
       lane: q.lane,
       text: q.text,
       hint: q.hint ?? '',
       imageUrl: q.imageUrl ?? '',
-      options: q.options as typeof EMPTY_QUESTION.options,
-      correctAnswer: q.correctAnswer,
+      options: opts,
+      correctAnswer: validIds.includes(q.correctAnswer) ? q.correctAnswer : 'A',
       explanation: q.explanation,
     })
     setEditId(q.id)
