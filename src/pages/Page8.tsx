@@ -632,9 +632,9 @@ export default function Page8() {
                           display: 'flex', alignItems: 'center',
                           padding: '0 20px', pointerEvents: 'none',
                           background: isCorrect
-                            ? 'rgba(0,201,167,0.18)'
+                            ? '#0E3A30'
                             : isWrong
-                              ? 'rgba(239,68,68,0.15)'
+                              ? '#3A1E22'
                               : '#0D1F3C',
                           transition: 'background 0.3s',
                         }}

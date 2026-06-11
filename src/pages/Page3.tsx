@@ -375,7 +375,7 @@ export default function Page3() {
                           width: 'calc(100% - 4px)', height: `${height - 4}px`,
                           display: 'flex', alignItems: 'center',
                           padding: '0 20px', pointerEvents: 'none',
-                          background: isCorrect ? 'rgba(0,201,167,0.18)' : isWrong ? 'rgba(239,68,68,0.15)' : '#0D1F3C',
+                          background: isCorrect ? '#0E3A30' : isWrong ? '#3A1E22' : '#0D1F3C',
                           transition: 'background 0.3s',
                         }}
                       >
