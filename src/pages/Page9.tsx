@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header        from '../components/Header'
@@ -9,7 +9,9 @@ import CardBg        from '../assets/DialogBg.svg'
 import CardFrame     from '../assets/Group 282.svg'
 import BadgeWide     from '../assets/Group 322.svg'
 import { useAuthStore } from '../store/authStore'
-import { disconnectSocket } from '../lib/socket'
+import { useGameStore } from '../store/gameStore'
+import type { MatchQuestion } from '../store/gameStore'
+import { connectSocket, disconnectSocket } from '../lib/socket'
 
 interface MatchResultState {
   winnerId:     string
@@ -36,15 +38,39 @@ export default function Page9() {
   const { user } = useAuthStore()
 
   const result     = (location.state as MatchResultState | null)
-  const goRematch = useCallback(
-    () => {
-      // Drop the finished match's socket so the invite page starts a clean new match,
-      // then go create a fresh invite link to send to the opponent.
-      disconnectSocket()
-      navigate(result?.gameType === 'trivia' ? '/trivia-invite' : '/gtr-invite')
-    },
-    [navigate, result?.gameType]
-  )
+  const { setMatchStart, setOpponentUsername } = useGameStore()
+  const [rematching, setRematching] = useState(false)
+
+  // Rematch: host triggers it; the server re-pairs BOTH players into a new match
+  // and pushes them straight back into the game — no new link to share (item 12).
+  const goRematch = useCallback(() => {
+    setRematching(true)
+    connectSocket().emit('match:rematch')
+  }, [])
+
+  useEffect(() => {
+    if (!result) return
+    const socket = connectSocket()
+    const onRematch = (d: { matchId: string; inviteToken: string; mode: string }) => {
+      // Both players auto-join the freshly re-paired match
+      socket.emit('match:join', { token: d.inviteToken, userId: user?.id })
+    }
+    const onStart = (d: { matchId: string; questions?: MatchQuestion[]; gtrRoundIds?: string[]; hostUsername?: string; invitedUsername?: string }) => {
+      setMatchStart(d.matchId, d.questions ?? [], result.isHost, d.gtrRoundIds ?? [])
+      setOpponentUsername(result.isHost ? (d.invitedUsername ?? null) : (d.hostUsername ?? null))
+      navigate(result.gameType === 'gtr' ? '/match' : '/trivia')
+    }
+    const onError = () => setRematching(false)
+    socket.on('match:rematch', onRematch)
+    socket.on('match:start', onStart)
+    socket.on('match:error', onError)
+    return () => {
+      socket.off('match:rematch', onRematch)
+      socket.off('match:start', onStart)
+      socket.off('match:error', onError)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result?.isHost, result?.gameType, user?.id])
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0
   const theirScore = result ? (result.isHost ? result.invitedScore : result.hostScore)    : 0
   const isDraw     = !!result && myScore === theirScore
@@ -389,13 +415,13 @@ export default function Page9() {
                       backgroundClip: 'text',
                     }}
                   >
-                    Rematch
+                    {rematching ? 'Setting up…' : 'Rematch'}
                   </span>
                 </button>
 
                 {/* Back to Duels — plain text link */}
                 <button
-                  onClick={() => navigate('/duels')}
+                  onClick={() => { disconnectSocket(); navigate('/duels') }}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     fontFamily: "'Barlow Condensed', sans-serif",

@@ -21,7 +21,7 @@ import { useGameStore } from '../store/gameStore'
 import { useLevelUpStore } from '../store/levelUpStore'
 import { useAuthStore } from '../store/authStore'
 import { useGTRRound }  from '../hooks/useGTRRound'
-import { connectSocket, disconnectSocket } from '../lib/socket'
+import { connectSocket } from '../lib/socket'
 import { toYouTubeEmbed } from '../lib/youtube'
 
 const RANK_TILES = [
@@ -128,7 +128,6 @@ export default function Page11() {
           const capturedIsHost = useGameStore.getState().isHost
           const oppName = useGameStore.getState().opponentUsername
           clearMatch()   // read isHost BEFORE clear — clearMatch sets isHost: undefined
-          disconnectSocket()
           navigate('/match-winner', {
             state: {
               winnerId: '',
@@ -155,7 +154,7 @@ export default function Page11() {
       const capturedIsHost = useGameStore.getState().isHost
       const oppName = useGameStore.getState().opponentUsername
       clearMatch()
-      disconnectSocket()
+      // keep the socket connected so the winner screen can offer an instant rematch
       navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost, opponentUsername: oppName } })
     }
     const onOpponentVote = (d: { roundIndex: number; votedRank: string }) => {

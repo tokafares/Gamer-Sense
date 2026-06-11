@@ -222,13 +222,13 @@ export function registerMatchHandler(io: Server) {
     })
 
     // ── match:rematch ──────────────────────────────────────────────────────
-    socket.on('match:rematch', async (payload: { matchId: string }) => {
-      const { matchId } = payload ?? {}
+    socket.on('match:rematch', async () => {
       const meta = socketMeta.get(socket.id)
-      if (!meta || meta.matchId !== matchId) return
+      if (!meta) return
+      const matchId = meta.matchId  // the socket is still in the finished match's room
 
       const oldMatch = await prisma.match.findUnique({ where: { id: matchId } })
-      if (!oldMatch || oldMatch.status !== 'completed') return
+      if (!oldMatch || oldMatch.status !== 'completed' || !oldMatch.invitedId) return
       if (oldMatch.hostId !== meta.userId) {
         socket.emit('match:error', { message: 'Only the host can request a rematch' })
         return
@@ -239,14 +239,24 @@ export function registerMatchHandler(io: Server) {
       const { tokenKey } = await import('../services/matchService.js')
 
       const newToken = uuidv4()
+      // Re-pair the SAME two players immediately so both clients can auto-rejoin
+      // via the existing join flow (no new link to share).
       const newMatch = await prisma.match.create({
-        data: { hostId: oldMatch.hostId, inviteToken: newToken, mode: oldMatch.mode },
+        data: {
+          hostId: oldMatch.hostId,
+          invitedId: oldMatch.invitedId,
+          status: 'active',
+          inviteToken: newToken,
+          mode: oldMatch.mode,
+        },
       })
       await redis.setex(tokenKey(newToken), 600, newMatch.id)
 
+      // Notify BOTH players (still in the old room) to auto-join the new match
       io.to(roomId(matchId)).emit('match:rematch', {
         matchId: newMatch.id,
         inviteToken: newToken,
+        mode: oldMatch.mode,
       })
     })
 
