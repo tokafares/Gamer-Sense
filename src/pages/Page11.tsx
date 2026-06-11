@@ -21,6 +21,7 @@ import { useGameStore } from '../store/gameStore'
 import { useAuthStore } from '../store/authStore'
 import { useGTRRound }  from '../hooks/useGTRRound'
 import { connectSocket, disconnectSocket } from '../lib/socket'
+import { toYouTubeEmbed } from '../lib/youtube'
 
 const RANK_TILES = [
   RankTile1, RankTile2, RankTile3, RankTile4, RankTile5,
@@ -158,7 +159,8 @@ export default function Page11() {
 
   const totalRounds = TOTAL_GTR_ROUNDS
 
-  const isYouTube = round?.imageUrl?.startsWith('https://www.youtube.com/embed/') ?? false
+  const ytEmbed = toYouTubeEmbed(round?.imageUrl)
+  const isYouTube = !!ytEmbed
   const isPlaceholderUrl = !round?.imageUrl ||
     round.imageUrl.includes('placehold.co') ||
     round.imageUrl.includes('placeholder') ||
@@ -323,7 +325,7 @@ export default function Page11() {
               ) : isYouTube ? (
                 <iframe
                   key={round.id}
-                  src={`${round.imageUrl}?rel=0&modestbranding=1`}
+                  src={`${ytEmbed}?rel=0&modestbranding=1`}
                   title="Guess The Rank"
                   width="100%"
                   height="460"
@@ -371,7 +373,6 @@ export default function Page11() {
             }}>
               {RANK_TILES.map((src, i) => {
                 const rankName  = RANKS_ORDER[i]
-                const isCorrect = gtrResult?.correctRank === rankName
                 const isVoted   = gtrResult?.votedRank   === rankName
                 return (
                   <motion.div
@@ -407,12 +408,10 @@ export default function Page11() {
                         />
                       )}
 
-                      {/* Post-vote highlights */}
-                      {voted && isVoted && !isCorrect && (
+                      {/* Post-vote highlight — only the player's own pick (teal); no gold on the
+                          correct rank (the correct answer is revealed on the results page instead) */}
+                      {voted && isVoted && (
                         <div style={{ position: 'absolute', inset: 0, border: '2px solid #00C9A7', background: 'rgba(0,201,167,0.12)', pointerEvents: 'none' }} />
-                      )}
-                      {voted && isCorrect && (
-                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #C9A227', background: 'rgba(201,162,39,0.15)', pointerEvents: 'none' }} />
                       )}
                     </motion.div>
                   </motion.div>

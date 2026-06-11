@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, lazy, Suspense } from 'react'
 import RequireAuth from './components/RequireAuth'
 import { prefetchPageImages } from './lib/prefetch'
@@ -75,7 +75,26 @@ function Landing() {
 }
 
 function App() {
+  const navigate = useNavigate()
+  const location = useLocation()
   useEffect(() => { prefetchPageImages() }, [])
+
+  // On a fresh tab/window session, always start at the landing page instead of
+  // restoring whatever deep route the browser reopened. sessionStorage is empty
+  // on a new tab but survives same-tab reloads, so refresh keeps you in place.
+  // Shareable links (match invites, champion pages) are excluded.
+  useEffect(() => {
+    if (sessionStorage.getItem('gs_session')) return
+    sessionStorage.setItem('gs_session', '1')
+    const path = location.pathname
+    const shareable =
+      path === '/' ||
+      path.startsWith('/match/join') ||
+      path.startsWith('/champion')
+    if (!shareable) navigate('/', { replace: true })
+  // run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>

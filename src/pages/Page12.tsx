@@ -8,7 +8,6 @@ import { useGameStore } from '../store/gameStore'
 
 // ── Round Results dialog SVG frames ────────────────────────────────────────
 import ResultsBar      from '../assets/Group 370.svg'
-import CloseBtn        from '../assets/Group 369.svg'
 import CardFrame       from '../assets/Group 375.svg'   // clean answer-card frame (empty pill)
 import PointsCard      from '../assets/Group 349.svg'
 
@@ -142,19 +141,6 @@ const GTRResults = memo(function GTRResults() {
             >
               Round {completedRound} Results
             </span>
-          </div>
-          <div style={{ position: 'absolute', top: '50%', right: '12px', transform: 'translateY(-50%)' }}>
-            <motion.div
-              role="button"
-              tabIndex={0}
-              aria-label="Exit"
-              onClick={finishGame}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') finishGame() }}
-              style={{ cursor: 'pointer' }}
-              whileHover={reduced ? {} : { scale: 1.15, transition: { duration: 0.18 } }}
-            >
-              <img src={CloseBtn} alt="Close" style={{ display: 'block', width: '45px', height: '45px' }} />
-            </motion.div>
           </div>
         </div>
 

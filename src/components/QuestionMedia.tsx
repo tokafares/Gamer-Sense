@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { toYouTubeEmbed } from '../lib/youtube'
 
 interface Props {
   imageUrl?: string | null
@@ -11,6 +12,22 @@ function isVideo(url: string): boolean {
 
 export default function QuestionMedia({ imageUrl, fallback }: Props) {
   if (!imageUrl) return <>{fallback}</>
+
+  const ytEmbed = toYouTubeEmbed(imageUrl)
+  if (ytEmbed) {
+    return (
+      <iframe
+        key={ytEmbed}
+        src={`${ytEmbed}?rel=0&modestbranding=1`}
+        title="Question media"
+        width="100%"
+        height="100%"
+        style={{ display: 'block', border: 'none', position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    )
+  }
 
   if (isVideo(imageUrl)) {
     return (

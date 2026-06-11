@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { useScenarioVideo } from '../hooks/useScenarioVideo'
+import { toYouTubeEmbed } from '../lib/youtube'
 import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 import QuestionMedia from '../components/QuestionMedia'
@@ -74,7 +75,8 @@ export default function Page3() {
   const { video: scenarioVideo } = useScenarioVideo(activeLane)
   const { addPoints, submitAnswer: recordAnswer, currentRound } = useGameStore()
 
-  const isYouTube       = scenarioVideo?.url.startsWith('https://www.youtube.com/embed/') ?? false
+  const scenarioYt      = toYouTubeEmbed(scenarioVideo?.url)
+  const isYouTube       = !!scenarioYt
   const isCloudinaryVid = scenarioVideo?.url.includes('cloudinary.com') && scenarioVideo?.url.endsWith('.mp4')
 
   // Fetch all questions for the active lane whenever lane changes
@@ -243,7 +245,7 @@ export default function Page3() {
                   scenarioVideo && isYouTube ? (
                     <iframe
                       key={scenarioVideo.id}
-                      src={`${scenarioVideo.url}?rel=0&modestbranding=1&autoplay=1&mute=1`}
+                      src={`${scenarioYt}?rel=0&modestbranding=1&autoplay=1&mute=1`}
                       title="Scenario"
                       width="100%"
                       height="100%"
