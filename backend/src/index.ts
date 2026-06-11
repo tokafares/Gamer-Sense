@@ -30,11 +30,18 @@ async function main() {
     process.env['ADMIN_URL'],
   ].filter(Boolean) as string[]
 
+  // Allow any *.up.railway.app / *.railway.app origin so renaming a service
+  // (which changes its domain) never breaks the deployed frontend/admin.
+  const isAllowedOrigin = (origin: string) =>
+    allowedOrigins.includes(origin) ||
+    /^https:\/\/[a-z0-9-]+\.(up\.)?railway\.app$/i.test(origin) ||
+    /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)
+
   await app.register(cors, {
     origin: (origin, cb) => {
       // allow requests with no origin (curl, Postman, server-to-server)
       if (!origin) return cb(null, true)
-      if (allowedOrigins.includes(origin)) return cb(null, true)
+      if (isAllowedOrigin(origin)) return cb(null, true)
       cb(new Error('Not allowed by CORS'), false)
     },
     credentials: true,
