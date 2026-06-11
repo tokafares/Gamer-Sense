@@ -12,6 +12,7 @@ import { useAuthStore } from '../store/authStore'
 import { useGameStore } from '../store/gameStore'
 import type { MatchQuestion } from '../store/gameStore'
 import { connectSocket, disconnectSocket } from '../lib/socket'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 interface MatchResultState {
   winnerId:     string
@@ -35,6 +36,7 @@ export default function Page9() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const location = useLocation()
+  const isMobile = useIsMobile()
   const { user } = useAuthStore()
 
   const result     = (location.state as MatchResultState | null)
@@ -107,7 +109,7 @@ export default function Page9() {
           maxWidth: 820,
           marginLeft: 'auto',
           marginRight: 'auto',
-          padding: '48px 24px 80px',
+          padding: isMobile ? '32px 12px 60px' : '48px 24px 80px',
           textAlign: 'center',
         }}>
 
@@ -122,7 +124,7 @@ export default function Page9() {
               <h1
                 className="font-beaufort font-bold"
                 style={{
-                  fontSize: 72, lineHeight: 1, margin: 0,
+                  fontSize: isMobile ? 46 : 72, lineHeight: 1, margin: 0,
                   background: isDraw
                     ? 'linear-gradient(to right, #C9A227, #F0C94A)'
                     : iWon

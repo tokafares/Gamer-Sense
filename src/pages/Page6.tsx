@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useIsMobile } from '../hooks/useIsMobile'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 
 const LABEL_CLS = 'font-beaufort font-bold'
@@ -29,8 +30,9 @@ const DuelModeCard = memo(function DuelModeCard({ title, description, tag, delay
         whileHover={reduced ? {} : { scale: 1.03, y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
         style={{
           position: 'relative',
-          width: '380px',
-          padding: '48px 36px',
+          width: '100%',
+          maxWidth: '380px',
+          padding: '40px 28px',
           background: '#0D1F3C',
           border: '1px solid #1E3A5F',
           borderRadius: '8px',
@@ -115,6 +117,7 @@ const DuelModeCard = memo(function DuelModeCard({ title, description, tag, delay
 export default function Page6() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
 
   const goTrivia = useCallback(() => { navigate('/trivia-invite') }, [navigate])
   const goGtr    = useCallback(() => { navigate('/gtr-invite') }, [navigate])
@@ -128,8 +131,10 @@ export default function Page6() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          paddingTop: '64px',
-          paddingBottom: '100px',
+          paddingTop: isMobile ? '40px' : '64px',
+          paddingBottom: isMobile ? '60px' : '100px',
+          paddingLeft: isMobile ? '16px' : 0,
+          paddingRight: isMobile ? '16px' : 0,
         }}>
 
           {/* Heading */}
@@ -142,7 +147,7 @@ export default function Page6() {
             <h1
               className={LABEL_CLS}
               style={{
-                fontSize: '54px',
+                fontSize: isMobile ? '40px' : '54px',
                 lineHeight: 1,
                 margin: 0,
                 paddingBottom: '6px',
@@ -172,7 +177,7 @@ export default function Page6() {
           </motion.p>
 
           {/* Mode cards */}
-          <div style={{ display: 'flex', alignItems: 'stretch', gap: '40px' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'stretch', gap: isMobile ? '20px' : '40px', width: isMobile ? '100%' : undefined }}>
             <DuelModeCard
               title="Trivia"
               tag="1v1 Knowledge Battle"
@@ -182,8 +187,8 @@ export default function Page6() {
               onClick={goTrivia}
             />
 
-            {/* Divider */}
-
+            {/* Divider — desktop only */}
+            {!isMobile && (
             <motion.div
               initial={reduced ? false : { opacity: 0, scaleY: 0 }}
               animate={{ opacity: 1, scaleY: 1 }}
@@ -195,6 +200,7 @@ export default function Page6() {
                 flexShrink: 0,
               }}
             />
+            )}
 
             <DuelModeCard
               title="Guess The Rank"

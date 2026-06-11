@@ -12,6 +12,7 @@ import { useGameStore } from '../store/gameStore'
 import type { MatchQuestion } from '../store/gameStore'
 import { apiPost } from '../lib/api'
 import { connectSocket, disconnectSocket } from '../lib/socket'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const CARD_W  = 360
 const CARD_H  = Math.round(CARD_W * 504 / 441)
@@ -96,6 +97,7 @@ const PlayerCard = memo(function PlayerCard({
 
 export default function Page7() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const { setMatchStart, setOpponentUsername } = useGameStore()
@@ -164,17 +166,20 @@ export default function Page7() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            paddingTop: '48px',
-            paddingBottom: '80px',
+            paddingTop: isMobile ? '32px' : '48px',
+            paddingBottom: isMobile ? '60px' : '80px',
+            paddingLeft: isMobile ? '12px' : 0,
+            paddingRight: isMobile ? '12px' : 0,
           }}
         >
           <motion.h1
             className="font-beaufort font-bold"
             style={{
-              fontSize: '60px',
+              fontSize: isMobile ? '30px' : '60px',
               lineHeight: 1.1,
               marginTop: 0,
-              marginBottom: '48px',
+              marginBottom: isMobile ? '28px' : '48px',
+              textAlign: 'center',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -187,7 +192,7 @@ export default function Page7() {
             Pre Trivia Matchmaking
           </motion.h1>
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '64px' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: isMobile ? '20px' : '64px' }}>
 
             <PlayerCard
               img={user?.avatarUrl ?? GrayProfile}
@@ -198,7 +203,7 @@ export default function Page7() {
 
             <motion.div
               style={{
-                height: CARD_H,
+                height: isMobile ? 'auto' : CARD_H,
                 display: 'flex',
                 alignItems: 'center',
                 flexShrink: 0,
@@ -210,7 +215,7 @@ export default function Page7() {
               <span
                 className="font-beaufort font-bold"
                 style={{
-                  fontSize: '60px',
+                  fontSize: isMobile ? '40px' : '60px',
                   lineHeight: 1,
                   fontStyle: 'italic',
                   background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
