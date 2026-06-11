@@ -372,8 +372,9 @@ export default function Page4() {
                 transition={{ duration: 0.45, delay: 0.2 }}
                 style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
               >
+                {/* clip off the bottom hint-box frame baked into the SVG (no hints in blitz) */}
                 <img src={Group270Svg} alt=""
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', clipPath: 'inset(0 0 20.5% 0)' }} />
 
                 <div style={{
                   position: 'absolute', top: 0, left: 0,

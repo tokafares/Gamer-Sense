@@ -589,8 +589,10 @@ export default function Page8() {
                 transition={{ duration: 0.45, delay: 0.2 }}
                 style={{ width: `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
               >
+                {/* clip off the bottom hint-box frame in solo (no hints in trivia);
+                    keep it in match mode where it holds the waiting/result status */}
                 <img src={Group270Svg} alt=""
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', clipPath: isMatchMode ? undefined : 'inset(0 0 20.5% 0)' }} />
 
                 <div style={{
                   position: 'absolute', top: 0, left: 0,
