@@ -480,27 +480,9 @@ export default function Page8() {
                       transition={{ duration: 0.3, delay: 0.1 }}
                     >
                       <span className="font-beaufort font-bold" style={{
-                        fontSize: 28, letterSpacing: '0.12em',
-                        color: lockedAnswerRef.current === roundResult.correctAnswer ? '#00C9A7' : '#ef4444',
+                        fontSize: 28, letterSpacing: '0.12em', color: '#3AF9FF',
                       }}>
-                        {lockedAnswerRef.current === roundResult.correctAnswer ? '✓ CORRECT!' : '✗ WRONG'}
-                      </span>
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
-                      style={{
-                        background: 'rgba(0,201,167,0.12)', border: '1px solid rgba(0,201,167,0.4)',
-                        borderRadius: 6, padding: '8px 16px', textAlign: 'center',
-                      }}
-                    >
-                      <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: '#8FA3C0', letterSpacing: '0.1em', display: 'block', marginBottom: 4 }}>
-                        CORRECT ANSWER
-                      </span>
-                      <span className="font-beaufort font-medium" style={{ fontSize: 15, color: '#00C9A7' }}>
-                        {roundResult.correctAnswer}
+                        ROUND COMPLETE
                       </span>
                     </motion.div>
 
@@ -528,21 +510,6 @@ export default function Page8() {
                         <div className="font-beaufort font-bold" style={{ fontSize: 36, lineHeight: 1, color: '#E8EDF5' }}>{roundResult.opponentScore}</div>
                       </div>
                     </motion.div>
-
-                    {roundResult.explanation && (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.4 }}
-                        style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: 12, color: '#8FA3C0', fontStyle: 'italic',
-                          textAlign: 'center', margin: 0, lineHeight: 1.5,
-                        }}
-                      >
-                        {roundResult.explanation}
-                      </motion.p>
-                    )}
 
                     <motion.span
                       initial={{ opacity: 0 }}
@@ -646,8 +613,9 @@ export default function Page8() {
                     const ans = question.options.find(a => a.id === id)
                     if (!ans) return null
                     const isSelected = selectedAnswer === id
-                    // Reveal correctness: match mode on round result, solo mode on lock-in
-                    const reveal    = isMatchMode ? !!roundResult : locked
+                    // Solo reveals the answer on lock-in. Duel never reveals the answer
+                    // between rounds (no red/green flash) — only scores progress.
+                    const reveal    = isMatchMode ? false : locked
                     const correctId = isMatchMode ? roundResult?.correctAnswer : soloQuestion?.correctAnswer
                     const isCorrect = reveal && correctId === id
                     const isWrong   = reveal && isSelected && correctId !== id
@@ -691,7 +659,7 @@ export default function Page8() {
                   ))}
 
                   {ANSWER_REGIONS.map(({ id, top, height }) => {
-                    const reveal    = isMatchMode ? !!roundResult : locked
+                    const reveal    = isMatchMode ? false : locked
                     const correctId = isMatchMode ? roundResult?.correctAnswer : soloQuestion?.correctAnswer
                     const isCorrect = reveal && correctId === id
                     const isWrong   = reveal && selectedAnswer === id && correctId !== id
@@ -775,14 +743,9 @@ export default function Page8() {
                       padding: '14px 20px', boxSizing: 'border-box',
                     }}
                   >
-                    <p className={LABEL_CLS} style={{ fontSize: '14px', lineHeight: 1.25, margin: '0 0 4px' }}>
-                      Correct: {roundResult.correctAnswer} &nbsp;|&nbsp; You {roundResult.yourScore} — Opp {roundResult.opponentScore}
+                    <p className={LABEL_CLS} style={{ fontSize: '14px', lineHeight: 1.25, margin: 0 }}>
+                      You {roundResult.yourScore} — Opp {roundResult.opponentScore}
                     </p>
-                    {roundResult.explanation && (
-                      <p className={PARA_CLS} style={{ fontSize: '12px', lineHeight: '16px', margin: 0, fontStyle: 'italic' }}>
-                        {roundResult.explanation}
-                      </p>
-                    )}
                   </motion.div>
                 )}
               </motion.div>
