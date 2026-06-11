@@ -705,6 +705,16 @@ function UsersTab() {
     }
   }, [load])
 
+  const deleteUser = useCallback(async (id: string, username: string) => {
+    if (!window.confirm(`Delete user "${username}"? This permanently removes their account, stats and matches.`)) return
+    try {
+      await apiDelete(`/admin/users/${id}`)
+      await load()
+    } catch {
+      setError('Failed to delete user')
+    }
+  }, [load])
+
   return (
     <div>
       {error && <p style={{ color: C.red, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, marginBottom: 12 }}>{error}</p>}
@@ -728,9 +738,14 @@ function UsersTab() {
                   <td style={tableCell}><span style={{ color: u.role === 'admin' ? C.teal : C.muted }}>{u.role}</span></td>
                   <td style={tableCell}>{u.membershipTier}</td>
                   <td style={tableCell}>
-                    <button onClick={() => { void toggleRole(u.id, u.role) }} style={ghostBtn}>
-                      {u.role === 'admin' ? 'REMOVE ADMIN' : 'MAKE ADMIN'}
-                    </button>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={() => { void toggleRole(u.id, u.role) }} style={ghostBtn}>
+                        {u.role === 'admin' ? 'REMOVE ADMIN' : 'MAKE ADMIN'}
+                      </button>
+                      <button onClick={() => { void deleteUser(u.id, u.username) }} style={{ ...ghostBtn, color: C.red, borderColor: C.red }}>
+                        DELETE
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

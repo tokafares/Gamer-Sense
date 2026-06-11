@@ -16,6 +16,7 @@ interface MatchResultState {
   invitedScore: number
   isHost?:      boolean
   gameType?:    'trivia' | 'gtr'
+  opponentUsername?: string | null
 }
 
 // DialogBg actual SVG: 783 × 702 — preserveAspectRatio="none" so it stretches to fill
@@ -58,12 +59,12 @@ export default function Page9() {
     },
     {
       avatar:   null,
-      username: 'Opponent',
+      username: result?.opponentUsername || 'Opponent',
       score:    theirScore,
       isWinner: !isDraw && !iWon,
       isDraw,
     },
-  ], [myAvatar, myUsername, myScore, iWon, isDraw, theirScore])
+  ], [myAvatar, myUsername, myScore, iWon, isDraw, theirScore, result?.opponentUsername])
 
   return (
     <>

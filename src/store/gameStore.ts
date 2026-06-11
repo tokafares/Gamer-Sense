@@ -37,6 +37,7 @@ interface GameState {
   matchQuestions: MatchQuestion[]
   isHost: boolean | undefined
   gtrRoundIds: string[]
+  opponentUsername: string | null
 }
 
 interface GameActions {
@@ -45,6 +46,7 @@ interface GameActions {
   advanceRound: () => void
   setGTRResult: (data: GTRResultData) => void
   setMatchStart: (matchId: string, questions: MatchQuestion[], isHost?: boolean, gtrRoundIds?: string[]) => void
+  setOpponentUsername: (name: string | null) => void
   clearMatch: () => void
   resetGame: () => void
 }
@@ -60,6 +62,7 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
   matchQuestions: [],
   isHost: undefined,
   gtrRoundIds: [],
+  opponentUsername: null,
 
   submitAnswer: (answer) =>
     set((state) => ({
@@ -85,8 +88,10 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
   setMatchStart: (matchId, questions, isHost?, gtrRoundIds?) =>
     set({ matchId, matchQuestions: questions, totalRounds: questions.length || 3, isHost, gtrRoundIds: gtrRoundIds ?? [] }),
 
+  setOpponentUsername: (name) => set({ opponentUsername: name }),
+
   clearMatch: () =>
-    set({ matchId: null, matchQuestions: [], isHost: undefined, gtrRoundIds: [] }),
+    set({ matchId: null, matchQuestions: [], isHost: undefined, gtrRoundIds: [], opponentUsername: null }),
 
   resetGame: () =>
     set({
@@ -100,5 +105,6 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
       matchQuestions: [],
       isHost: undefined,
       gtrRoundIds: [],
+      opponentUsername: null,
     }),
 }))

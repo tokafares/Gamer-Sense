@@ -66,7 +66,7 @@ export default function Page8() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const { matchId, matchQuestions, isHost, currentRound, totalRounds, addPoints, submitAnswer: recordAnswer, clearMatch } = useGameStore()
+  const { matchId, matchQuestions, isHost, currentRound, totalRounds, opponentUsername, addPoints, submitAnswer: recordAnswer, clearMatch, setOpponentUsername } = useGameStore()
   const isMatchMode = !!matchId
   const [activeLane,      setActiveLane]      = useState(() => isMatchMode ? (matchQuestions[0]?.lane ?? 'top') : 'top')
   const [selectedAnswer,  setSelectedAnswer]  = useState<string | null>(null)
@@ -154,9 +154,11 @@ export default function Page8() {
 
     const socket = connectSocket()
 
-    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; question: { id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } }) => {
+    const onMatchResume = (data: { matchId: string; currentRound: number; hostScore: number; invitedScore: number; hostUsername?: string; invitedUsername?: string; question: { id: string; text: string; imageUrl?: string | null; lane: string; options: { id: string; text: string }[] } }) => {
       const mine   = isHost ? data.hostScore : data.invitedScore
       const theirs = isHost ? data.invitedScore : data.hostScore
+      const opp = isHost ? data.invitedUsername : data.hostUsername
+      if (opp) setOpponentUsername(opp)
       matchRoundIndexRef.current = data.currentRound
       setCurrentMatchQuestion(data.question)
       setActiveLane(data.question.lane)
@@ -205,8 +207,9 @@ export default function Page8() {
     const onMatchEnd = (data: { winnerId: string; hostScore: number; invitedScore: number }) => {
       if (advanceRef.current) clearTimeout(advanceRef.current)
       const capturedIsHost = useGameStore.getState().isHost
+      const oppName = useGameStore.getState().opponentUsername
       clearMatch()
-      navigate('/match-winner', { state: { ...data, isHost: capturedIsHost, gameType: 'trivia' } })
+      navigate('/match-winner', { state: { ...data, isHost: capturedIsHost, gameType: 'trivia', opponentUsername: oppName } })
     }
 
     socket.on('match:resume',   onMatchResume)
@@ -363,7 +366,7 @@ export default function Page8() {
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
                 <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0' }}>OPPONENT</span>
                 <span className="font-beaufort font-bold" style={{ fontSize: 28, lineHeight: 1, color: '#E8EDF5' }}>
-                  Challenger
+                  {opponentUsername ?? 'Opponent'}
                 </span>
                 <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em' }}>
                   {oppScore} correct

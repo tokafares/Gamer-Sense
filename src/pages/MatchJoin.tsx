@@ -18,7 +18,7 @@ export default function MatchJoin() {
   const [searchParams] = useSearchParams()
   const token = pathToken ?? searchParams.get('token')
   const { user } = useAuthStore()
-  const { setMatchStart } = useGameStore()
+  const { setMatchStart, setOpponentUsername } = useGameStore()
 
   const [status,   setStatus]   = useState<'joining' | 'waiting' | 'starting' | 'error'>('joining')
   const [matchMode, setMatchMode] = useState<'trivia' | 'gtr'>('trivia')
@@ -49,10 +49,11 @@ export default function MatchJoin() {
         socket.on('match:waiting', () => {
           if (!cancelled) setStatus('waiting')
         })
-        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[]; gtrRoundIds?: string[] }) => {
+        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[]; gtrRoundIds?: string[]; hostUsername?: string }) => {
           if (cancelled) return
           navigating = true
           setMatchStart(d.matchId, d.questions, false, d.gtrRoundIds ?? [])
+          setOpponentUsername(d.hostUsername ?? null)   // guest's opponent is the host
           setStatus('starting')
           // Route based on match mode: GTR → /match, Trivia → /trivia
           navigate(mode === 'gtr' ? '/match' : '/trivia')

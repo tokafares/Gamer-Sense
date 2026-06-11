@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import bcrypt from 'bcrypt'
 import { adminGuard } from '../middleware/adminGuard'
 import prisma from '../lib/prisma'
+import { invalidateLeaderboardCache } from '../services/leaderboardService'
 
 interface QuestionBody {
   type: string
@@ -217,6 +218,38 @@ export async function adminRoutes(app: FastifyInstance) {
           select: { id: true, username: true, email: true },
         })
         return reply.send({ ...user, message: 'Password updated' })
+      } catch {
+        return reply.status(404).send({ error: 'User not found' })
+      }
+    },
+  )
+
+  // ── Delete a user (and their dependent records) ────────────────────────────
+  app.delete<{ Params: UserParams }>(
+    '/admin/users/:id',
+    { preHandler: adminGuard },
+    async (request, reply) => {
+      const { id } = request.params
+      if (request.user.userId === id) {
+        return reply.status(400).send({ error: 'You cannot delete your own account' })
+      }
+      try {
+        await prisma.$transaction(async (tx) => {
+          const matches = await tx.match.findMany({
+            where: { OR: [{ hostId: id }, { invitedId: id }] },
+            select: { id: true },
+          })
+          const matchIds = matches.map((m) => m.id)
+          if (matchIds.length) {
+            await tx.matchResult.deleteMany({ where: { matchId: { in: matchIds } } })
+            await tx.match.deleteMany({ where: { id: { in: matchIds } } })
+          }
+          await tx.gTRVote.deleteMany({ where: { userId: id } })
+          await tx.userStats.deleteMany({ where: { userId: id } })
+          await tx.user.delete({ where: { id } })
+        })
+        await invalidateLeaderboardCache()
+        return reply.send({ id, message: 'User deleted' })
       } catch {
         return reply.status(404).send({ error: 'User not found' })
       }

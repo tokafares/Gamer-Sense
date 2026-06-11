@@ -314,6 +314,16 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
     return
   }
 
+  // Resolve both players' usernames so each client can show their real opponent
+  const [hostUser, invitedUser] = await Promise.all([
+    prisma.user.findUnique({ where: { id: match.hostId }, select: { username: true } }),
+    match.invitedId
+      ? prisma.user.findUnique({ where: { id: match.invitedId }, select: { username: true } })
+      : Promise.resolve(null),
+  ])
+  const hostUsername = hostUser?.username ?? 'Host'
+  const invitedUsername = invitedUser?.username ?? 'Opponent'
+
   // Both unique users connected — check if resuming a game already in progress
   const state = await loadState(matchId)
 
@@ -325,6 +335,8 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
       currentRound: state.currentRound,
       hostScore: state.hostScore,
       invitedScore: state.invitedScore,
+      hostUsername,
+      invitedUsername,
       question: { id: current.id, text: current.text, imageUrl: current.imageUrl ?? null, lane: current.lane, options: current.options },
     })
     return
@@ -352,6 +364,8 @@ async function handleJoin(io: Server, socket: Socket, matchId: string, userId: s
     matchId,
     questions: safeQuestions,
     gtrRoundIds: freshState.gtrRoundIds ?? [],
+    hostUsername,
+    invitedUsername,
   })
 
   // Only push round:question for trivia mode (GTR players fetch rounds via REST)

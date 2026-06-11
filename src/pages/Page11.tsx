@@ -52,7 +52,7 @@ export default function Page11() {
   const [selected,    setSelected]    = useState<number | null>(null)
   const [localRound,  setLocalRound]  = useState(1)
   const [advancing,   setAdvancing]   = useState(false)
-  const { points, opponentScore, gtrResult, matchId, gtrRoundIds, currentRound, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
+  const { points, opponentScore, gtrResult, matchId, gtrRoundIds, currentRound, opponentUsername, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
   const isDuel = !!matchId
@@ -118,6 +118,7 @@ export default function Page11() {
         // Fallback: if match:end never arrives within 12s, navigate anyway
         matchEndTimeout.current = setTimeout(() => {
           const capturedIsHost = useGameStore.getState().isHost
+          const oppName = useGameStore.getState().opponentUsername
           clearMatch()   // read isHost BEFORE clear — clearMatch sets isHost: undefined
           disconnectSocket()
           navigate('/match-winner', {
@@ -127,6 +128,7 @@ export default function Page11() {
               invitedScore: 0,
               isHost: capturedIsHost,
               gameType: 'gtr',
+              opponentUsername: oppName,
             },
           })
         }, 12000)
@@ -143,9 +145,10 @@ export default function Page11() {
     const onMatchEnd = (d: { winnerId: string; hostScore: number; invitedScore: number }) => {
       if (matchEndTimeout.current) clearTimeout(matchEndTimeout.current)
       const capturedIsHost = useGameStore.getState().isHost
+      const oppName = useGameStore.getState().opponentUsername
       clearMatch()
       disconnectSocket()
-      navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost } })
+      navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost, opponentUsername: oppName } })
     }
     socket.on('match:end', onMatchEnd)
     return () => { socket.off('match:end', onMatchEnd) }
@@ -234,7 +237,7 @@ export default function Page11() {
                   </svg>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div className="font-beaufort font-bold" style={{ fontSize: 15, color: '#E8EDF5', lineHeight: 1 }}>Opponent</div>
+                  <div className="font-beaufort font-bold" style={{ fontSize: 15, color: '#E8EDF5', lineHeight: 1 }}>{opponentUsername ?? 'Opponent'}</div>
                   <div className="font-beaufort font-bold" style={{ fontSize: 26, color: '#8FA3C0', lineHeight: 1.1 }}>{opponentScore}</div>
                 </div>
               </div>

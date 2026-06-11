@@ -95,7 +95,7 @@ export default function GtrInvite() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const { setMatchStart } = useGameStore()
+  const { setMatchStart, setOpponentUsername } = useGameStore()
 
   const [inviteUrl,  setInviteUrl]  = useState<string | null>(null)
   const [copied,     setCopied]     = useState(false)
@@ -119,10 +119,11 @@ export default function GtrInvite() {
         socket.on('match:waiting', () => {
           if (!cancelled) setStatus('waiting')
         })
-        socket.on('match:start', (d: { matchId: string; questions: []; gtrRoundIds?: string[] }) => {
+        socket.on('match:start', (d: { matchId: string; questions: []; gtrRoundIds?: string[]; invitedUsername?: string }) => {
           if (cancelled) return
           navigating = true
           setMatchStart(d.matchId, [], true, d.gtrRoundIds ?? [])
+          setOpponentUsername(d.invitedUsername ?? null)   // host's opponent is the invited player
           setStatus('ready')
           navigate('/match')
         })

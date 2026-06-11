@@ -98,7 +98,7 @@ export default function Page7() {
   const reduced = useReducedMotion()
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const { setMatchStart } = useGameStore()
+  const { setMatchStart, setOpponentUsername } = useGameStore()
 
   const [_matchId,   setMatchId]    = useState<string | null>(null)
   const [inviteUrl,  setInviteUrl]  = useState<string | null>(null)
@@ -124,10 +124,11 @@ export default function Page7() {
         socket.on('match:waiting', () => {
           if (!cancelled) setStatus('waiting')
         })
-        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[] }) => {
+        socket.on('match:start', (d: { matchId: string; questions: MatchQuestion[]; invitedUsername?: string }) => {
           if (cancelled) return
           navigating = true
           setMatchStart(d.matchId, d.questions, true)
+          setOpponentUsername(d.invitedUsername ?? null)   // host's opponent is the invited player
           setStatus('ready')
           navigate('/trivia')
         })
