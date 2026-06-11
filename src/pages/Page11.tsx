@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -44,26 +44,33 @@ const TOTAL_GTR_ROUNDS = 3
 export default function Page11() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
+  const location = useLocation()
+  // Solo mode returns here for rounds 2-3 from the results page with this flag,
+  // so we must NOT reset the game (points + round counter must carry over).
+  const continueGame = (location.state as { continueGame?: boolean } | null)?.continueGame === true
   const [selected,    setSelected]    = useState<number | null>(null)
   const [localRound,  setLocalRound]  = useState(1)
   const [advancing,   setAdvancing]   = useState(false)
-  const { points, opponentScore, gtrResult, matchId, gtrRoundIds, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
+  const { points, opponentScore, gtrResult, matchId, gtrRoundIds, currentRound, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
   const isDuel = !!matchId
-  // Reset per-round when localRound changes so each round can emit its vote
+  // Solo round is driven by the store (persists across the round → results → next-round
+  // navigation); duel keeps its in-page localRound progression.
+  const roundNum = isDuel ? localRound : currentRound
+  // Reset per-round when the active round changes so each round can emit its vote
   const voteEmitted = useRef(false)
-  useEffect(() => { voteEmitted.current = false }, [localRound])
+  useEffect(() => { voteEmitted.current = false }, [roundNum])
 
-  // Reset game state on first mount for solo mode
+  // Reset game state on a fresh solo start only (not when returning for the next round)
   useEffect(() => {
-    if (!isDuel) resetGame()
+    if (!isDuel && !continueGame) resetGame()
     return () => { if (matchEndTimeout.current) clearTimeout(matchEndTimeout.current) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const duelRoundId = isDuel ? (gtrRoundIds[localRound - 1] ?? undefined) : undefined
-  const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound(localRound, duelRoundId)
+  const { round, loading, error, voted, submitVote, result: voteResult, stats } = useGTRRound(roundNum, duelRoundId)
 
   const handleSubmit = useCallback(() => {
     if (selected === null || !round || voted) return
@@ -87,15 +94,23 @@ export default function Page11() {
       percentages: stats.percentages,
     })
 
+    if (!isDuel) {
+      // Solo: show this round's results page after a brief beat so the player
+      // sees the picked/correct highlight on the tiles before the page changes.
+      setAdvancing(true)
+      const t = setTimeout(() => navigate('/results'), 1400)
+      return () => clearTimeout(t)
+    }
+
     if (localRound < TOTAL_GTR_ROUNDS) {
-      // Rounds 1-2: advance locally, no socket emit yet
+      // Duel rounds 1-2: advance locally, no socket emit yet
       setAdvancing(true)
       setTimeout(() => {
         setAdvancing(false)
         setLocalRound(r => r + 1)
       }, 2500)
     } else {
-      // Final round — emit score then navigate
+      // Duel final round — emit score then navigate
       if (isDuel && matchId && !voteEmitted.current) {
         voteEmitted.current = true
         connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
@@ -114,8 +129,6 @@ export default function Page11() {
             },
           })
         }, 12000)
-      } else if (!isDuel) {
-        setTimeout(() => navigate('/results'), 2500)
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,10 +255,10 @@ export default function Page11() {
                 padding: '0 16px', boxSizing: 'border-box',
               }}>
                 <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#E8EDF5', lineHeight: 1 }}>
-                  Round {localRound}/{totalRounds}
+                  Round {roundNum}/{totalRounds}
                 </span>
                 <span style={{ color: '#C9A227', fontSize: 18, letterSpacing: 4, lineHeight: 1 }}>
-                  {Array.from({ length: totalRounds }, (_, i) => i < localRound ? '◆' : '◇').join(' ')}
+                  {Array.from({ length: totalRounds }, (_, i) => i < roundNum ? '◆' : '◇').join(' ')}
                 </span>
                 <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#00C9A7', lineHeight: 1 }}>
                   Points {points}
@@ -425,7 +438,7 @@ export default function Page11() {
                 style={{ width: 10, height: 10, borderRadius: '50%', background: '#3AF9FF' }}
               />
               <span className="font-beaufort font-bold" style={{ fontSize: 20, color: '#3AF9FF' }}>
-                {localRound < TOTAL_GTR_ROUNDS ? `Round ${localRound + 1} incoming…` : 'Calculating results…'}
+                Showing results…
               </span>
             </motion.div>
           )}

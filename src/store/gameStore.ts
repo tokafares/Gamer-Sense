@@ -42,6 +42,7 @@ interface GameState {
 interface GameActions {
   submitAnswer: (answer: AnswerRecord) => void
   addPoints: (pts: number) => void
+  advanceRound: () => void
   setGTRResult: (data: GTRResultData) => void
   setMatchStart: (matchId: string, questions: MatchQuestion[], isHost?: boolean, gtrRoundIds?: string[]) => void
   clearMatch: () => void
@@ -72,6 +73,13 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
   addPoints: (pts) =>
     set((state) => ({ points: state.points + pts })),
 
+  // Solo GTR: bump to the next round (capped at totalRounds) when the
+  // player clicks "Go to Next Round" on the per-round results page.
+  advanceRound: () =>
+    set((state) => ({
+      currentRound: Math.min(state.currentRound + 1, state.totalRounds),
+    })),
+
   setGTRResult: (data) => set({ gtrResult: data }),
 
   setMatchStart: (matchId, questions, isHost?, gtrRoundIds?) =>
@@ -83,6 +91,7 @@ export const useGameStore = create<GameState & GameActions>()((set) => ({
   resetGame: () =>
     set({
       currentRound: 1,
+      totalRounds: 3,
       points: 0,
       answers: [],
       opponentScore: 0,

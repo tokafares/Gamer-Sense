@@ -1,4 +1,5 @@
 import { useMemo, memo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -8,13 +9,39 @@ import { useGameStore } from '../store/gameStore'
 // ── Round Results dialog SVG frames ────────────────────────────────────────
 import ResultsBar      from '../assets/Group 370.svg'
 import CloseBtn        from '../assets/Group 369.svg'
-import YourAnswerCard  from '../assets/Group 375.svg'
+import CardFrame       from '../assets/Group 375.svg'   // clean answer-card frame (empty pill)
 import PointsCard      from '../assets/Group 349.svg'
-import CorrectCard     from '../assets/Group 373.svg'
+
+// ── Rank emblems — overlaid inside the card pill so each card shows the ──────
+// actual voted / correct rank instead of a baked-in fixed emblem.
+import EmblemIron       from '../assets/rank-iron.png'
+import EmblemBronze     from '../assets/rank-bronze.png'
+import EmblemSilver     from '../assets/rank-silver.png'
+import EmblemGold       from '../assets/rank-gold.png'
+import EmblemEmerald    from '../assets/rank-emerald.png'
+import EmblemPlatinum   from '../assets/rank-platinum.png'
+import EmblemDiamond    from '../assets/rank-diamond.png'
+import EmblemMaster     from '../assets/rank-master.png'
+import EmblemChallenger from '../assets/rank-challenger.png'
+
+const RANK_EMBLEM: Record<string, string> = {
+  iron:       EmblemIron,
+  bronze:     EmblemBronze,
+  silver:     EmblemSilver,
+  gold:       EmblemGold,
+  emerald:    EmblemEmerald,
+  platinum:   EmblemPlatinum,
+  diamond:    EmblemDiamond,
+  master:     EmblemMaster,
+  challenger: EmblemChallenger,
+}
+
+// Pill region inside Group 375.svg (viewBox 376×418), as % of the card box —
+// the emblem is centred here so it sits within the teal ring.
+const PILL = { left: '15.3%', top: '19.1%', width: '69.4%', height: '34.2%' }
 
 // ── Voting statistics ───────────────────────────────────────────────────────
 import VotingBg        from '../assets/voting statisticsBg.svg'
-import ViewResultBtn   from '../assets/view result button 359.svg'
 
 import Line2 from '../assets/Line 2.svg'
 
@@ -45,13 +72,27 @@ const BAR_RENDER_MAX = 290
 
 const GTRResults = memo(function GTRResults() {
   const reduced = useReducedMotion()
-  const { points, answers, currentRound, gtrResult } = useGameStore()
+  const navigate = useNavigate()
+  const { points, answers, currentRound, totalRounds, gtrResult, advanceRound, resetGame } = useGameStore()
   const completedRound = answers.length || currentRound
 
   const votedRank   = gtrResult?.votedRank   ?? ''
   const correctRank = gtrResult?.correctRank ?? ''
   const totalVotes  = gtrResult?.totalVotes  ?? 0
   const percentages = gtrResult?.percentages ?? {}
+
+  const votedEmblem   = RANK_EMBLEM[votedRank.toLowerCase()]
+  const correctEmblem = RANK_EMBLEM[correctRank.toLowerCase()]
+
+  const isLastRound = completedRound >= totalRounds
+  const goNextRound = () => {
+    advanceRound()
+    navigate('/match', { state: { continueGame: true } })
+  }
+  const finishGame = () => {
+    resetGame()
+    navigate('/duels')
+  }
 
   const bars = useMemo(() => {
     const maxPct = Math.max(...RANKS.map(r => percentages[r] ?? 0), 1)
@@ -103,6 +144,11 @@ const GTRResults = memo(function GTRResults() {
           </div>
           <div style={{ position: 'absolute', top: '50%', right: '12px', transform: 'translateY(-50%)' }}>
             <motion.div
+              role="button"
+              tabIndex={0}
+              aria-label="Exit"
+              onClick={finishGame}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') finishGame() }}
               style={{ cursor: 'pointer' }}
               whileHover={reduced ? {} : { scale: 1.15, transition: { duration: 0.18 } }}
             >
@@ -119,7 +165,18 @@ const GTRResults = memo(function GTRResults() {
             transition={{ duration: 0.45, delay: 0.2 }}
             style={{ flex: 1, minWidth: 0, position: 'relative' }}
           >
-            <img src={YourAnswerCard} alt="Your Answer" style={{ display: 'block', width: '100%', height: 'auto' }} />
+            <img src={CardFrame} alt="Your Answer" style={{ display: 'block', width: '100%', height: 'auto' }} />
+            {/* Voted-rank emblem inside the pill (dynamic per round) */}
+            {votedEmblem && (
+              <div style={{
+                position: 'absolute',
+                left: PILL.left, top: PILL.top, width: PILL.width, height: PILL.height,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                pointerEvents: 'none',
+              }}>
+                <img src={votedEmblem} alt={votedRank} style={{ maxWidth: '78%', maxHeight: '82%', objectFit: 'contain' }} />
+              </div>
+            )}
             <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', flexDirection: 'column',
@@ -173,7 +230,18 @@ const GTRResults = memo(function GTRResults() {
             transition={{ duration: 0.45, delay: 0.36 }}
             style={{ flex: 1, minWidth: 0, position: 'relative' }}
           >
-            <img src={CorrectCard} alt="Correct Answer" style={{ display: 'block', width: '100%', height: 'auto' }} />
+            <img src={CardFrame} alt="Correct Answer" style={{ display: 'block', width: '100%', height: 'auto' }} />
+            {/* Correct-rank emblem inside the pill (dynamic per round) */}
+            {correctEmblem && (
+              <div style={{
+                position: 'absolute',
+                left: PILL.left, top: PILL.top, width: PILL.width, height: PILL.height,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                pointerEvents: 'none',
+              }}>
+                <img src={correctEmblem} alt={correctRank} style={{ maxWidth: '78%', maxHeight: '82%', objectFit: 'contain' }} />
+              </div>
+            )}
             <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', flexDirection: 'column',
@@ -268,8 +336,8 @@ const GTRResults = memo(function GTRResults() {
         </div>
       </motion.div>
 
-      {/* ── View Results button ────────────────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+      {/* ── Next round / Finish button ─────────────────────────────── */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -277,9 +345,17 @@ const GTRResults = memo(function GTRResults() {
         >
           <motion.button
             whileHover={reduced ? {} : { scale: 1.04, transition: { duration: 0.2 } }}
-            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'block' }}
+            onClick={isLastRound ? finishGame : goNextRound}
+            className="font-beaufort font-bold"
+            style={{
+              display: 'block', cursor: 'pointer',
+              padding: '15px 52px', border: 'none', borderRadius: 6,
+              background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+              color: '#060F1E', fontSize: 19, letterSpacing: '0.06em',
+              boxShadow: '0 6px 20px rgba(0,167,173,0.35)',
+            }}
           >
-            <img src={ViewResultBtn} alt="View Results" style={{ display: 'block', width: '353px', height: '65px' }} />
+            {isLastRound ? 'Finish' : `Go to Next Round  (${completedRound + 1}/${totalRounds})`}
           </motion.button>
         </motion.div>
       </div>
