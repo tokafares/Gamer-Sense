@@ -13,6 +13,7 @@ import BtnMidLane from '../assets/knowledgehub-btn-midlane.svg'
 import BtnADC from '../assets/knowledgehub-btn-adc.svg'
 import BtnSupport from '../assets/knowledgehub-btn-support.svg'
 import { useChampions } from '../hooks/useChampions'
+import { useIsMobile } from '../hooks/useIsMobile'
 import type { Role } from '../types/champion'
 
 const LANE_BTNS: { src: string; alt: string; role: Role }[] = [
@@ -55,6 +56,8 @@ const gradientVariants: Variants = {
 export default function Page5() {
   const reduced  = useReducedMotion()
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
+  const panelW = isMobile ? '100%' : `${PANEL_W}px`
   const { champions, loading, error } = useChampions()
 
   const [activeRole,    setActiveRole]    = useState<Role | null>(null)
@@ -91,7 +94,7 @@ export default function Page5() {
       <main style={{ paddingTop: '85.2px', background: 'transparent', position: 'relative' }}>
         <div style={{ position: 'relative', overflow: 'visible' }}>
 
-          {/* Illustration */}
+          {/* Illustration — hidden on mobile */}
           <motion.img
             src={Group309}
             alt=""
@@ -105,7 +108,7 @@ export default function Page5() {
               objectPosition: 'right top',
               pointerEvents: 'none',
               zIndex: 1,
-              display: 'block',
+              display: isMobile ? 'none' : 'block',
             }}
             initial={reduced ? false : { opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
@@ -114,10 +117,11 @@ export default function Page5() {
 
           {/* Left content */}
           <div style={{
-            maxWidth: '68%',
-            paddingLeft: '79px',
-            paddingTop: `${TOP_PAD}px`,
-            paddingBottom: `${BOT_PAD}px`,
+            maxWidth: isMobile ? '100%' : '68%',
+            paddingLeft: isMobile ? '16px' : '79px',
+            paddingRight: isMobile ? '16px' : '0',
+            paddingTop: isMobile ? '24px' : `${TOP_PAD}px`,
+            paddingBottom: isMobile ? '40px' : `${BOT_PAD}px`,
             position: 'relative',
             zIndex: 2,
           }}>
@@ -133,7 +137,7 @@ export default function Page5() {
                 className="font-beaufort font-bold"
                 style={{
                   display: 'inline-block',
-                  fontSize: '54px',
+                  fontSize: isMobile ? '36px' : '54px',
                   lineHeight: 1,
                   margin: 0,
                   paddingBottom: '6px',
@@ -149,7 +153,7 @@ export default function Page5() {
 
             {/* Search bar */}
             <motion.div
-              style={{ width: `${PANEL_W}px`, marginBottom: 12 }}
+              style={{ width: panelW, marginBottom: 12 }}
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -180,8 +184,10 @@ export default function Page5() {
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
+              gap: isMobile ? 6 : 0,
               marginBottom: `${TABS_MB}px`,
-              width: `${PANEL_W}px`,
+              width: panelW,
+              overflowX: isMobile ? 'auto' : 'visible',
             }}>
               {LANE_BTNS.map(({ src, alt, role }, i) => {
                 const isActive = activeRole === role
@@ -216,7 +222,7 @@ export default function Page5() {
                     <img
                       src={src}
                       alt={alt}
-                      style={{ display: 'block', height: `${TABS_H}px`, width: 'auto' }}
+                      style={{ display: 'block', height: isMobile ? '46px' : `${TABS_H}px`, width: 'auto' }}
                     />
                   </motion.button>
                 )
@@ -228,8 +234,8 @@ export default function Page5() {
               backgroundImage: `url(${ChampionBg})`,
               backgroundSize: '100% 100%',
               backgroundRepeat: 'no-repeat',
-              width: `${PANEL_W}px`,
-              height: `${GRID_H}px`,
+              width: panelW,
+              height: isMobile ? '460px' : `${GRID_H}px`,
               boxSizing: 'border-box',
               overflow: 'hidden',
             }}>
@@ -237,9 +243,9 @@ export default function Page5() {
                 className="champion-grid-scroll"
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(6, 1fr)',
-                  gap: `${GRID_GAP}px`,
-                  padding: `${GRID_PAD}px`,
+                  gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
+                  gap: isMobile ? '10px' : `${GRID_GAP}px`,
+                  padding: isMobile ? '14px' : `${GRID_PAD}px`,
                   height: '100%',
                   overflowY: 'auto',
                   boxSizing: 'border-box',
@@ -485,7 +491,7 @@ export default function Page5() {
 
             {/* Result count */}
             <motion.div
-              style={{ width: `${PANEL_W}px`, marginTop: 8, textAlign: 'right' }}
+              style={{ width: panelW, marginTop: 8, textAlign: 'right' }}
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.45 }}

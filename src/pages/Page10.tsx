@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useMemo } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { apiPut } from '../lib/api'
 
 import PlayerCard   from '../assets/Group 367.svg'
@@ -57,6 +58,7 @@ const LOCAL_AVATAR_KEY = 'gs_avatar'
 
 export default function Page10() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const { user, login, token } = useAuthStore()
   const { profile, loading: profileLoading } = useProfile(user?.id ?? null)
 
@@ -129,7 +131,7 @@ export default function Page10() {
           maxWidth: '1440px',
           marginLeft: 'auto',
           marginRight: 'auto',
-          padding: '20px 79px 48px',
+          padding: isMobile ? '16px 16px 40px' : '20px 79px 48px',
           position: 'relative',
           zIndex: 1,
         }}>
@@ -159,11 +161,12 @@ export default function Page10() {
             </h1>
           </motion.div>
 
-          {/* ── Two-column layout ── */}
+          {/* ── Two-column layout (stacks on mobile) ── */}
           <div style={{
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             gap: `${COL_GAP}px`,
-            alignItems: 'flex-start',
+            alignItems: isMobile ? 'center' : 'flex-start',
           }}>
 
             {/* ─── LEFT: Player card + Upgrade button ─── */}
@@ -283,6 +286,7 @@ export default function Page10() {
             <div style={{
               flex: 1,
               minWidth: 0,
+              width: isMobile ? '100%' : undefined,
               display: 'flex',
               flexDirection: 'column',
               gap: '10px',
