@@ -3,15 +3,17 @@ import RiotLogo from '../assets/Group 74.svg'
 import LearnMoreBtn from '../assets/Group 171.svg'
 import PartnerIllustration from '../assets/C12 2.webp'
 import { scrollFadeUp, scrollFadeIn, scaleInSpring } from '../lib/animations'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function OurPartners() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const vp = { once: true }
 
   return (
     <div className="w-full">
 
-      <div className="flex flex-col items-center pt-[80px] pb-[40px]">
+      <div className="flex flex-col items-center pb-[40px]" style={{ paddingTop: isMobile ? '48px' : '80px' }}>
 
         <motion.div
           className="relative text-center"
@@ -22,12 +24,13 @@ export default function OurPartners() {
         >
           <h2
             className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-            style={{ mixBlendMode: 'multiply' as const }}
+            style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '40px' : undefined }}
           >
             Our Partners
           </h2>
           <h2
             className="absolute inset-0 font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
+            style={{ fontSize: isMobile ? '40px' : undefined }}
             aria-hidden="true"
           >
             Our Partners
@@ -36,6 +39,7 @@ export default function OurPartners() {
 
         <motion.p
           className="font-['Inter',sans-serif] text-[25px] font-medium text-[#0E1B2F] text-center max-w-[1090px] mt-[40px] leading-[30px] px-[20px]"
+          style={isMobile ? { fontSize: '15px', lineHeight: '22px', marginTop: '24px' } : undefined}
           variants={scrollFadeIn}
           initial={reduced ? false : 'hidden'}
           whileInView="show"

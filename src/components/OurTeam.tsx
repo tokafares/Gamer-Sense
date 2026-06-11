@@ -3,15 +3,17 @@ import MaskGroup from '../assets/Mask group.webp'
 import TeamGroup from '../assets/C6 2.webp'
 import LearnMoreBtn from '../assets/Group 171.svg'
 import { scrollFadeIn, slideFromLeftScroll, slideFromRightScroll } from '../lib/animations'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function OurTeam() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const vp = { once: true }
 
   return (
     <section
       className="relative w-full"
-      style={{ height: '590px', marginTop: '-4px', marginBottom: 0, paddingBottom: 0, zIndex: 20, position: 'relative', clipPath: 'inset(-250px 0 0 0)' }}
+      style={{ height: isMobile ? '440px' : '590px', marginTop: '-4px', marginBottom: 0, paddingBottom: 0, zIndex: 20, position: 'relative', clipPath: 'inset(-250px 0 0 0)' }}
     >
 
       {/* TEAM GROUP — slide in from right (opacity only to preserve rotate transform) */}
@@ -54,7 +56,7 @@ export default function OurTeam() {
       {/* TEXT CONTENT — slide in from left */}
       <motion.div
         className="absolute z-[10]"
-        style={{ left: '79px', top: '60px', maxWidth: '500px' }}
+        style={isMobile ? { left: '20px', right: '20px', top: '40px', maxWidth: '100%' } : { left: '79px', top: '60px', maxWidth: '500px' }}
         variants={slideFromLeftScroll}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
@@ -64,19 +66,23 @@ export default function OurTeam() {
         <div className="relative">
           <h2
             className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-            style={{ mixBlendMode: 'multiply' as const }}
+            style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '40px' : undefined }}
           >
             Our Team
           </h2>
           <h2
             className="absolute inset-0 font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
+            style={{ fontSize: isMobile ? '40px' : undefined }}
             aria-hidden="true"
           >
             Our Team
           </h2>
         </div>
 
-        <p className="font-['Inter',sans-serif] text-[22px] font-medium text-[#0E1B2F] leading-[30px] mt-[16px]">
+        <p
+          className="font-['Inter',sans-serif] text-[22px] font-medium text-[#0E1B2F] leading-[30px] mt-[16px]"
+          style={isMobile ? { fontSize: '14px', lineHeight: '21px' } : undefined}
+        >
           Collaborative excellence with the industry's best. We are proud to work alongside these visionaries to push the boundaries of what's possible.
         </p>
 
