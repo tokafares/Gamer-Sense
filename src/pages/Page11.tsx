@@ -53,7 +53,7 @@ export default function Page11() {
   const [selected,    setSelected]    = useState<number | null>(null)
   const [localRound,  setLocalRound]  = useState(1)
   const [advancing,   setAdvancing]   = useState(false)
-  const [opponentPick, setOpponentPick] = useState<string | null>(null)  // opponent's rank in duel GTR
+  const [opponentPick, setOpponentPick] = useState<{ round: number; rank: string } | null>(null)  // opponent's rank in duel GTR
   const { points, opponentScore, gtrResult, matchId, gtrRoundIds, currentRound, opponentUsername, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
@@ -159,7 +159,7 @@ export default function Page11() {
       navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost, opponentUsername: oppName } })
     }
     const onOpponentVote = (d: { roundIndex: number; votedRank: string }) => {
-      setOpponentPick(d.votedRank)
+      setOpponentPick({ round: d.roundIndex, rank: d.votedRank })
     }
     socket.on('match:end', onMatchEnd)
     socket.on('gtr:opponent-vote', onOpponentVote)
@@ -389,7 +389,7 @@ export default function Page11() {
               {RANK_TILES.map((src, i) => {
                 const rankName  = RANKS_ORDER[i]
                 const isVoted   = gtrResult?.votedRank   === rankName
-                const isOppPick = isDuel && opponentPick === rankName
+                const isOppPick = isDuel && opponentPick?.round === localRound && opponentPick?.rank === rankName
                 return (
                   <motion.div
                     key={i}
