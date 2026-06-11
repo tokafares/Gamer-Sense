@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import FooterBg from '../assets/Group 73.svg'
 import Woman from '../assets/C15 1.webp'
 import { scrollFadeIn, footerStagger, footerItem, scaleInSpring } from '../lib/animations'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Particle {
   x: number
@@ -32,6 +33,7 @@ interface BlobConfig {
 
 export default function Footer() {
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
   const canvasRef     = useRef<HTMLCanvasElement>(null)
   const blobCanvasRef = useRef<HTMLCanvasElement>(null)
   const vp = { once: true }
@@ -147,7 +149,7 @@ export default function Footer() {
   return (
     <footer
       className="relative w-full"
-      style={{ height: '500px', position: 'relative', zIndex: 30, marginTop: 0, paddingTop: 0 }}
+      style={{ height: isMobile ? '360px' : '500px', position: 'relative', zIndex: 30, marginTop: 0, paddingTop: 0 }}
     >
       {/* Background */}
       <img
@@ -182,24 +184,26 @@ export default function Footer() {
         }}
       />
 
-      {/* Woman — fade in */}
-      <motion.img
-        src={Woman}
-        alt=""
-        loading="lazy"
-        className="absolute pointer-events-none select-none z-[5]"
-        style={{ left: '0px', bottom: '0px', height: 'calc(100% + 60px)', width: 'auto' }}
-        variants={scrollFadeIn}
-        initial={reduced ? false : 'hidden'}
-        whileInView="show"
-        viewport={vp}
-        transition={{ duration: 0.8 }}
-      />
+      {/* Woman — fade in (desktop only; too cramped on mobile) */}
+      {!isMobile && (
+        <motion.img
+          src={Woman}
+          alt=""
+          loading="lazy"
+          className="absolute pointer-events-none select-none z-[5]"
+          style={{ left: '0px', bottom: '0px', height: 'calc(100% + 60px)', width: 'auto' }}
+          variants={scrollFadeIn}
+          initial={reduced ? false : 'hidden'}
+          whileInView="show"
+          viewport={vp}
+          transition={{ duration: 0.8 }}
+        />
+      )}
 
-      {/* Text content — staggered columns */}
+      {/* Text content — staggered columns (full-width on mobile) */}
       <motion.div
         className="absolute z-[10]"
-        style={{ left: '55%', top: '80px' }}
+        style={isMobile ? { left: '24px', right: '24px', top: '48px' } : { left: '55%', top: '80px' }}
         variants={footerStagger}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
@@ -207,6 +211,7 @@ export default function Footer() {
       >
         <motion.h3
           className="font-beaufort text-[40px] font-bold leading-none bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
+          style={isMobile ? { fontSize: '28px' } : undefined}
           variants={footerItem}
         >
           About Us
@@ -214,7 +219,7 @@ export default function Footer() {
 
         <motion.p
           className="font-['Inter',sans-serif] text-[20px] font-normal leading-[30px] tracking-[0.10em] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent mt-[14px]"
-          style={{ maxWidth: '420px' }}
+          style={isMobile ? { maxWidth: '100%', fontSize: '14px', lineHeight: '21px' } : { maxWidth: '420px' }}
           variants={footerItem}
         >
           Our mission is to enhance your League of Legends gameplay through strategic decision-making.
@@ -222,6 +227,7 @@ export default function Footer() {
 
         <motion.h3
           className="font-beaufort text-[40px] font-bold leading-none bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent mt-[32px]"
+          style={isMobile ? { fontSize: '28px', marginTop: '22px' } : undefined}
           variants={footerItem}
         >
           Quick Link
@@ -229,6 +235,7 @@ export default function Footer() {
 
         <motion.div
           className="flex flex-row gap-[40px] mt-[16px]"
+          style={isMobile ? { gap: '22px' } : undefined}
           variants={footerItem}
         >
           {['Features', 'Community', 'Contact'].map(link => (
@@ -236,6 +243,7 @@ export default function Footer() {
               key={link}
               href="#"
               className="font-['Inter',sans-serif] text-[20px] font-normal tracking-[0.10em] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent no-underline cursor-pointer hover:opacity-80 transition-opacity duration-200"
+              style={isMobile ? { fontSize: '14px' } : undefined}
             >
               {link}
             </a>

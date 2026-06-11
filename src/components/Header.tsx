@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useLocation, Link } from 'react-router-dom'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import Logo from '../assets/Layer _1.svg'
 import NavIcon from '../assets/Vector _3.svg'
 import { navSlideDown } from '../lib/animations'
 import { useAuthStore } from '../store/authStore'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const FEATURE_NAV = [
   { label: 'SCENARIOS',      to: '/scenarios' },
@@ -15,6 +17,13 @@ const FEATURE_NAV = [
   { label: 'DUELS',          to: '/duels' },
 ]
 
+// Full nav list shown in the mobile drawer (home + features + all feature pages)
+const MOBILE_NAV = [
+  { label: 'HOME',     to: '/' },
+  { label: 'FEATURES', to: '/features' },
+  ...FEATURE_NAV,
+]
+
 const DUELS_PATHS  = new Set(['/duels', '/trivia-invite', '/gtr-invite', '/match-winner', '/results'])
 const BLITZ_PATHS  = new Set(['/blitz'])
 const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...DUELS_PATHS, ...BLITZ_PATHS])
@@ -22,6 +31,8 @@ const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...DUELS_PATHS, ..
 export default function Header() {
   const { pathname } = useLocation()
   const reduced = useReducedMotion()
+  const isMobile = useIsMobile()
+  const [menuOpen, setMenuOpen] = useState(false)
   const { isAuthenticated, user, openLoginModal, logout } = useAuthStore()
 
   const isHome        = pathname === '/'
@@ -29,10 +40,116 @@ export default function Header() {
   const isChampion    = pathname.startsWith('/champion/')
   const isFeaturePage = FEATURE_PATHS.has(pathname) || isChampion
 
+  const isActive = (to: string) =>
+    to === '/duels' ? DUELS_PATHS.has(pathname)
+    : to === '/blitz' ? BLITZ_PATHS.has(pathname)
+    : to === '/knowledge-hub' ? (pathname === to || isChampion)
+    : pathname === to
+
+  // Hooks must run unconditionally (before the mobile early-return)
   const { scrollY } = useScroll()
   const headerOpacity = useTransform(scrollY, [0, 120], reduced ? [1, 1] : [1, 0.85])
   const headerBlur    = useTransform(scrollY, [0, 120], reduced ? ['blur(0px)', 'blur(0px)'] : ['blur(0px)', 'blur(8px)'])
 
+  // ── Mobile: hamburger + slide-in drawer ──────────────────────────────────
+  if (isMobile) {
+    return (
+      <>
+        <header
+          className="fixed top-0 left-0 w-full z-50 h-[85.2px] flex items-center"
+          style={{ backgroundColor: 'rgba(0, 20, 51, 0.95)', borderBottom: '1px solid rgba(58,249,255,0.18)' }}
+        >
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            style={{ position: 'absolute', left: 16, background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', flexDirection: 'column', gap: 5 }}
+          >
+            <span style={{ display: 'block', width: 24, height: 2, background: '#E8EDF5', borderRadius: 2 }} />
+            <span style={{ display: 'block', width: 24, height: 2, background: '#E8EDF5', borderRadius: 2 }} />
+            <span style={{ display: 'block', width: 24, height: 2, background: '#E8EDF5', borderRadius: 2 }} />
+          </button>
+
+          <Link to="/" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', lineHeight: 0 }}>
+            <img src={Logo} alt="GamerSense" style={{ width: 150, height: 'auto', objectFit: 'contain' }} />
+          </Link>
+
+          <div style={{ position: 'absolute', right: 14, display: 'flex', alignItems: 'center' }}>
+            {isAuthenticated && user ? (
+              <button onClick={logout} className="font-beaufort font-bold" style={{ background: 'none', border: '1px solid #1E3A5F', color: '#8FA3C0', cursor: 'pointer', padding: '5px 9px', fontSize: 10, letterSpacing: '0.08em', borderRadius: 3 }}>
+                LOGOUT
+              </button>
+            ) : (
+              <button onClick={openLoginModal} className="font-beaufort font-bold" style={{ background: 'linear-gradient(to right, #3AF9FF, #00A7AD)', border: 'none', color: '#0F1E2D', cursor: 'pointer', padding: '6px 14px', fontSize: 11, letterSpacing: '0.08em', borderRadius: 3 }}>
+                LOGIN
+              </button>
+            )}
+          </div>
+        </header>
+
+        <AnimatePresence>
+          {menuOpen && (
+            <>
+              <motion.div
+                key="backdrop"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                onClick={() => setMenuOpen(false)}
+                style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' }}
+              />
+              <motion.nav
+                key="drawer"
+                initial={reduced ? { opacity: 0 } : { x: '-100%' }}
+                animate={reduced ? { opacity: 1 } : { x: 0 }}
+                exit={reduced ? { opacity: 0 } : { x: '-100%' }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 70,
+                  width: '80%', maxWidth: 320, background: '#0A1628',
+                  borderRight: '1px solid #1E3A5F', padding: '24px 0',
+                  display: 'flex', flexDirection: 'column',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 18px' }}>
+                  <img src={Logo} alt="GamerSense" style={{ width: 150, height: 'auto' }} />
+                  <button onClick={() => setMenuOpen(false)} aria-label="Close menu" style={{ background: 'none', border: 'none', color: '#8FA3C0', fontSize: 26, lineHeight: 1, cursor: 'pointer', padding: 4 }}>×</button>
+                </div>
+                <div style={{ height: 1, background: '#1E3A5F', margin: '0 0 8px' }} />
+                <div style={{ overflowY: 'auto', flex: 1 }}>
+                  {MOBILE_NAV.map(({ label, to }) => {
+                    const active = isActive(to)
+                    return (
+                      <Link
+                        key={label}
+                        to={to}
+                        onClick={() => setMenuOpen(false)}
+                        className="font-beaufort font-medium"
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 10,
+                          padding: '14px 24px', textDecoration: 'none',
+                          fontSize: 16, color: active ? '#01F7FF' : '#E8EDF5',
+                          borderLeft: active ? '3px solid #01F7FF' : '3px solid transparent',
+                          background: active ? 'rgba(1,247,255,0.06)' : 'transparent',
+                        }}
+                      >
+                        {active && <img src={NavIcon} alt="" style={{ width: 9, height: 12, transform: 'rotate(180deg)' }} />}
+                        {label}
+                      </Link>
+                    )
+                  })}
+                </div>
+                {isAuthenticated && user && (
+                  <div style={{ padding: '14px 24px', borderTop: '1px solid #1E3A5F', color: '#8FA3C0', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13 }}>
+                    Signed in as <span style={{ color: '#E8EDF5' }}>{user.username}</span>
+                  </div>
+                )}
+              </motion.nav>
+            </>
+          )}
+        </AnimatePresence>
+      </>
+    )
+  }
+
+  // ── Desktop ───────────────────────────────────────────────────────────────
   return (
     <motion.header
       className="fixed top-0 left-0 w-full z-50 h-[85.2px] overflow-hidden"
