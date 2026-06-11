@@ -46,9 +46,6 @@ const ANS_TOP   = Q_H + Q_ANS_GAP
 
 const ANS_H = Math.round(332 * SCALE)
 
-const HINT_TOP = Math.round(560 * SCALE)
-const HINT_H   = PANEL_H - HINT_TOP
-
 const ANSWER_REGIONS = [
   { id: 'A', top: 0,                        height: Math.round(96  * SCALE) },
   { id: 'B', top: Math.round(118 * SCALE),  height: Math.round(96  * SCALE) },
@@ -461,20 +458,6 @@ export default function Page4() {
                   })}
                 </div>
 
-                {question?.hint && (
-                  <div style={{
-                    position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                    width: '100%', height: `${HINT_H}px`,
-                    padding: '14px 20px', boxSizing: 'border-box',
-                  }}>
-                    <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                      Hint:
-                    </p>
-                    <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
-                      "{question.hint}"
-                    </p>
-                  </div>
-                )}
               </motion.div>
             )}
           </div>
