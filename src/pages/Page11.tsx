@@ -53,6 +53,7 @@ export default function Page11() {
   const [selected,    setSelected]    = useState<number | null>(null)
   const [localRound,  setLocalRound]  = useState(1)
   const [advancing,   setAdvancing]   = useState(false)
+  const [opponentPick, setOpponentPick] = useState<string | null>(null)  // opponent's rank in duel GTR
   const { points, opponentScore, gtrResult, matchId, gtrRoundIds, currentRound, opponentUsername, addPoints, setGTRResult, clearMatch, resetGame } = useGameStore()
   const { user } = useAuthStore()
   const [imgError, setImgError] = useState(false)
@@ -62,7 +63,7 @@ export default function Page11() {
   const roundNum = isDuel ? localRound : currentRound
   // Reset per-round when the active round changes so each round can emit its vote
   const voteEmitted = useRef(false)
-  useEffect(() => { voteEmitted.current = false }, [roundNum])
+  useEffect(() => { voteEmitted.current = false; setOpponentPick(null) }, [roundNum])
 
   // Reset game state on a fresh solo start only (not when returning for the next round)
   useEffect(() => {
@@ -96,6 +97,11 @@ export default function Page11() {
       totalVotes:  stats.totalVotes,
       percentages: stats.percentages,
     })
+
+    // Duel: tell the opponent which rank we picked this round (item 13b)
+    if (isDuel && matchId) {
+      connectSocket().emit('gtr:pick', { matchId, roundIndex: localRound, votedRank: voteResult.votedRank })
+    }
 
     if (!isDuel) {
       // Solo: show this round's results page after a brief beat so the player
@@ -152,8 +158,12 @@ export default function Page11() {
       disconnectSocket()
       navigate('/match-winner', { state: { ...d, gameType: 'gtr', isHost: capturedIsHost, opponentUsername: oppName } })
     }
+    const onOpponentVote = (d: { roundIndex: number; votedRank: string }) => {
+      setOpponentPick(d.votedRank)
+    }
     socket.on('match:end', onMatchEnd)
-    return () => { socket.off('match:end', onMatchEnd) }
+    socket.on('gtr:opponent-vote', onOpponentVote)
+    return () => { socket.off('match:end', onMatchEnd); socket.off('gtr:opponent-vote', onOpponentVote) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDuel, matchId])
 
@@ -379,6 +389,7 @@ export default function Page11() {
               {RANK_TILES.map((src, i) => {
                 const rankName  = RANKS_ORDER[i]
                 const isVoted   = gtrResult?.votedRank   === rankName
+                const isOppPick = isDuel && opponentPick === rankName
                 return (
                   <motion.div
                     key={i}
@@ -411,6 +422,13 @@ export default function Page11() {
                             pointerEvents: 'none',
                           }}
                         />
+                      )}
+
+                      {/* Opponent's pick in a duel — purple, with a small label */}
+                      {isOppPick && (
+                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #B57BFF', background: 'rgba(181,123,255,0.14)', pointerEvents: 'none' }}>
+                          <span style={{ position: 'absolute', top: 2, left: 0, right: 0, textAlign: 'center', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, letterSpacing: '0.08em', color: '#D9C2FF' }}>OPP</span>
+                        </div>
                       )}
 
                       {/* Post-vote highlight — only the player's own pick (teal); no gold on the

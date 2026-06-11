@@ -74,6 +74,7 @@ export default function Page8() {
   const [locked,          setLocked]          = useState(false)
   const [roundResult,     setRoundResult]     = useState<RoundResult | null>(null)
   const [waitingOpponent, setWaitingOpponent] = useState(false)
+  const [timerLeft,       setTimerLeft]       = useState<number | null>(null)
   // Live match scores
   const [yourScore,       setYourScore]       = useState(0)
   const [oppScore,        setOppScore]        = useState(0)
@@ -180,7 +181,13 @@ export default function Page8() {
       setLocked(false)
       setRoundResult(null)
       setWaitingOpponent(false)
+      setTimerLeft(null)
       lockedAnswerRef.current = null
+    }
+
+    // One player answered — the other has N seconds to lock in (anti-hostage)
+    const onRoundTimer = (data: { roundIndex: number; seconds: number }) => {
+      setTimerLeft(data.seconds)
     }
 
     const onRoundResult = (data: { roundIndex: number; correctAnswer: string; explanation: string; hostScore: number; invitedScore: number }) => {
@@ -189,6 +196,7 @@ export default function Page8() {
       const result: RoundResult = { correctAnswer: data.correctAnswer, yourScore: mine, opponentScore: theirs, explanation: data.explanation }
       setRoundResult(result)
       setWaitingOpponent(false)
+      setTimerLeft(null)
       setYourScore(mine)
       setOppScore(theirs)
       addPoints(mine)
@@ -215,18 +223,27 @@ export default function Page8() {
 
     socket.on('match:resume',   onMatchResume)
     socket.on('round:question', onRoundQuestion)
+    socket.on('round:timer',    onRoundTimer)
     socket.on('round:result',   onRoundResult)
     socket.on('match:end',      onMatchEnd)
 
     return () => {
       socket.off('match:resume',   onMatchResume)
       socket.off('round:question', onRoundQuestion)
+      socket.off('round:timer',    onRoundTimer)
       socket.off('round:result',   onRoundResult)
       socket.off('match:end',      onMatchEnd)
       if (advanceRef.current) clearTimeout(advanceRef.current)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMatchMode, matchId])
+
+  // Count the lock-in timer down each second
+  useEffect(() => {
+    if (timerLeft == null || timerLeft <= 0) return
+    const t = setTimeout(() => setTimerLeft(s => (s == null ? null : Math.max(0, s - 1))), 1000)
+    return () => clearTimeout(t)
+  }, [timerLeft])
 
   const handleLockIn = useCallback(async () => {
     if (!selectedAnswer || locked || !question) return
@@ -315,6 +332,26 @@ export default function Page8() {
               >
                 {roundLabel}
               </span>
+            )}
+
+            {/* ── 20s lock-in countdown (duel) ── */}
+            {isMatchMode && timerLeft != null && !roundResult && (
+              <motion.span
+                key={locked ? 'wait' : 'urgent'}
+                initial={reduced ? false : { scale: 0.9, opacity: 0.7 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="font-beaufort font-bold"
+                style={{
+                  marginBottom: '8px',
+                  padding: '4px 14px', borderRadius: 6,
+                  border: `2px solid ${!locked && timerLeft <= 10 ? '#FF4444' : '#1E3A5F'}`,
+                  background: !locked && timerLeft <= 10 ? 'rgba(255,68,68,0.12)' : 'rgba(13,31,60,0.8)',
+                  color: !locked ? (timerLeft <= 10 ? '#FF4444' : '#3AF9FF') : '#8FA3C0',
+                  fontSize: '15px',
+                }}
+              >
+                {locked ? `⏱ Opponent: ${timerLeft}s` : `⏱ ${timerLeft}s — lock in!`}
+              </motion.span>
             )}
           </div>
 

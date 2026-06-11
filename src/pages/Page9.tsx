@@ -9,6 +9,7 @@ import CardBg        from '../assets/DialogBg.svg'
 import CardFrame     from '../assets/Group 282.svg'
 import BadgeWide     from '../assets/Group 322.svg'
 import { useAuthStore } from '../store/authStore'
+import { disconnectSocket } from '../lib/socket'
 
 interface MatchResultState {
   winnerId:     string
@@ -36,7 +37,12 @@ export default function Page9() {
 
   const result     = (location.state as MatchResultState | null)
   const goRematch = useCallback(
-    () => navigate(result?.gameType === 'trivia' ? '/trivia-invite' : '/gtr-invite'),
+    () => {
+      // Drop the finished match's socket so the invite page starts a clean new match,
+      // then go create a fresh invite link to send to the opponent.
+      disconnectSocket()
+      navigate(result?.gameType === 'trivia' ? '/trivia-invite' : '/gtr-invite')
+    },
     [navigate, result?.gameType]
   )
   const myScore    = result ? (result.isHost ? result.hostScore    : result.invitedScore) : 0

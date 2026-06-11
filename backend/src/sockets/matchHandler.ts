@@ -30,6 +30,16 @@ const gtrVotes = new Map<string, Map<string, number>>()
 // GTR vote timeout handles — fires match:end if second vote never arrives
 const gtrVoteTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
+// Trivia round timeout handles — once one player answers, the other has 20s to
+// lock in or the round auto-resolves (so a stalling player can't hold it hostage)
+const roundTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+const ROUND_ANSWER_SECONDS = 20
+
+function clearRoundTimer(matchId: string) {
+  const t = roundTimeouts.get(matchId)
+  if (t) { clearTimeout(t); roundTimeouts.delete(matchId) }
+}
+
 function withMatchLock<T>(matchId: string, fn: () => Promise<T>): Promise<T> {
   const current = matchLocks.get(matchId) ?? Promise.resolve()
   let unlock!: () => void
@@ -114,54 +124,31 @@ export function registerMatchHandler(io: Server) {
           state.answers[roundIndex][userId] = answer
           await saveState(state)
 
-          const question = state.questions[roundIndex]
           const bothAnswered =
             state.answers[roundIndex][state.hostId] !== undefined &&
             state.answers[roundIndex][state.invitedId] !== undefined
 
-          if (!bothAnswered) return
+          if (bothAnswered) {
+            clearRoundTimer(matchId)
+            await resolveTriviaRound(io, matchId, state)
+            return
+          }
 
-          const hostAnswer = state.answers[roundIndex][state.hostId]
-          const invitedAnswer = state.answers[roundIndex][state.invitedId]
-          if (hostAnswer === question.correctAnswer) state.hostScore++
-          if (invitedAnswer === question.correctAnswer) state.invitedScore++
-
-          io.to(roomId(matchId)).emit('round:result', {
-            roundIndex,
-            correctAnswer: question.correctAnswer,
-            explanation: question.explanation,
-            hostScore: state.hostScore,
-            invitedScore: state.invitedScore,
-          })
-
-          state.currentRound++
-
-          if (state.currentRound >= state.questions.length) {
-            state.status = 'completed'
-            await saveState(state)
-            await finalizeMatch(state)
-            await invalidateLeaderboardCache()
-
-            const winnerId =
-              state.hostScore >= state.invitedScore ? state.hostId : state.invitedId
-            io.to(roomId(matchId)).emit('match:end', {
-              winnerId,
-              hostScore: state.hostScore,
-              invitedScore: state.invitedScore,
-            })
-          } else {
-            await saveState(state)
-            const next = state.questions[state.currentRound]
-            io.to(roomId(matchId)).emit('round:question', {
-              roundIndex: state.currentRound,
-              question: {
-                id: next.id,
-                text: next.text,
-                imageUrl: next.imageUrl ?? null,
-                lane: next.lane,
-                options: next.options,
-              },
-            })
+          // First answer in — give the other player 20s to lock in, then auto-resolve
+          if (!roundTimeouts.has(matchId)) {
+            io.to(roomId(matchId)).emit('round:timer', { roundIndex, seconds: ROUND_ANSWER_SECONDS })
+            roundTimeouts.set(
+              matchId,
+              setTimeout(() => {
+                void withMatchLock(matchId, async () => {
+                  roundTimeouts.delete(matchId)
+                  const s = await loadState(matchId)
+                  if (!s || s.status !== 'active' || s.mode !== 'trivia') return
+                  if (s.currentRound !== roundIndex) return // already resolved
+                  await resolveTriviaRound(io, matchId, s)
+                })
+              }, ROUND_ANSWER_SECONDS * 1000),
+            )
           }
         })
       },
@@ -226,6 +213,14 @@ export function registerMatchHandler(io: Server) {
       },
     )
 
+    // ── gtr:pick — relay a player's per-round rank pick to the opponent (item 13b) ──
+    socket.on('gtr:pick', (payload: { matchId: string; roundIndex: number; votedRank: string }) => {
+      const { matchId, roundIndex, votedRank } = payload ?? {}
+      const meta = socketMeta.get(socket.id)
+      if (!meta || meta.matchId !== matchId || !votedRank) return
+      socket.to(roomId(matchId)).emit('gtr:opponent-vote', { roundIndex, votedRank })
+    })
+
     // ── match:rematch ──────────────────────────────────────────────────────
     socket.on('match:rematch', async (payload: { matchId: string }) => {
       const { matchId } = payload ?? {}
@@ -269,12 +264,13 @@ export function registerMatchHandler(io: Server) {
             matchUsers.get(meta.matchId)?.delete(userId)
             if ((matchUsers.get(meta.matchId)?.size ?? 0) === 0) {
               matchUsers.delete(meta.matchId)
-              // Both players disconnected — cancel any pending GTR vote timeout
+              // Both players disconnected — cancel any pending timeouts
               if (gtrVoteTimeouts.has(meta.matchId)) {
                 clearTimeout(gtrVoteTimeouts.get(meta.matchId)!)
                 gtrVoteTimeouts.delete(meta.matchId)
               }
               gtrVotes.delete(meta.matchId)
+              clearRoundTimer(meta.matchId)
             }
           }
           matchSocketToUser.delete(socket.id)
@@ -283,6 +279,47 @@ export function registerMatchHandler(io: Server) {
       }
     })
   })
+}
+
+// ── Shared trivia round resolution (both-answered OR 20s timeout) ──────────────
+// Caller MUST hold the match lock. A missing answer (timeout) scores 0.
+async function resolveTriviaRound(io: Server, matchId: string, state: MatchState) {
+  const roundIndex = state.currentRound
+  const question = state.questions[roundIndex]
+  const hostAnswer = state.answers[roundIndex]?.[state.hostId]
+  const invitedAnswer = state.answers[roundIndex]?.[state.invitedId]
+  if (hostAnswer === question.correctAnswer) state.hostScore++
+  if (invitedAnswer === question.correctAnswer) state.invitedScore++
+
+  io.to(roomId(matchId)).emit('round:result', {
+    roundIndex,
+    correctAnswer: question.correctAnswer,
+    explanation: question.explanation,
+    hostScore: state.hostScore,
+    invitedScore: state.invitedScore,
+  })
+
+  state.currentRound++
+
+  if (state.currentRound >= state.questions.length) {
+    state.status = 'completed'
+    await saveState(state)
+    await finalizeMatch(state)
+    await invalidateLeaderboardCache()
+    const winnerId = state.hostScore >= state.invitedScore ? state.hostId : state.invitedId
+    io.to(roomId(matchId)).emit('match:end', {
+      winnerId,
+      hostScore: state.hostScore,
+      invitedScore: state.invitedScore,
+    })
+  } else {
+    await saveState(state)
+    const next = state.questions[state.currentRound]
+    io.to(roomId(matchId)).emit('round:question', {
+      roundIndex: state.currentRound,
+      question: { id: next.id, text: next.text, imageUrl: next.imageUrl ?? null, lane: next.lane, options: next.options },
+    })
+  }
 }
 
 // ── Shared join logic ─────────────────────────────────────────────────────────
