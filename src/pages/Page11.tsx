@@ -63,6 +63,8 @@ export default function Page11() {
   const roundNum = isDuel ? localRound : currentRound
   // Reset per-round when the active round changes so each round can emit its vote
   const voteEmitted = useRef(false)
+  const matchEndTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastPointsRef = useRef(0)   // most recent round's pointsEarned, for the final gtr:vote
   useEffect(() => { voteEmitted.current = false; setOpponentPick(null) }, [roundNum])
 
   // Reset game state on a fresh solo start only (not when returning for the next round)
@@ -83,6 +85,29 @@ export default function Page11() {
   // Reset selection + image error when a new round loads
   useEffect(() => { setImgError(false); setSelected(null) }, [round?.id])
 
+  // Duel: advance to the next round (rounds 1-2) or finish (round 3). Called once
+  // both players have picked, OR after the 20s fallback if the opponent stalls.
+  const advanceDuelRound = useCallback(() => {
+    setAdvancing(false)
+    if (localRound < TOTAL_GTR_ROUNDS) {
+      setLocalRound(r => r + 1)
+      return
+    }
+    if (matchId && !voteEmitted.current) {
+      voteEmitted.current = true
+      connectSocket().emit('gtr:vote', { matchId, pointsEarned: lastPointsRef.current })
+      // Fallback: if match:end never arrives within 12s, navigate anyway
+      matchEndTimeout.current = setTimeout(() => {
+        const capturedIsHost = useGameStore.getState().isHost
+        const oppName = useGameStore.getState().opponentUsername
+        clearMatch()
+        navigate('/match-winner', {
+          state: { winnerId: '', hostScore: 0, invitedScore: 0, isHost: capturedIsHost, gameType: 'gtr', opponentUsername: oppName },
+        })
+      }, 12000)
+    }
+  }, [localRound, matchId, navigate, clearMatch])
+
   // When vote + stats both arrive — update store, then advance or finish
   useEffect(() => {
     if (!voteResult || !stats || !round) return
@@ -98,11 +123,6 @@ export default function Page11() {
       percentages: stats.percentages,
     })
 
-    // Duel: tell the opponent which rank we picked this round (item 13b)
-    if (isDuel && matchId) {
-      connectSocket().emit('gtr:pick', { matchId, roundIndex: localRound, votedRank: voteResult.votedRank })
-    }
-
     if (!isDuel) {
       // Solo: show this round's results page after a brief beat so the player
       // sees the picked/correct highlight on the tiles before the page changes.
@@ -111,41 +131,27 @@ export default function Page11() {
       return () => clearTimeout(t)
     }
 
-    if (localRound < TOTAL_GTR_ROUNDS) {
-      // Duel rounds 1-2: advance locally, no socket emit yet
-      setAdvancing(true)
-      setTimeout(() => {
-        setAdvancing(false)
-        setLocalRound(r => r + 1)
-      }, 2500)
-    } else {
-      // Duel final round — emit score then navigate
-      if (isDuel && matchId && !voteEmitted.current) {
-        voteEmitted.current = true
-        connectSocket().emit('gtr:vote', { matchId, pointsEarned: voteResult.pointsEarned })
-        // Fallback: if match:end never arrives within 12s, navigate anyway
-        matchEndTimeout.current = setTimeout(() => {
-          const capturedIsHost = useGameStore.getState().isHost
-          const oppName = useGameStore.getState().opponentUsername
-          clearMatch()   // read isHost BEFORE clear — clearMatch sets isHost: undefined
-          navigate('/match-winner', {
-            state: {
-              winnerId: '',
-              hostScore: 0,
-              invitedScore: 0,
-              isHost: capturedIsHost,
-              gameType: 'gtr',
-              opponentUsername: oppName,
-            },
-          })
-        }, 12000)
-      }
+    // Duel: tell the opponent our pick, then WAIT for them to pick before
+    // advancing (synced rounds — no fixed 2.5s local timer). 20s anti-stall fallback.
+    lastPointsRef.current = voteResult.pointsEarned
+    if (matchId) {
+      connectSocket().emit('gtr:pick', { matchId, roundIndex: localRound, votedRank: voteResult.votedRank })
     }
+    setAdvancing(true)
+    const fallback = setTimeout(() => advanceDuelRound(), 20000)
+    return () => clearTimeout(fallback)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteResult, stats])
 
+  // Duel: once BOTH have picked this round, reveal both picks briefly then advance
+  useEffect(() => {
+    if (!isDuel || !voted || !advancing) return
+    if (!(opponentPick && opponentPick.round === localRound)) return
+    const t = setTimeout(() => advanceDuelRound(), 1500)
+    return () => clearTimeout(t)
+  }, [isDuel, voted, advancing, opponentPick, localRound, advanceDuelRound])
+
   // In duel mode: listen for match:end and navigate to winner screen
-  const matchEndTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     if (!isDuel || !matchId) return
     const socket = connectSocket()
