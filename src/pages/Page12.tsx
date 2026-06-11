@@ -90,8 +90,9 @@ const GTRResults = memo(function GTRResults() {
     navigate('/match', { state: { continueGame: true } })
   }
   const finishGame = () => {
+    // Exit / Finish → back to the Guess Rank page, starting a fresh game.
     resetGame()
-    navigate('/duels')
+    navigate('/match')
   }
 
   const bars = useMemo(() => {
