@@ -18,6 +18,7 @@ import RankTile8     from '../assets/Group 355.svg'
 import RankTile9     from '../assets/Group 356.svg'
 import SubmitBtn     from '../assets/submit button 359.svg'
 import { useGameStore } from '../store/gameStore'
+import { useLevelUpStore } from '../store/levelUpStore'
 import { useAuthStore } from '../store/authStore'
 import { useGTRRound }  from '../hooks/useGTRRound'
 import { connectSocket, disconnectSocket } from '../lib/socket'
@@ -86,6 +87,7 @@ export default function Page11() {
     if (!voteResult || !stats || !round) return
 
     addPoints(voteResult.pointsEarned)
+    useLevelUpStore.getState().checkLevelUp(voteResult.totalPoints, voteResult.pointsEarned)
     setGTRResult({
       roundId:     round.id,
       imageUrl:    round.imageUrl,

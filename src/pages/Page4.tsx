@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import { scrollFadeIn, staggerCards, cardItemAnim } from '../lib/animations'
 import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
+import { useLevelUpStore } from '../store/levelUpStore'
 import QuestionMedia from '../components/QuestionMedia'
 import type { Question } from '../types/question'
 
@@ -165,7 +166,7 @@ export default function Page4() {
     let correct = false
     if (import.meta.env.VITE_API_URL) {
       try {
-        const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number }>('/answers/submit', {
+        const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number; totalPoints: number }>('/answers/submit', {
           questionId: question.id,
           selectedAnswer,
         })
@@ -173,6 +174,7 @@ export default function Page4() {
         correct = res.correct
         addPoints(res.pointsEarned)
         recordAnswer({ round: currentRound, selectedId: selectedAnswer, correctId: res.correctAnswer, isCorrect: res.correct, pointsEarned: res.pointsEarned })
+        useLevelUpStore.getState().checkLevelUp(res.totalPoints, res.pointsEarned)
       } catch { /* silent */ }
     } else {
       correct = selectedAnswer === question.correctAnswer

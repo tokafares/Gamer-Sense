@@ -7,6 +7,7 @@ import { useScenarioVideo } from '../hooks/useScenarioVideo'
 import { toYouTubeEmbed } from '../lib/youtube'
 import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
+import { useLevelUpStore } from '../store/levelUpStore'
 import QuestionMedia from '../components/QuestionMedia'
 import type { Question } from '../types/question'
 
@@ -132,7 +133,7 @@ export default function Page3() {
     let correct = false
     if (import.meta.env.VITE_API_URL) {
       try {
-        const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number; explanation: string }>('/answers/submit', {
+        const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number; totalPoints: number; explanation: string }>('/answers/submit', {
           questionId: question.id,
           selectedAnswer,
         })
@@ -140,6 +141,7 @@ export default function Page3() {
         correct = res.correct
         addPoints(res.pointsEarned)
         recordAnswer({ round: currentRound, selectedId: selectedAnswer, correctId: res.correctAnswer, isCorrect: res.correct, pointsEarned: res.pointsEarned })
+        useLevelUpStore.getState().checkLevelUp(res.totalPoints, res.pointsEarned)
       } catch { /* submit failed silently */ }
     } else {
       correct = selectedAnswer === question.correctAnswer

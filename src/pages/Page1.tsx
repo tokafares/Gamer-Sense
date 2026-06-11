@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import { motion, useReducedMotion } from 'framer-motion'
 import { fadeUp, staggerContainer, slideFromLeft } from '../lib/animations'
 import { useLeaderboard } from '../hooks/useLeaderboard'
+import { levelFromPoints } from '../lib/level'
 
 /* ─── data ────────────────────────────────────────────── */
 
@@ -263,10 +264,10 @@ const Home = () => {
           {/* table */}
           <div className="mt-[50px] overflow-hidden" style={{ border: '1px solid #1E3A5F' }}>
             <div
-              className="bg-gs-card grid grid-cols-4"
+              className="bg-gs-card grid grid-cols-5"
               style={{ borderBottom: '1px solid #1E3A5F', padding: '20px 32px' }}
             >
-              {['Rank', 'Player Name', 'Points', 'Tier'].map((h) => (
+              {['Rank', 'Player Name', 'Level', 'Points', 'Tier'].map((h) => (
                 <span
                   key={h}
                   className="text-gs-teal font-bold text-center uppercase"
@@ -288,14 +289,14 @@ const Home = () => {
                 {Array.from({ length: 5 }, (_, i) => (
                   <div
                     key={i}
-                    className="grid grid-cols-4 text-center"
+                    className="grid grid-cols-5 text-center"
                     style={{
                       padding: '16px 32px',
                       fontSize: '14px',
                       background: i % 2 === 0 ? '#0D1F3C' : '#112040',
                     }}
                   >
-                    {[28, 55, 35, 45].map((w, j) => (
+                    {[22, 48, 30, 32, 40].map((w, j) => (
                       <div key={j} style={{ display: 'flex', justifyContent: 'center' }}>
                         <div style={{
                           height: '20px',
@@ -329,7 +330,7 @@ const Home = () => {
                     key={row.rank}
                     variants={slideFromLeft}
                     transition={{ duration: 0.35, ease: 'easeOut' }}
-                    className="grid grid-cols-4 text-center"
+                    className="grid grid-cols-5 text-center"
                     style={{
                       padding: '16px 32px',
                       fontSize: '14px',
@@ -338,6 +339,7 @@ const Home = () => {
                   >
                     <span className="text-gs-textMuted">{row.rank}</span>
                     <span className="text-gs-text">{row.username}</span>
+                    <span className="text-gs-teal font-bold">Lv {levelFromPoints(row.points)}</span>
                     <span className="text-gs-text">{row.points.toLocaleString()}</span>
                     <span className="text-gs-textMuted">{row.tier}</span>
                   </motion.div>

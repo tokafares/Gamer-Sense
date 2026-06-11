@@ -12,6 +12,7 @@ import OurTeam from './components/OurTeam'
 import Footer from './components/Footer'
 import SeparatorLine from './assets/Rectangle 6.svg'
 import LoginModal from './components/LoginModal'
+import LevelUpToast from './components/LevelUpToast'
 import { Link } from 'react-router-dom'
 
 const Page1        = lazy(() => import('./pages/Page1'))
@@ -132,6 +133,7 @@ function App() {
       </Routes>
       </Suspense>
       <LoginModal />
+      <LevelUpToast />
     </>
   )
 }
