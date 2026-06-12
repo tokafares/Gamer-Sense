@@ -147,7 +147,7 @@ export default function Page6() {
             <h1
               className={LABEL_CLS}
               style={{
-                fontSize: isMobile ? '40px' : '54px',
+                fontSize: isMobile ? '35px' : '54px',
                 lineHeight: 1,
                 margin: 0,
                 paddingBottom: '6px',

@@ -97,9 +97,11 @@ const KnowledgeHub = () => {
             className="font-beaufort font-bold"
             style={{
               display: 'inline-block',
-              fontSize: '42px',
+              fontSize: isMobile ? '35px' : '42px',
               lineHeight: 1,
               marginBottom: '8px',
+              textAlign: isMobile ? 'center' : undefined,
+              width: isMobile ? '100%' : undefined,
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

@@ -147,7 +147,7 @@ export default function Page10() {
               className="font-beaufort font-bold"
               style={{
                 display: 'inline-block',
-                fontSize: '54px',
+                fontSize: isMobile ? '35px' : '54px',
                 lineHeight: 1,
                 margin: 0,
                 paddingBottom: '6px',
