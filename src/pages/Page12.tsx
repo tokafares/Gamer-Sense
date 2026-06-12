@@ -96,6 +96,8 @@ const GTRResults = memo(function GTRResults() {
     navigate('/match')
   }
 
+  // Mobile panel is shorter, so cap the tallest bar lower to keep it inside the panel
+  const barMax = isMobile ? 170 : BAR_RENDER_MAX
   const bars = useMemo(() => {
     const maxPct = Math.max(...RANKS.map(r => percentages[r] ?? 0), 1)
     return RANKS.map(rank => {
@@ -103,12 +105,12 @@ const GTRResults = memo(function GTRResults() {
       return {
         rank,
         pct,
-        height: Math.round((pct / maxPct) * BAR_RENDER_MAX),
+        height: Math.round((pct / maxPct) * barMax),
         isVoted:   rank.toLowerCase() === votedRank.toLowerCase(),
         isCorrect: rank.toLowerCase() === correctRank.toLowerCase(),
       }
     })
-  }, [percentages, votedRank, correctRank])
+  }, [percentages, votedRank, correctRank, barMax])
 
   return (
     <>
@@ -254,7 +256,7 @@ const GTRResults = memo(function GTRResults() {
 
       {/* ── Voting Statistics ──────────────────────────────────────── */}
       <motion.div
-        style={{ position: 'relative', width: '100%', paddingTop: `${VOTING_BG_RATIO * 100}%` }}
+        style={{ position: 'relative', width: '100%', ...(isMobile ? { height: 360 } : { paddingTop: `${VOTING_BG_RATIO * 100}%` }) }}
         initial={reduced ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.45 }}
@@ -263,16 +265,16 @@ const GTRResults = memo(function GTRResults() {
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', flexDirection: 'column',
-          padding: '14px 22px 14px',
+          padding: isMobile ? '12px 12px' : '14px 22px 14px',
         }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '14px', flexShrink: 0, marginBottom: '6px' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '0px' : '14px', flexShrink: 0, marginBottom: '6px' }}>
             <span className="font-beaufort font-bold" style={{
-              fontSize: '35px', lineHeight: 1, paddingBottom: '4px',
+              fontSize: isMobile ? '20px' : '35px', lineHeight: 1, paddingBottom: '4px',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>Voting Statistics</span>
             <span className="font-beaufort font-bold" style={{
-              fontSize: '35px', lineHeight: 1,
+              fontSize: isMobile ? '15px' : '35px', lineHeight: 1,
               background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>{totalVotes > 0 ? `${totalVotes} votes` : '— votes'}</span>

@@ -202,63 +202,65 @@ export default function Page11() {
           zIndex: 1,
         }}>
 
-          {/* ── 1v1 scoreboard — duel mode only ── */}
+          {/* ── 1v1 scoreboard — duel mode only (matches Trivia duel) ── */}
           {isDuel && (
             <motion.div
-              initial={reduced ? false : { opacity: 0, y: -16 }}
+              initial={reduced ? false : { opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
+              transition={{ duration: 0.4, delay: 0.1 }}
               style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                background: '#0A1628', border: '1px solid #1E3A5F',
-                borderRadius: 8, padding: '14px 28px', marginBottom: 12,
+                display: 'flex', alignItems: 'center',
+                background: '#0D1F3C', border: '1px solid #1E3A5F',
+                borderRadius: 8, padding: isMobile ? '10px 14px' : '12px 24px',
+                marginBottom: '12px', gap: 0,
               }}
             >
-              {/* My side */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: '50%',
-                  background: '#1E3A5F', overflow: 'hidden', flexShrink: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0' }}>YOU</span>
+                <span className="font-beaufort font-bold" style={{
+                  fontSize: isMobile ? 18 : 28, lineHeight: 1, maxWidth: '100%',
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                 }}>
-                  {user?.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="8" r="4" fill="#3AF9FF" opacity="0.5"/>
-                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#3AF9FF" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
-                    </svg>
-                  )}
-                </div>
-                <div>
-                  <div className="font-beaufort font-bold" style={{ fontSize: 15, color: '#E8EDF5', lineHeight: 1 }}>{user?.username ?? 'You'}</div>
-                  <div className="font-beaufort font-bold" style={{ fontSize: 26, color: '#3AF9FF', lineHeight: 1.1 }}>{points}</div>
+                  {user?.username ?? 'Player'}
+                </span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em' }}>
+                  {points} pts
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: isMobile ? '0 10px' : '0 24px', flexShrink: 0 }}>
+                <span className="font-beaufort font-bold" style={{
+                  fontSize: isMobile ? 22 : 32, fontStyle: 'italic', lineHeight: 1,
+                  background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>VS</span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: '#8FA3C0', letterSpacing: '0.1em' }}>
+                  ROUND {roundNum}/{totalRounds}
+                </span>
+                <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                  {Array.from({ length: totalRounds }, (_, i) => (
+                    <div key={i} style={{
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: i < roundNum - 1 ? '#00C9A7' : i === roundNum - 1 ? '#3AF9FF' : '#1E3A5F',
+                      transition: 'background 0.3s',
+                    }} />
+                  ))}
                 </div>
               </div>
 
-              {/* VS */}
-              <span className="font-beaufort font-bold" style={{
-                fontSize: 36, fontStyle: 'italic',
-                background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              }}>VS</span>
-
-              {/* Opponent side */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexDirection: 'row-reverse' }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: '50%',
-                  background: '#1E3A5F', flexShrink: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, letterSpacing: '0.12em', color: '#8FA3C0' }}>OPPONENT</span>
+                <span className="font-beaufort font-bold" style={{
+                  fontSize: isMobile ? 18 : 28, lineHeight: 1, color: '#E8EDF5', maxWidth: '100%',
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="4" fill="#8FA3C0" opacity="0.5"/>
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#8FA3C0" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
-                  </svg>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div className="font-beaufort font-bold" style={{ fontSize: 15, color: '#E8EDF5', lineHeight: 1 }}>{opponentUsername ?? 'Opponent'}</div>
-                  <div className="font-beaufort font-bold" style={{ fontSize: 26, color: '#8FA3C0', lineHeight: 1.1 }}>{opponentScore}</div>
-                </div>
+                  {opponentUsername ?? 'Opponent'}
+                </span>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: '#E8EDF5', letterSpacing: '0.06em' }}>
+                  {opponentScore} pts
+                </span>
               </div>
             </motion.div>
           )}
@@ -270,26 +272,26 @@ export default function Page11() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <div style={{ flex: 1, minWidth: 0, position: 'relative', height: `${ROUND_H}px` }}>
+            <div style={{ flex: 1, minWidth: 0, position: 'relative', height: `${isMobile ? 84 : ROUND_H}px` }}>
               <img src={RoundBg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
               <div style={{
                 position: 'absolute', top: '50%', left: '1.2%', width: '97.5%',
                 transform: 'translateY(-50%)', pointerEvents: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '0 16px', boxSizing: 'border-box',
+                padding: isMobile ? '0 14px' : '0 16px', boxSizing: 'border-box',
               }}>
-                <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#E8EDF5', lineHeight: 1 }}>
+                <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? 20 : 17, color: '#E8EDF5', lineHeight: 1 }}>
                   Round {roundNum}/{totalRounds}
                 </span>
-                <span style={{ color: '#C9A227', fontSize: 18, letterSpacing: 4, lineHeight: 1 }}>
+                <span style={{ color: '#C9A227', fontSize: isMobile ? 22 : 18, letterSpacing: isMobile ? 3 : 4, lineHeight: 1 }}>
                   {Array.from({ length: totalRounds }, (_, i) => i < roundNum ? '◆' : '◇').join(' ')}
                 </span>
-                <span className="font-beaufort font-bold" style={{ fontSize: 17, color: '#00C9A7', lineHeight: 1 }}>
+                <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? 20 : 17, color: '#00C9A7', lineHeight: 1 }}>
                   Points {points}
                 </span>
               </div>
             </div>
-            <img src={FlagIcon} alt="" style={{ width: '63px', height: '63px', flexShrink: 0, display: 'block' }} />
+            <img src={FlagIcon} alt="" style={{ width: isMobile ? '76px' : '63px', height: isMobile ? '76px' : '63px', flexShrink: 0, display: 'block' }} />
           </motion.div>
 
           {/* ── GTR media — real video or image from the backend ── */}
