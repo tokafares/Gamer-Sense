@@ -67,15 +67,17 @@ function Landing() {
       <div style={{ position: 'relative', zIndex: 20 }}>
         <OurTeam />
       </div>
-      {/* Girl — full width, just above the footer */}
-      <div style={{ position: 'relative', zIndex: 20, lineHeight: 0, fontSize: 0 }}>
-        <img
-          src={Woman}
-          alt=""
-          className="w-full h-auto block"
-          style={{ position: 'relative', zIndex: 20 }}
-        />
-      </div>
+      {/* Girl — full width, just above the footer (mobile only; desktop keeps her in the footer) */}
+      {isMobile && (
+        <div style={{ position: 'relative', zIndex: 20, lineHeight: 0, fontSize: 0 }}>
+          <img
+            src={Woman}
+            alt=""
+            className="w-full h-auto block"
+            style={{ position: 'relative', zIndex: 20 }}
+          />
+        </div>
+      )}
       <img
         src={SeparatorLine}
         alt=""

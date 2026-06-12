@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import FooterBg from '../assets/Group 73.svg'
-import { footerStagger, footerItem, scaleInSpring } from '../lib/animations'
+import Woman from '../assets/C15 1.webp'
+import { scrollFadeIn, footerStagger, footerItem, scaleInSpring } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Particle {
@@ -148,7 +149,9 @@ export default function Footer() {
   return (
     <footer
       className="relative w-full"
-      style={{ position: 'relative', zIndex: 30, marginTop: 0, paddingTop: isMobile ? '40px' : '80px', paddingBottom: isMobile ? '48px' : '60px', overflow: 'hidden' }}
+      style={isMobile
+        ? { position: 'relative', zIndex: 30, marginTop: 0, paddingTop: '40px', paddingBottom: '48px', overflow: 'hidden' }
+        : { height: '500px', position: 'relative', zIndex: 30, marginTop: 0, paddingTop: 0 }}
     >
       {/* Background */}
       <img
@@ -183,10 +186,26 @@ export default function Footer() {
         }}
       />
 
+      {/* Woman — bottom-left on desktop (mobile shows her in a section above the footer) */}
+      {!isMobile && (
+        <motion.img
+          src={Woman}
+          alt=""
+          loading="lazy"
+          className="absolute pointer-events-none select-none z-[5]"
+          style={{ left: '0px', bottom: '0px', height: 'calc(100% + 60px)', width: 'auto' }}
+          variants={scrollFadeIn}
+          initial={reduced ? false : 'hidden'}
+          whileInView="show"
+          viewport={vp}
+          transition={{ duration: 0.8 }}
+        />
+      )}
+
       {/* Text content — staggered columns */}
       <motion.div
-        className="relative z-[10]"
-        style={isMobile ? { marginLeft: '20px', marginRight: '20px' } : { marginLeft: '55%', paddingRight: '20px' }}
+        className={isMobile ? 'relative z-[10]' : 'absolute z-[10]'}
+        style={isMobile ? { marginLeft: '20px', marginRight: '20px' } : { left: '55%', top: '80px' }}
         variants={footerStagger}
         initial={reduced ? false : 'hidden'}
         whileInView="show"

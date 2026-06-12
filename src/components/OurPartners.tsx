@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import RiotLogo from '../assets/Group 74.svg'
 import LearnMoreBtn from '../assets/Group 171.svg'
 import PartnerIllustration from '../assets/C6 2 (1).png'
+import PartnerIllustrationDesktop from '../assets/C12 2.webp'
 import { scrollFadeUp, scrollFadeIn, scaleInSpring } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
@@ -75,20 +76,36 @@ export default function OurPartners() {
 
       </div>
 
-      {/* Illustration — oversized, bleeds off both screen edges so no margins show */}
-      <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
-        <motion.img
-          src={PartnerIllustration}
-          alt=""
-          loading="lazy"
-          className="h-auto block"
-          style={{ position: 'relative', zIndex: 1, width: isMobile ? '180%' : '150%', maxWidth: 'none', flexShrink: 0 }}
-          variants={scrollFadeIn}
-          initial={reduced ? false : 'hidden'}
-          whileInView="show"
-          viewport={vp}
-        />
-      </div>
+      {/* Illustration flush at bottom — desktop: original partner art; mobile: gamers, oversized bleed */}
+      {isMobile ? (
+        <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
+          <motion.img
+            src={PartnerIllustration}
+            alt=""
+            loading="lazy"
+            className="h-auto block"
+            style={{ position: 'relative', zIndex: 1, width: '180%', maxWidth: 'none', flexShrink: 0 }}
+            variants={scrollFadeIn}
+            initial={reduced ? false : 'hidden'}
+            whileInView="show"
+            viewport={vp}
+          />
+        </div>
+      ) : (
+        <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1 }}>
+          <motion.img
+            src={PartnerIllustrationDesktop}
+            alt=""
+            loading="lazy"
+            className="w-full h-auto block"
+            style={{ position: 'relative', zIndex: 1 }}
+            variants={scrollFadeIn}
+            initial={reduced ? false : 'hidden'}
+            whileInView="show"
+            viewport={vp}
+          />
+        </div>
+      )}
 
     </div>
   )
