@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import DialogBg from '../assets/DialogBg.png'
+import AnswerBg from '../assets/Group 264.png'
 
 const LABEL_CLS = 'font-beaufort font-bold bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent'
 const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent'
@@ -26,9 +28,10 @@ interface QAPanelProps {
   style?: CSSProperties
 }
 
-const BOX: CSSProperties = {
-  background: '#0D1F3C',
-  borderRadius: 8,
+const FRAME: CSSProperties = {
+  backgroundSize: '100% 100%',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
   boxSizing: 'border-box',
 }
 
@@ -48,7 +51,7 @@ export default function QAPanel({
       }}
     >
       {/* Question box */}
-      <div style={{ ...BOX, border: '1px solid #1E3A5F', padding: isMobile ? '12px 14px' : '14px 18px', flexShrink: 0 }}>
+      <div style={{ ...FRAME, backgroundImage: `url(${DialogBg})`, padding: isMobile ? '12px 16px' : '16px 22px', flexShrink: 0 }}>
         <p className={LABEL_CLS} style={{ fontSize: isMobile ? '15px' : '18px', lineHeight: 1.2, margin: '0 0 6px' }}>
           {questionLabel}
         </p>
@@ -64,12 +67,12 @@ export default function QAPanel({
           const isSelected = selectedAnswer === id && !reveal
           const isCorrect  = reveal && correctAnswer === id
           const isWrong    = reveal && selectedAnswer === id && correctAnswer !== id
-          const borderColor = isCorrect ? '#00C9A7' : isWrong ? '#ef4444' : isSelected ? '#3AF9FF' : '#1E3A5F'
-          const bg = isCorrect ? 'rgba(0,201,167,0.12)'
-            : isWrong ? 'rgba(239,68,68,0.12)'
-            : isSelected ? 'rgba(58,249,255,0.07)'
-            : '#0D1F3C'
           const interactive = !locked && !loading
+          const overlayBorder = isCorrect ? '#00C9A7' : isWrong ? '#ef4444' : isSelected ? '#3AF9FF' : null
+          const overlayBg = isCorrect ? 'rgba(0,201,167,0.16)'
+            : isWrong ? 'rgba(239,68,68,0.16)'
+            : isSelected ? 'rgba(58,249,255,0.10)'
+            : null
           return (
             <motion.button
               key={id}
@@ -77,18 +80,27 @@ export default function QAPanel({
               onClick={() => interactive && onSelect(id)}
               disabled={locked}
               aria-label={`Answer ${id}`}
-              whileHover={reduced || !interactive || isSelected ? {} : { borderColor: 'rgba(58,249,255,0.55)' }}
+              whileHover={reduced || !interactive || isSelected ? {} : { filter: 'brightness(1.12)' }}
+              animate={{ filter: 'brightness(1)' }}
+              transition={{ duration: 0.18 }}
               style={{
-                ...BOX, background: bg,
-                borderWidth: 2, borderStyle: 'solid', borderColor,
-                textAlign: 'left', padding: isMobile ? '12px 14px' : '0 18px',
-                minHeight: isMobile ? 0 : 56, flex: isMobile ? 'none' : 1,
+                ...FRAME, backgroundImage: `url(${AnswerBg})`,
+                position: 'relative', border: 'none', borderRadius: 6,
+                textAlign: 'left', padding: isMobile ? '0 16px' : '0 20px',
+                minHeight: isMobile ? 48 : 56, flex: isMobile ? 'none' : 1,
                 display: 'flex', alignItems: 'center',
                 cursor: interactive ? 'pointer' : 'default',
-                transition: 'background 0.25s, border-color 0.25s',
               }}
             >
-              <span className={PARA_CLS} style={{ fontSize: isMobile ? '13px' : '14px', lineHeight: 1.35 }}>
+              {overlayBorder && (
+                <span style={{
+                  position: 'absolute', inset: 0, borderRadius: 6,
+                  border: `2px solid ${overlayBorder}`,
+                  background: overlayBg ?? 'transparent',
+                  pointerEvents: 'none',
+                }} />
+              )}
+              <span className={PARA_CLS} style={{ position: 'relative', fontSize: isMobile ? '13px' : '14px', lineHeight: 1.35 }}>
                 {id}.&nbsp;{opt.text}{isCorrect ? '  ✓' : isWrong ? '  ✗' : ''}
               </span>
             </motion.button>
@@ -98,7 +110,7 @@ export default function QAPanel({
 
       {/* Hint box — Scenarios only */}
       {showHint && (
-        <div style={{ ...BOX, border: '1px solid #1E3A5F', padding: isMobile ? '12px 14px' : '14px 18px', flexShrink: 0 }}>
+        <div style={{ ...FRAME, backgroundImage: `url(${DialogBg})`, padding: isMobile ? '12px 16px' : '14px 22px', flexShrink: 0 }}>
           <p className={LABEL_CLS} style={{ fontSize: isMobile ? '14px' : '16px', lineHeight: 1.2, margin: '0 0 5px' }}>
             Hint:
           </p>
