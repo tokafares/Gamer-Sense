@@ -271,7 +271,7 @@ export default function Page11() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <div style={{ flex: 1, minWidth: 0, position: 'relative', height: `${isMobile ? 96 : 78}px` }}>
+            <div style={{ flex: 1, minWidth: 0, position: 'relative', height: '65px' }}>
               <img src={RoundBg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
               <div style={{
                 position: 'absolute', top: '50%', left: '1.2%', width: '97.5%',
