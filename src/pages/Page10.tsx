@@ -292,7 +292,44 @@ export default function Page10() {
               gap: '10px',
             }}>
 
-              {/* Statistics panel — Group 336 (1085 × 399) */}
+              {/* Statistics — mobile: clean 3-card row (per Group 349 reference); desktop: framed panel */}
+              {isMobile ? (
+                <motion.div
+                  initial={reduced ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.25 }}
+                >
+                  <p className="font-beaufort font-bold" style={{ fontSize: 18, margin: '0 0 10px', ...VALUE_GRADIENT }}>
+                    Statistics
+                  </p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {STATS.map(({ src, label, value }, i) => (
+                      <motion.div
+                        key={i}
+                        style={{ flex: 1, minWidth: 0, position: 'relative' }}
+                        initial={reduced ? false : { opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.35 + i * 0.08 }}
+                      >
+                        <img src={src} alt="" loading="lazy" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          display: 'flex', flexDirection: 'column',
+                          alignItems: 'center', justifyContent: 'flex-end',
+                          paddingBottom: '11%', gap: 2, pointerEvents: 'none',
+                        }}>
+                          <span className="font-beaufort font-bold" style={{ fontSize: 9.5, lineHeight: 1.05, textAlign: 'center', ...LABEL_GRADIENT }}>
+                            {label}
+                          </span>
+                          <span className="font-beaufort font-bold" style={{ fontSize: 17, lineHeight: 1, ...VALUE_GRADIENT }}>
+                            {value}
+                          </span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : (
               <motion.div
                 style={{
                   position: 'relative',
@@ -349,6 +386,7 @@ export default function Page10() {
                   ))}
                 </div>
               </motion.div>
+              )}
 
               {/* Current Ranks panel — Group 345 (1085 × 280) */}
               <motion.div
