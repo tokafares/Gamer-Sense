@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import RiotLogo from '../assets/Group 74.svg'
 import LearnMoreBtn from '../assets/Group 171.svg'
-import PartnerIllustration from '../assets/C6 2.webp'
+import PartnerIllustration from '../assets/C6 2 (1).png'
 import { scrollFadeUp, scrollFadeIn, scaleInSpring } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 

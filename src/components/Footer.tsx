@@ -148,7 +148,7 @@ export default function Footer() {
   return (
     <footer
       className="relative w-full"
-      style={{ height: isMobile ? '600px' : '500px', position: 'relative', zIndex: 30, marginTop: 0, paddingTop: 0 }}
+      style={{ position: 'relative', zIndex: 30, marginTop: 0, paddingTop: isMobile ? '40px' : '80px', paddingBottom: isMobile ? '48px' : '60px', overflow: 'hidden' }}
     >
       {/* Background */}
       <img
@@ -185,8 +185,8 @@ export default function Footer() {
 
       {/* Text content — staggered columns */}
       <motion.div
-        className="absolute z-[10]"
-        style={isMobile ? { left: '20px', right: '20px', top: '40px' } : { left: '55%', top: '80px' }}
+        className="relative z-[10]"
+        style={isMobile ? { marginLeft: '20px', marginRight: '20px' } : { marginLeft: '55%', paddingRight: '20px' }}
         variants={footerStagger}
         initial={reduced ? false : 'hidden'}
         whileInView="show"
