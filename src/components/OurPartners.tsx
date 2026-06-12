@@ -24,13 +24,13 @@ export default function OurPartners() {
         >
           <h2
             className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-            style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '40px' : undefined }}
+            style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '35px' : undefined }}
           >
             Our Partners
           </h2>
           <h2
             className="absolute inset-0 font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-            style={{ fontSize: isMobile ? '40px' : undefined }}
+            style={{ fontSize: isMobile ? '35px' : undefined }}
             aria-hidden="true"
           >
             Our Partners
@@ -39,7 +39,7 @@ export default function OurPartners() {
 
         <motion.p
           className="font-['Inter',sans-serif] text-[25px] font-medium text-[#0E1B2F] text-center max-w-[1090px] mt-[40px] leading-[30px] px-[20px]"
-          style={isMobile ? { fontSize: '15px', lineHeight: '22px', marginTop: '24px' } : undefined}
+          style={isMobile ? { fontSize: '11px', lineHeight: '15px', marginTop: '20px' } : undefined}
           variants={scrollFadeIn}
           initial={reduced ? false : 'hidden'}
           whileInView="show"

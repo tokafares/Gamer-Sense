@@ -66,13 +66,13 @@ export default function OurTeam() {
         <div className="relative">
           <h2
             className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-            style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '40px' : undefined }}
+            style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '35px' : undefined }}
           >
             Our Team
           </h2>
           <h2
             className="absolute inset-0 font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-            style={{ fontSize: isMobile ? '40px' : undefined }}
+            style={{ fontSize: isMobile ? '35px' : undefined }}
             aria-hidden="true"
           >
             Our Team
@@ -81,7 +81,7 @@ export default function OurTeam() {
 
         <p
           className="font-['Inter',sans-serif] text-[22px] font-medium text-[#0E1B2F] leading-[30px] mt-[16px]"
-          style={isMobile ? { fontSize: '14px', lineHeight: '21px' } : undefined}
+          style={isMobile ? { fontSize: '11px', lineHeight: '15px' } : undefined}
         >
           Collaborative excellence with the industry's best. We are proud to work alongside these visionaries to push the boundaries of what's possible.
         </p>

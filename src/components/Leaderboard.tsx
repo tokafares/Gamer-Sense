@@ -30,13 +30,13 @@ export default memo(function Leaderboard() {
       >
         <h2
           className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-          style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '44px' : undefined }}
+          style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '35px' : undefined }}
         >
           Leaderboard
         </h2>
         <h2
           className="absolute inset-0 font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
-          style={{ fontSize: isMobile ? '44px' : undefined }}
+          style={{ fontSize: isMobile ? '35px' : undefined }}
           aria-hidden="true"
         >
           Leaderboard
