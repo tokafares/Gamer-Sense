@@ -6,7 +6,6 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import Group309 from '../assets/Group 309.webp'
-import ChampionBg from '../assets/ChampionBg.svg'
 import ScenarioFrame from '../assets/Scenario.png'
 import BtnTopLane from '../assets/knowledgehub-btn-toplane.svg'
 import BtnJungle from '../assets/knowledgehub-btn-jungle.svg'
@@ -232,9 +231,6 @@ export default function Page5() {
 
             {/* Champion grid */}
             <div style={{
-              backgroundImage: `url(${ChampionBg})`,
-              backgroundSize: '100% 100%',
-              backgroundRepeat: 'no-repeat',
               width: panelW,
               height: isMobile ? '460px' : `${GRID_H}px`,
               boxSizing: 'border-box',
