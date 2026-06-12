@@ -96,8 +96,8 @@ const GTRResults = memo(function GTRResults() {
     navigate('/match')
   }
 
-  // Mobile panel is shorter, so cap the tallest bar lower to keep it inside the panel
-  const barMax = isMobile ? 170 : BAR_RENDER_MAX
+  // Keep the panel's natural proportions; cap bars small on mobile so they stay compact like the reference
+  const barMax = isMobile ? 58 : BAR_RENDER_MAX
   const bars = useMemo(() => {
     const maxPct = Math.max(...RANKS.map(r => percentages[r] ?? 0), 1)
     return RANKS.map(rank => {
@@ -256,7 +256,7 @@ const GTRResults = memo(function GTRResults() {
 
       {/* ── Voting Statistics ──────────────────────────────────────── */}
       <motion.div
-        style={{ position: 'relative', width: '100%', ...(isMobile ? { height: 360 } : { paddingTop: `${VOTING_BG_RATIO * 100}%` }) }}
+        style={{ position: 'relative', width: '100%', paddingTop: isMobile ? '52%' : `${VOTING_BG_RATIO * 100}%` }}
         initial={reduced ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.45 }}
@@ -265,35 +265,35 @@ const GTRResults = memo(function GTRResults() {
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', flexDirection: 'column',
-          padding: isMobile ? '12px 12px' : '14px 22px 14px',
+          padding: isMobile ? '8px 10px 6px' : '14px 22px 14px',
         }}>
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '0px' : '14px', flexShrink: 0, marginBottom: '6px' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '0px' : '14px', flexShrink: 0, marginBottom: isMobile ? '3px' : '6px' }}>
             <span className="font-beaufort font-bold" style={{
-              fontSize: isMobile ? '20px' : '35px', lineHeight: 1, paddingBottom: '4px',
+              fontSize: isMobile ? '16px' : '35px', lineHeight: 1, paddingBottom: isMobile ? '2px' : '4px',
               background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>Voting Statistics</span>
             <span className="font-beaufort font-bold" style={{
-              fontSize: isMobile ? '15px' : '35px', lineHeight: 1,
+              fontSize: isMobile ? '12px' : '35px', lineHeight: 1,
               background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>{totalVotes > 0 ? `${totalVotes} votes` : '— votes'}</span>
           </div>
 
-          <img src={Line2} alt="" style={{ display: 'block', width: '100%', height: '2px', flexShrink: 0, marginBottom: '8px' }} />
+          <img src={Line2} alt="" style={{ display: 'block', width: '100%', height: '2px', flexShrink: 0, marginBottom: isMobile ? '4px' : '8px' }} />
 
-          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: '4px', paddingBottom: '10px', minHeight: 0 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: isMobile ? '3px' : '4px', paddingBottom: isMobile ? '4px' : '10px', minHeight: 0 }}>
             {RANK_TILES.map((tileSrc, i) => {
               const bar = bars[i]
               return (
                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
                   {bar && (
                     <>
-                      <span className="font-beaufort font-bold" style={{ fontSize: '11px', lineHeight: 1, marginBottom: '3px', color: '#E8EDF5', letterSpacing: '0.02em' }}>
+                      <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? '8px' : '11px', lineHeight: 1, marginBottom: isMobile ? '1px' : '3px', color: '#E8EDF5', letterSpacing: '0.02em' }}>
                         {bar.pct}%
                       </span>
                       <div style={{
-                        width: '82%', height: '6px', borderRadius: '2px 2px 0 0',
+                        width: '82%', height: isMobile ? '4px' : '6px', borderRadius: '2px 2px 0 0',
                         background: bar.isVoted ? '#00C9A7' : bar.isCorrect ? '#C9A227' : '#8FA3C0',
                       }} />
                       <motion.div
