@@ -1,8 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import MaskGroup from '../assets/Mask group.webp'
-import TeamGroup from '../assets/C6 2.webp'
 import LearnMoreBtn from '../assets/Group 171.svg'
-import { scrollFadeIn, slideFromLeftScroll, slideFromRightScroll } from '../lib/animations'
+import { scrollFadeIn, slideFromLeftScroll } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function OurTeam() {
@@ -15,29 +14,6 @@ export default function OurTeam() {
       className="relative w-full"
       style={{ height: isMobile ? '440px' : '590px', marginTop: '-4px', marginBottom: 0, paddingBottom: 0, zIndex: 20, position: 'relative', clipPath: 'inset(-250px 0 0 0)' }}
     >
-
-      {/* TEAM GROUP — slide in from right (opacity only to preserve rotate transform) */}
-      <motion.img
-        src={TeamGroup}
-        alt="Our Team"
-        loading="lazy"
-        className="absolute z-[2] pointer-events-none select-none"
-        style={{
-          right: '0px',
-          top: '-150px',
-          height: '100%',
-          width: 'auto',
-          maxWidth: '52%',
-          objectFit: 'contain',
-          objectPosition: 'right top',
-          transform: 'rotate(-5.35deg)',
-          transformOrigin: 'top right',
-        }}
-        variants={slideFromRightScroll}
-        initial={reduced ? false : 'hidden'}
-        whileInView="show"
-        viewport={vp}
-      />
 
       {/* MASK GROUP — static overlay */}
       <img

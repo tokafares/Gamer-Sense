@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import RiotLogo from '../assets/Group 74.svg'
 import LearnMoreBtn from '../assets/Group 171.svg'
-import PartnerIllustration from '../assets/C12 2.webp'
+import PartnerIllustration from '../assets/C6 2.webp'
 import { scrollFadeUp, scrollFadeIn, scaleInSpring } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
@@ -75,14 +75,14 @@ export default function OurPartners() {
 
       </div>
 
-      {/* Illustration flush at bottom */}
-      <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1 }}>
+      {/* Illustration flush at bottom — centred cutout */}
+      <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
         <motion.img
           src={PartnerIllustration}
           alt=""
           loading="lazy"
-          className="w-full h-auto block"
-          style={{ position: 'relative', zIndex: 1 }}
+          className="h-auto block"
+          style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: isMobile ? '420px' : '760px' }}
           variants={scrollFadeIn}
           initial={reduced ? false : 'hidden'}
           whileInView="show"

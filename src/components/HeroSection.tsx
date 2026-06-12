@@ -113,7 +113,7 @@ export default function HeroSection() {
           className="absolute font-beaufort font-bold leading-none bg-gradient-to-b from-[#FFFCF6] to-[#CCCCCC] bg-clip-text text-transparent whitespace-nowrap"
           style={isMobile
             ? { left: 0, right: 0, textAlign: 'center', top: '15%', fontSize: '18px' }
-            : { left: LEFT, top: '20%', fontSize: '53.58px' }}
+            : { left: LEFT, top: '20%', fontSize: '62px' }}
           variants={heroTitle}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -129,7 +129,7 @@ export default function HeroSection() {
             right: isMobile ? 0 : undefined,
             textAlign: isMobile ? 'center' : undefined,
             top: isMobile ? '22%' : '30%',
-            fontSize: isMobile ? '26px' : '90px',
+            fontSize: isMobile ? '26px' : '104px',
             lineHeight: 1.04,
             whiteSpace: 'nowrap',
             width: isMobile ? '100%' : 'max-content',
@@ -153,7 +153,7 @@ export default function HeroSection() {
           className="absolute font-['Inter',sans-serif] font-normal leading-snug h-auto pb-[8px] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent"
           style={isMobile
             ? { left: 0, right: 0, textAlign: 'center', top: '31%', fontSize: '11px', width: '100%', paddingLeft: '40px', paddingRight: '40px', boxSizing: 'border-box' }
-            : { left: LEFT, top: '46%', fontSize: '17px', width: '400px' }}
+            : { left: LEFT, top: '46%', fontSize: '19px', width: '440px' }}
           variants={heroSubtitleAnim}
           initial={reduced ? false : 'hidden'}
           animate="show"
