@@ -428,6 +428,7 @@ export default function Page8() {
                 display: 'flex', flexDirection: isMobile ? 'row' : 'column',
                 gap: isMobile ? '6px' : `${LANE_GAP}px`, flexShrink: 0,
                 width: isMobile ? '100%' : `${LANE_W}px`, height: isMobile ? 'auto' : '100%',
+                order: isMobile ? 2 : 0,
               }}
             >
               {LANES.map(({ key, label, svg }) => (
@@ -462,7 +463,7 @@ export default function Page8() {
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              style={{ flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, minWidth: 0, height: isMobile ? '210px' : '100%', position: 'relative' }}
+              style={{ flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, minWidth: 0, height: isMobile ? '210px' : '100%', position: 'relative', order: isMobile ? 1 : 0 }}
             >
               <img src={DialogBgSvg} alt=""
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
@@ -579,6 +580,7 @@ export default function Page8() {
                 transition={{ duration: 0.4 }}
                 style={{
                   width: isMobile ? '100%' : `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0,
+                  order: isMobile ? 3 : 0,
                   background: '#0D1F3C', border: '1px solid #1E3A5F',
                   borderTop: '3px solid #00C9A7', borderRadius: 6,
                   display: 'flex', flexDirection: 'column',
@@ -630,7 +632,7 @@ export default function Page8() {
                 initial={reduced ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.2 }}
-                style={{ width: isMobile ? '100%' : `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative' }}
+                style={{ width: isMobile ? '100%' : `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative', order: isMobile ? 3 : 0 }}
               >
                 {/* clip off the bottom hint-box frame in solo (no hints in trivia);
                     keep it in match mode where it holds the waiting/result status */}
