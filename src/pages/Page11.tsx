@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
-import RoundBg       from '../assets/RoundBg.svg'
+import RoundBg       from '../assets/RoundBanner.png'
 import FlagIcon      from '../assets/Flag Group171.svg'
 import RankContainer from '../assets/Group 365.svg'
 import RankTile1     from '../assets/Group _342.svg'
@@ -36,7 +36,6 @@ const RANKS_ORDER = [
 ]
 
 const RANK_RATIO = 198 / 1361   // Group 365 aspect ratio
-const ROUND_H    = 65
 
 function isCloudinaryVideo(url: string): boolean {
   return url.includes('cloudinary.com') && url.endsWith('.mp4')
@@ -272,7 +271,7 @@ export default function Page11() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <div style={{ flex: 1, minWidth: 0, position: 'relative', height: `${isMobile ? 84 : ROUND_H}px` }}>
+            <div style={{ flex: 1, minWidth: 0, position: 'relative', height: `${isMobile ? 96 : 78}px` }}>
               <img src={RoundBg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
               <div style={{
                 position: 'absolute', top: '50%', left: '1.2%', width: '97.5%',
