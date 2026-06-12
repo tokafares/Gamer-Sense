@@ -10,6 +10,7 @@ import { apiGet, apiPost } from '../lib/api'
 import { useGameStore } from '../store/gameStore'
 import { useLevelUpStore } from '../store/levelUpStore'
 import QuestionMedia from '../components/QuestionMedia'
+import QAPanel from '../components/QAPanel'
 import type { Question } from '../types/question'
 
 import SeparatorLine  from '../assets/Rectangle 6.svg'
@@ -20,8 +21,6 @@ import MidLaneSvg    from '../assets/Group 260.svg'
 import ADCSvg        from '../assets/Group 261.svg'
 import SupportSvg    from '../assets/Group 262.svg'
 
-import Group270Svg   from '../assets/Group 270.svg'
-import AnswerBtnsSvg from '../assets/Group 269.svg'
 import LockInBtnSvg  from '../assets/Group 312.svg'
 
 const LANES = [
@@ -40,21 +39,6 @@ const LANE_W   = Math.round(149 * SCALE)
 const LANE_GAP = Math.round((PANEL_H - 5 * LANE_H) / 4)
 
 const PANEL_W = Math.round(557 * SCALE)
-
-const Q_H       = Math.round(163 * SCALE)
-const Q_ANS_GAP = 16
-const ANS_TOP   = Q_H + Q_ANS_GAP
-
-const ANS_H = Math.round(332 * SCALE)
-
-const HINT_TOP = Math.round(560 * SCALE)
-const HINT_H   = PANEL_H - HINT_TOP
-
-const ANSWER_REGIONS = [
-  { id: 'A', top: 0,                        height: Math.round(96  * SCALE) },
-  { id: 'B', top: Math.round(118 * SCALE),  height: Math.round(96  * SCALE) },
-  { id: 'C', top: Math.round(236 * SCALE),  height: Math.round(96  * SCALE) },
-]
 
 const LABEL_CLS = 'font-beaufort font-bold bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent'
 const PARA_CLS  = 'font-beaufort font-medium bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent'
@@ -343,110 +327,22 @@ export default function Page3() {
                 initial={reduced ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.2 }}
-                style={{ width: isMobile ? '100%' : `${PANEL_W}px`, height: `${PANEL_H}px`, flexShrink: 0, position: 'relative', order: isMobile ? 3 : 0 }}
+                style={{ width: isMobile ? '100%' : `${PANEL_W}px`, height: isMobile ? 'auto' : `${PANEL_H}px`, flexShrink: 0, order: isMobile ? 3 : 0 }}
               >
-                {/* Group 270.svg: single background covering Q box + Hint box */}
-                <img src={Group270Svg} alt=""
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-
-                {/* Question text overlay */}
-                <div style={{
-                  position: 'absolute', top: 0, left: 0,
-                  width: '100%', height: `${Q_H}px`,
-                  padding: '14px 20px', boxSizing: 'border-box',
-                }}>
-                  <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                    Question {laneQuestions.length > 0 ? `${questionIdx + 1} / ${laneQuestions.length}` : ''}
-                  </p>
-                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                    {loading ? 'Loading question…' : fetchError ? fetchError : (question?.text ?? '')}
-                  </p>
-                </div>
-
-                {/* Answer buttons */}
-                <div style={{
-                  position: 'absolute', top: `${ANS_TOP}px`, left: 0,
-                  width: '100%', height: `${ANS_H}px`,
-                }}>
-                  <img src={AnswerBtnsSvg} alt=""
-                    style={{ display: 'block', width: '100%', height: '100%' }} />
-
-                  {question && ANSWER_REGIONS.map(({ id, top, height }) => {
-                    const ans = question.options.find(a => a.id === id)
-                    if (!ans) return null
-                    const isCorrect = locked && question.correctAnswer === id
-                    const isWrong   = locked && selectedAnswer === id && question.correctAnswer !== id
-                    return (
-                      <div
-                        key={`ans-text-${id}`}
-                        style={{
-                          position: 'absolute', top: `${top + 2}px`, left: '2px',
-                          width: 'calc(100% - 4px)', height: `${height - 4}px`,
-                          display: 'flex', alignItems: 'center',
-                          padding: '0 20px', pointerEvents: 'none',
-                          background: isCorrect ? '#0E3A30' : isWrong ? '#3A1E22' : '#0D1F3C',
-                          transition: 'background 0.3s',
-                        }}
-                      >
-                        <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0 }}>
-                          {id}.&nbsp;{ans.text}{isCorrect ? '  ✓' : isWrong ? '  ✗' : ''}
-                        </p>
-                      </div>
-                    )
-                  })}
-
-                  {question && ANSWER_REGIONS.map(({ id, top, height }, i) => {
-                    const isCorrect = locked && question.correctAnswer === id
-                    const isWrong   = locked && selectedAnswer === id && question.correctAnswer !== id
-                    return (
-                    <motion.div
-                      key={id}
-                      role="button"
-                      tabIndex={locked ? -1 : 0}
-                      onClick={() => !locked && !loading && setSelectedAnswer(id)}
-                      onKeyDown={e => e.key === 'Enter' && !locked && setSelectedAnswer(id)}
-                      initial={reduced ? false : { opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.3 + i * 0.08 }}
-                      style={{
-                        position: 'absolute', top: `${top}px`, left: 0,
-                        width: '100%', height: `${height}px`,
-                        cursor: locked ? 'default' : 'pointer',
-                      }}
-                      aria-label={`Answer ${id}`}
-                    >
-                      {!locked && selectedAnswer === id && (
-                        <div style={{
-                          position: 'absolute', inset: 0,
-                          border: '2px solid #3AF9FF',
-                          background: 'rgba(58,249,255,0.07)',
-                          pointerEvents: 'none',
-                        }} />
-                      )}
-                      {isCorrect && (
-                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #00C9A7', pointerEvents: 'none' }} />
-                      )}
-                      {isWrong && (
-                        <div style={{ position: 'absolute', inset: 0, border: '2px solid #ef4444', pointerEvents: 'none' }} />
-                      )}
-                    </motion.div>
-                    )
-                  })}
-                </div>
-
-                {/* Hint text overlay */}
-                <div style={{
-                  position: 'absolute', top: `${HINT_TOP}px`, left: 0,
-                  width: '100%', height: `${HINT_H}px`,
-                  padding: '14px 20px', boxSizing: 'border-box',
-                }}>
-                  <p className={LABEL_CLS} style={{ fontSize: '18px', lineHeight: 1.25, margin: '0 0 7px' }}>
-                    Hint:
-                  </p>
-                  <p className={PARA_CLS} style={{ fontSize: '13px', lineHeight: '18px', margin: 0, fontStyle: 'italic' }}>
-                    {question?.hint ? `"${question.hint}"` : ''}
-                  </p>
-                </div>
+                <QAPanel
+                  isMobile={isMobile}
+                  questionLabel={`Question ${laneQuestions.length > 0 ? `${questionIdx + 1} / ${laneQuestions.length}` : ''}`}
+                  questionText={loading ? 'Loading question…' : fetchError ? fetchError : (question?.text ?? '')}
+                  options={question?.options ?? []}
+                  selectedAnswer={selectedAnswer}
+                  locked={locked}
+                  loading={loading}
+                  reveal={locked}
+                  correctAnswer={question?.correctAnswer}
+                  onSelect={setSelectedAnswer}
+                  showHint
+                  hint={question?.hint}
+                />
               </motion.div>
             )}
           </div>
