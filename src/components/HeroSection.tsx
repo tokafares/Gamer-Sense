@@ -51,20 +51,18 @@ export default function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover object-center z-[2] pointer-events-none"
         />
 
-        {/* Layer 4: Bright players — idle float */}
+        {/* Layer 4: Bright players — idle float (full image on mobile, both gamers) */}
         <motion.img
           src={PlayersBright}
           alt=""
           fetchPriority="high"
           className="z-[3] pointer-events-none select-none"
-          style={{
-            position: 'absolute',
-            right: '0',
-            bottom: '0',
-            height: isMobile ? '52%' : '75%',
-            width: isMobile ? '72%' : '55%',
-            objectFit: 'cover',
-            objectPosition: 'left top',
+          style={isMobile ? {
+            position: 'absolute', left: 0, right: 0, bottom: 0,
+            width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'bottom center',
+          } : {
+            position: 'absolute', right: '0', bottom: '0',
+            height: '75%', width: '55%', objectFit: 'cover', objectPosition: 'left top',
           }}
           animate={reduced ? {} : { y: [0, -8, 0] }}
           transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
@@ -76,14 +74,13 @@ export default function HeroSection() {
           alt=""
           fetchPriority="high"
           className="z-[4] pointer-events-none select-none"
-          style={{
-            position: 'absolute',
-            right: '0',
-            bottom: '0',
-            height: isMobile ? '52%' : '75%',
-            width: isMobile ? '72%' : '55%',
-            objectFit: 'cover',
-            objectPosition: 'left top',
+          style={isMobile ? {
+            position: 'absolute', left: 0, right: 0, bottom: 0,
+            width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'bottom center',
+            mixBlendMode: 'screen' as const,
+          } : {
+            position: 'absolute', right: '0', bottom: '0',
+            height: '75%', width: '55%', objectFit: 'cover', objectPosition: 'left top',
             mixBlendMode: 'screen' as const,
           }}
           animate={reduced ? {} : { y: [0, -8, 0] }}
