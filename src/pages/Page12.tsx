@@ -135,8 +135,8 @@ const GTRResults = memo(function GTRResults() {
             <span
               className="font-beaufort font-bold"
               style={{
-                fontSize: 30, lineHeight: 1,
-                paddingBottom: '4px',
+                fontSize: isMobile ? 20 : 30, lineHeight: 1,
+                paddingBottom: '4px', whiteSpace: 'nowrap',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -175,12 +175,12 @@ const GTRResults = memo(function GTRResults() {
               paddingBottom: '10%', gap: 6, pointerEvents: 'none',
             }}>
               <span className="font-beaufort font-bold" style={{
-                fontSize: 31.31, lineHeight: 1,
+                fontSize: isMobile ? 19 : 31.31, lineHeight: 1,
                 background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>Your Answer</span>
               <span className="font-beaufort font-bold" style={{
-                fontSize: 35, lineHeight: 1, textTransform: 'capitalize',
+                fontSize: isMobile ? 22 : 35, lineHeight: 1, textTransform: 'capitalize',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>{votedRank || '—'}</span>
@@ -202,12 +202,12 @@ const GTRResults = memo(function GTRResults() {
               gap: 12, pointerEvents: 'none',
             }}>
               <span className="font-beaufort font-bold" style={{
-                fontSize: 50, lineHeight: 1,
+                fontSize: isMobile ? 30 : 50, lineHeight: 1,
                 background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>Points</span>
               <span className="font-beaufort font-bold" style={{
-                fontSize: 50, lineHeight: 1,
+                fontSize: isMobile ? 30 : 50, lineHeight: 1,
                 background: 'linear-gradient(to bottom, #FFCA3A, #AD7600)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>{points}</span>
@@ -240,12 +240,12 @@ const GTRResults = memo(function GTRResults() {
               paddingBottom: '10%', gap: 6, pointerEvents: 'none',
             }}>
               <span className="font-beaufort font-bold" style={{
-                fontSize: 31.31, lineHeight: 1,
+                fontSize: isMobile ? 19 : 31.31, lineHeight: 1,
                 background: 'linear-gradient(to bottom, #FFFCF6, #969696)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>Correct Answer</span>
               <span className="font-beaufort font-bold" style={{
-                fontSize: 35, lineHeight: 1, textTransform: 'capitalize',
+                fontSize: isMobile ? 22 : 35, lineHeight: 1, textTransform: 'capitalize',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>{correctRank || '—'}</span>

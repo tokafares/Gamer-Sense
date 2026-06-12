@@ -267,7 +267,7 @@ export default function Page11() {
 
           {/* ── Round bar ── */}
           <motion.div
-            style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '8px' }}
+            style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: isMobile ? '6px' : '8px' }}
             initial={reduced ? false : { opacity: 0, y: -14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
@@ -278,20 +278,21 @@ export default function Page11() {
                 position: 'absolute', top: '50%', left: '1.2%', width: '97.5%',
                 transform: 'translateY(-50%)', pointerEvents: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: isMobile ? '0 14px' : '0 16px', boxSizing: 'border-box',
+                gap: isMobile ? '6px' : '10px',
+                padding: isMobile ? '0 12px' : '0 16px', boxSizing: 'border-box',
               }}>
-                <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? 20 : 17, color: '#E8EDF5', lineHeight: 1 }}>
+                <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? 16 : 17, color: '#E8EDF5', lineHeight: 1, whiteSpace: 'nowrap' }}>
                   Round {roundNum}/{totalRounds}
                 </span>
-                <span style={{ color: '#C9A227', fontSize: isMobile ? 22 : 18, letterSpacing: isMobile ? 3 : 4, lineHeight: 1 }}>
+                <span style={{ color: '#C9A227', fontSize: isMobile ? 16 : 18, letterSpacing: isMobile ? 2 : 4, lineHeight: 1, whiteSpace: 'nowrap' }}>
                   {Array.from({ length: totalRounds }, (_, i) => i < roundNum ? '◆' : '◇').join(' ')}
                 </span>
-                <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? 20 : 17, color: '#00C9A7', lineHeight: 1 }}>
+                <span className="font-beaufort font-bold" style={{ fontSize: isMobile ? 16 : 17, color: '#00C9A7', lineHeight: 1, whiteSpace: 'nowrap' }}>
                   Points {points}
                 </span>
               </div>
             </div>
-            <img src={FlagIcon} alt="" style={{ width: isMobile ? '76px' : '63px', height: isMobile ? '76px' : '63px', flexShrink: 0, display: 'block' }} />
+            <img src={FlagIcon} alt="" style={{ width: isMobile ? '58px' : '63px', height: isMobile ? '58px' : '63px', flexShrink: 0, display: 'block' }} />
           </motion.div>
 
           {/* ── GTR media — real video or image from the backend ── */}
