@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import MaskGroup from '../assets/Mask group.webp'
 import LearnMoreBtn from '../assets/Group 171.svg'
-import { scrollFadeIn, slideFromLeftScroll } from '../lib/animations'
+import { scrollFadeUp, scrollFadeIn } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function OurTeam() {
@@ -10,36 +9,19 @@ export default function OurTeam() {
   const vp = { once: true }
 
   return (
-    <section
-      className="relative w-full"
-      style={{ height: isMobile ? '440px' : '590px', marginTop: '-4px', marginBottom: 0, paddingBottom: 0, zIndex: 20, position: 'relative', clipPath: 'inset(-250px 0 0 0)' }}
-    >
-
-      {/* MASK GROUP — static overlay */}
-      <img
-        src={MaskGroup}
-        alt=""
-        loading="lazy"
-        className="absolute left-0 w-full z-[5] pointer-events-none select-none"
-        style={{
-          top: '42%',
-          height: '65%',
-          objectFit: 'cover',
-          objectPosition: 'center top',
-        }}
-      />
-
-      {/* TEXT CONTENT — slide in from left */}
-      <motion.div
-        className="absolute z-[10]"
-        style={isMobile ? { left: '20px', right: '20px', top: '40px', maxWidth: '100%' } : { left: '79px', top: '60px', maxWidth: '500px' }}
-        variants={slideFromLeftScroll}
-        initial={reduced ? false : 'hidden'}
-        whileInView="show"
-        viewport={vp}
+    <div className="w-full">
+      <div
+        className="flex flex-col items-center text-center"
+        style={{ paddingTop: isMobile ? '48px' : '80px', paddingBottom: isMobile ? '40px' : '60px', paddingLeft: '20px', paddingRight: '20px' }}
       >
 
-        <div className="relative">
+        <motion.div
+          className="relative text-center"
+          variants={scrollFadeUp}
+          initial={reduced ? false : 'hidden'}
+          whileInView="show"
+          viewport={vp}
+        >
           <h2
             className="font-beaufort text-[90px] font-bold leading-none tracking-[-0.02em] bg-gradient-to-r from-[#3AF9FF] to-[#00A7AD] bg-clip-text text-transparent"
             style={{ mixBlendMode: 'multiply' as const, fontSize: isMobile ? '35px' : undefined }}
@@ -53,14 +35,19 @@ export default function OurTeam() {
           >
             Our Team
           </h2>
-        </div>
+        </motion.div>
 
-        <p
-          className="font-['Inter',sans-serif] text-[22px] font-medium text-[#0E1B2F] leading-[30px] mt-[16px]"
-          style={isMobile ? { fontSize: '11px', lineHeight: '15px' } : undefined}
+        <motion.p
+          className="font-['Inter',sans-serif] text-[22px] font-medium text-[#0E1B2F] text-center max-w-[1090px] leading-[30px] mt-[40px]"
+          style={isMobile ? { fontSize: '11px', lineHeight: '15px', marginTop: '20px' } : undefined}
+          variants={scrollFadeIn}
+          initial={reduced ? false : 'hidden'}
+          whileInView="show"
+          viewport={vp}
+          transition={{ delay: 0.15 }}
         >
           Collaborative excellence with the industry's best. We are proud to work alongside these visionaries to push the boundaries of what's possible.
-        </p>
+        </motion.p>
 
         <motion.img
           src={LearnMoreBtn}
@@ -74,8 +61,7 @@ export default function OurTeam() {
           whileHover={reduced ? {} : { scale: 1.04, filter: 'brightness(1.1)' }}
           whileTap={reduced ? {} : { scale: 0.97 }}
         />
-      </motion.div>
-
-    </section>
+      </div>
+    </div>
   )
 }

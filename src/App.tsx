@@ -11,6 +11,7 @@ import Leaderboard from './components/Leaderboard'
 import OurPartners from './components/OurPartners'
 import OurTeam from './components/OurTeam'
 import Footer from './components/Footer'
+import Woman from './assets/C15 1.webp'
 import SeparatorLine from './assets/Rectangle 6.svg'
 import LoginModal from './components/LoginModal'
 import LevelUpToast from './components/LevelUpToast'
@@ -65,6 +66,15 @@ function Landing() {
       </div>
       <div style={{ position: 'relative', zIndex: 20 }}>
         <OurTeam />
+      </div>
+      {/* Girl on a white background, just above the footer */}
+      <div style={{ background: '#FFFFFF', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', position: 'relative', zIndex: 20, lineHeight: 0 }}>
+        <img
+          src={Woman}
+          alt=""
+          className="block h-auto"
+          style={{ width: '100%', maxWidth: isMobile ? '360px' : '520px' }}
+        />
       </div>
       <img
         src={SeparatorLine}

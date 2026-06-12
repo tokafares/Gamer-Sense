@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import FooterBg from '../assets/Group 73.svg'
-import Woman from '../assets/C15 1.webp'
-import { scrollFadeIn, footerStagger, footerItem, scaleInSpring } from '../lib/animations'
+import { footerStagger, footerItem, scaleInSpring } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Particle {
@@ -184,26 +183,10 @@ export default function Footer() {
         }}
       />
 
-      {/* Woman — full-width at the top of the footer on mobile (per Figma), bottom-left on desktop */}
-      <motion.img
-        src={Woman}
-        alt=""
-        loading="lazy"
-        className="absolute pointer-events-none select-none z-[5]"
-        style={isMobile
-          ? { left: 0, top: 0, width: '100%', height: 'auto', objectFit: 'cover' }
-          : { left: '0px', bottom: '0px', height: 'calc(100% + 60px)', width: 'auto' }}
-        variants={scrollFadeIn}
-        initial={reduced ? false : 'hidden'}
-        whileInView="show"
-        viewport={vp}
-        transition={{ duration: 0.8 }}
-      />
-
-      {/* Text content — staggered columns (below the woman on mobile) */}
+      {/* Text content — staggered columns */}
       <motion.div
         className="absolute z-[10]"
-        style={isMobile ? { left: '20px', right: '20px', top: '380px' } : { left: '55%', top: '80px' }}
+        style={isMobile ? { left: '20px', right: '20px', top: '40px' } : { left: '55%', top: '80px' }}
         variants={footerStagger}
         initial={reduced ? false : 'hidden'}
         whileInView="show"

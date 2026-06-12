@@ -75,14 +75,14 @@ export default function OurPartners() {
 
       </div>
 
-      {/* Illustration flush at bottom — centred cutout */}
-      <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
+      {/* Illustration flush at bottom — full width */}
+      <div style={{ lineHeight: 0, fontSize: 0, position: 'relative', zIndex: 1 }}>
         <motion.img
           src={PartnerIllustration}
           alt=""
           loading="lazy"
-          className="h-auto block"
-          style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: isMobile ? '420px' : '760px' }}
+          className="w-full h-auto block"
+          style={{ position: 'relative', zIndex: 1 }}
           variants={scrollFadeIn}
           initial={reduced ? false : 'hidden'}
           whileInView="show"
