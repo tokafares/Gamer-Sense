@@ -113,3 +113,52 @@ body {
   box-sizing: border-box;
 }
 
+/* ── Champion Detail — mobile: stack name over full-width content ────────── */
+@media (max-width: 768px) {
+  .cd-name-panel {
+    position: relative;
+    left: 0;
+    top: 0;
+    bottom: auto;
+    max-width: 100%;
+    justify-content: flex-start;
+    pointer-events: auto;
+    padding: 88px 18px 0;
+    box-sizing: border-box;
+  }
+  .cd-name {
+    font-size: clamp(2.4rem, 12vw, 3.4rem) !important;
+    word-break: break-word;
+  }
+  .cd-right-col {
+    width: 100%;
+    margin-left: 0;
+    min-height: auto;
+    padding: 18px 16px 104px;
+  }
+  /* splash sits across the top, fading downward instead of to the right */
+  .cd-splash-img {
+    width: 100% !important;
+    height: 46% !important;
+    object-position: top center !important;
+    -webkit-mask-image: linear-gradient(to bottom, black 35%, transparent 92%) !important;
+    mask-image: linear-gradient(to bottom, black 35%, transparent 92%) !important;
+  }
+  .cd-nav {
+    left: 0 !important;
+    right: 0;
+    transform: none !important;
+    padding: 0 12px;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .cd-nav button {
+    padding: 9px 14px !important;
+    font-size: 12px !important;
+    max-width: 46vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+

@@ -7,6 +7,7 @@ import Footer from '../components/Footer'
 import SeparatorLine from '../assets/Rectangle 6.svg'
 import Group309 from '../assets/Group 309.webp'
 import ChampionBg from '../assets/ChampionBg.svg'
+import ScenarioFrame from '../assets/Scenario.png'
 import BtnTopLane from '../assets/knowledgehub-btn-toplane.svg'
 import BtnJungle from '../assets/knowledgehub-btn-jungle.svg'
 import BtnMidLane from '../assets/knowledgehub-btn-midlane.svg'
@@ -337,7 +338,7 @@ export default function Page5() {
                           whileHover="hovered"
                           variants={innerVariants}
                           transition={{ duration: 0.28, ease: 'easeOut' }}
-                          style={{ position: 'relative', overflow: 'hidden' }}
+                          style={{ position: 'relative', overflow: 'hidden', borderRadius: 8 }}
                         >
                           {/* Layer 1: portrait — always visible, sets card aspect ratio */}
                           <img
@@ -481,6 +482,14 @@ export default function Page5() {
                               View →
                             </motion.div>
                           </motion.div>
+
+                          {/* Per-champion frame overlay */}
+                          <img
+                            src={ScenarioFrame}
+                            alt=""
+                            aria-hidden="true"
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}
+                          />
                         </motion.div>
                       </motion.div>
                     )

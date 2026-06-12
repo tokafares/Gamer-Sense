@@ -218,7 +218,7 @@ export default function ChampionDetail() {
               filter: 'blur(16px)',
               pointerEvents: 'none',
             }} />
-            <h1 style={{
+            <h1 className="cd-name" style={{
               position: 'relative',
               fontSize: 'clamp(3.5rem, 7vw, 8.5rem)',
               fontFamily: "'Beaufort for LOL', serif",
@@ -458,7 +458,7 @@ export default function ChampionDetail() {
       </div>
 
       {/* ══ PREV / NEXT — fixed bottom ════════════════════════════════════════ */}
-      <div style={{
+      <div className="cd-nav" style={{
         position: 'fixed',
         bottom: 24,
         left: '50%',
