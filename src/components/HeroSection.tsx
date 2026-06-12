@@ -23,7 +23,7 @@ export default function HeroSection() {
       className="relative w-full h-[calc(100vh-86.4px)] min-h-[500px] bg-[#091528] mt-[86.4px]"
       style={{
         clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% calc(100% - 60px), 0 100%)' : 'polygon(0 0, 100% 0, 100% calc(100% - 120px), 0 100%)',
-        ...(isMobile ? { height: '440px', minHeight: '440px' } : {}),
+        ...(isMobile ? { height: '470px', minHeight: '470px' } : {}),
       }}
     >
 
@@ -61,8 +61,8 @@ export default function HeroSection() {
             position: 'absolute',
             right: '0',
             bottom: '0',
-            height: '75%',
-            width: '55%',
+            height: isMobile ? '52%' : '75%',
+            width: isMobile ? '72%' : '55%',
             objectFit: 'cover',
             objectPosition: 'left top',
           }}
@@ -80,8 +80,8 @@ export default function HeroSection() {
             position: 'absolute',
             right: '0',
             bottom: '0',
-            height: '75%',
-            width: '55%',
+            height: isMobile ? '52%' : '75%',
+            width: isMobile ? '72%' : '55%',
             objectFit: 'cover',
             objectPosition: 'left top',
             mixBlendMode: 'screen' as const,
@@ -114,7 +114,9 @@ export default function HeroSection() {
         {/* "Master" */}
         <motion.h2
           className="absolute font-beaufort font-bold leading-none bg-gradient-to-b from-[#FFFCF6] to-[#CCCCCC] bg-clip-text text-transparent whitespace-nowrap"
-          style={{ left: LEFT, top: isMobile ? '15%' : '20%', fontSize: isMobile ? '30px' : '53.58px' }}
+          style={isMobile
+            ? { left: 0, right: 0, textAlign: 'center', top: '15%', fontSize: '18px' }
+            : { left: LEFT, top: '20%', fontSize: '53.58px' }}
           variants={heroTitle}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -126,13 +128,15 @@ export default function HeroSection() {
         <motion.h1
           className="absolute font-beaufort font-bold"
           style={{
-            left: LEFT,
-            top: isMobile ? '21%' : '30%',
-            fontSize: isMobile ? '40px' : '90px',
+            left: isMobile ? 0 : LEFT,
+            right: isMobile ? 0 : undefined,
+            textAlign: isMobile ? 'center' : undefined,
+            top: isMobile ? '22%' : '30%',
+            fontSize: isMobile ? '26px' : '90px',
             lineHeight: 1.04,
-            whiteSpace: isMobile ? 'normal' : 'nowrap',
-            width: isMobile ? 'calc(100% - 40px)' : 'max-content',
-            paddingRight: '6px',
+            whiteSpace: 'nowrap',
+            width: isMobile ? '100%' : 'max-content',
+            paddingRight: isMobile ? 0 : '6px',
             paddingBottom: '8px',
             background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
             WebkitBackgroundClip: 'text',
@@ -150,7 +154,9 @@ export default function HeroSection() {
         {/* Subtitle */}
         <motion.p
           className="absolute font-['Inter',sans-serif] font-normal leading-snug h-auto pb-[8px] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent"
-          style={{ left: LEFT, top: isMobile ? '50%' : '46%', fontSize: isMobile ? '14px' : '17px', width: isMobile ? 'calc(100% - 40px)' : '400px' }}
+          style={isMobile
+            ? { left: 0, right: 0, textAlign: 'center', top: '31%', fontSize: '11px', width: '100%', paddingLeft: '40px', paddingRight: '40px', boxSizing: 'border-box' }
+            : { left: LEFT, top: '46%', fontSize: '17px', width: '400px' }}
           variants={heroSubtitleAnim}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -159,12 +165,12 @@ export default function HeroSection() {
         </motion.p>
 
         {/* GET STARTED button */}
-        <Link to="/features" style={{ position: 'absolute', left: LEFT, top: isMobile ? '66%' : '62%', lineHeight: 0 }}>
+        <Link to="/features" style={{ position: 'absolute', left: isMobile ? 0 : LEFT, right: isMobile ? 0 : undefined, top: isMobile ? '39%' : '62%', lineHeight: 0, textAlign: isMobile ? 'center' : undefined }}>
           <motion.img
             src={GetStartedBtn}
             alt="Get Started"
             className="cursor-pointer flex-shrink-0"
-            style={{ width: isMobile ? '230px' : '345px', height: 'auto' }}
+            style={{ width: isMobile ? '165px' : '345px', height: 'auto', display: isMobile ? 'inline-block' : 'block' }}
             variants={heroButtonAnim}
             initial={reduced ? false : 'hidden'}
             animate="show"
