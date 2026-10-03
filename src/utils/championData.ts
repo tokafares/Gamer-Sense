@@ -52,6 +52,28 @@ async function getDDragonVersion(): Promise<string> {
 let cachedChampions: Champion[] | null = null
 let fetchPromise: Promise<Champion[]> | null = null
 
+/**
+ * Resolves a local champion to its Data Dragon id, i.e. its key in champion.json's `data`
+ * (e.g. local "Lee" -> "LeeSin", "Wukong" -> "MonkeyKing", "BelVeth" -> "Belveth").
+ * Local ids and names don't always match Data Dragon, so try in order:
+ *   1. the local id, if it is already a champion.json key
+ *   2. the id in the local splash URL (`.../splash/LeeSin_0.jpg`), which uses Data Dragon ids
+ *   3. a punctuation/case-insensitive match against champion.json keys and display names
+ */
+function resolveDDragonId(champ: Champion, ddMap: Record<string, DDragonBasic>): string | null {
+  if (ddMap[champ.id]) return champ.id
+
+  const fromSplash = champ.splashUrl.match(/\/splash\/([A-Za-z0-9]+)_\d+\.jpg$/)?.[1]
+  if (fromSplash && ddMap[fromSplash]) return fromSplash
+
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+  const wanted = new Set([normalize(champ.id), normalize(champ.name)])
+  for (const [key, dd] of Object.entries(ddMap)) {
+    if (wanted.has(normalize(key)) || wanted.has(normalize(dd.name))) return key
+  }
+  return null
+}
+
 function mapDifficulty(d: number): number {
   if (d <= 4) return 1
   if (d <= 7) return 2
@@ -83,21 +105,27 @@ export async function getChampions(): Promise<Champion[]> {
       const list  = (await listRes.json()) as { data: Record<string, DDragonBasic> }
       const ddMap = list.data
 
+      // Local id -> Data Dragon id (champion.json key). Every Data Dragon request uses the latter.
+      const ddIds = new Map(local.champions.map(c => [c.id, resolveDDragonId(c, ddMap)] as const))
+
       // Fetch all individual champion files in parallel for lore, allytips, enemytips
       // (these fields are not present in the list endpoint)
       const detailMap = new Map<string, DDragonDetail>()
       await Promise.allSettled(
         local.champions.map(async c => {
-          const r = await fetch(`${base}/champion/${c.id}.json`)
+          const ddId = ddIds.get(c.id)
+          if (!ddId) return
+          const r = await fetch(`${base}/champion/${ddId}.json`)
           if (!r.ok) return
           const json = (await r.json()) as { data: Record<string, DDragonDetail> }
-          const d = json.data[c.id]
+          const d = json.data[ddId]
           if (d) detailMap.set(c.id, d)
         })
       )
 
       const merged = local.champions.map(champ => {
-        const dd     = ddMap[champ.id]
+        const ddId   = ddIds.get(champ.id) ?? undefined
+        const dd     = ddId ? ddMap[ddId] : undefined
         const detail = detailMap.get(champ.id)
 
         const strengths  = (detail?.allytips  ?? []).filter(Boolean).slice(0, 3)
@@ -105,6 +133,7 @@ export async function getChampions(): Promise<Champion[]> {
 
         return {
           ...champ,
+          ddragonId:   ddId,
           name:        dd?.name      ?? champ.name,
           title:       dd?.title     ?? champ.title,
           description: detail?.lore  ?? dd?.blurb   ?? champ.description,

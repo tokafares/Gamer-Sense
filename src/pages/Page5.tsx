@@ -286,7 +286,7 @@ export default function Page5() {
                   filtered.map((champ, i) => {
                     const isHovered = hoveredId === champ.id
                     const isDimmed  = !!hoveredId && !isHovered
-                    const splashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg`
+                    const splashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.ddragonId ?? champ.id}_0.jpg`
 
                     // Per-card inner variants — depend on champ.color
                     const innerVariants: Variants = {

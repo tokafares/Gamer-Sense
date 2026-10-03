@@ -25,6 +25,8 @@ export interface Champion {
   splashUrl: string
   portraitUrl: string
   stats: ChampionStats
+  /** Data Dragon id (champion.json key), e.g. "LeeSin" for local id "Lee". Set by getChampions(). */
+  ddragonId?: string
 }
 
 export interface ChampionsData {
