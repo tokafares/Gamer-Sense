@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# Vercel
+# Vercel CLI link (per machine)
 .vercel

@@ -84,7 +84,7 @@ const Home = () => {
           {/* Left text column */}
           <div
             className="flex flex-col items-start shrink-0"
-            style={{ paddingLeft: '79px', paddingTop: '128px', paddingBottom: '64px', maxWidth: '760px' }}
+            style={{ paddingLeft: 'clamp(20px, 4.1168vw, 79px)', paddingTop: '128px', paddingBottom: '64px', maxWidth: '760px' }}
           >
             <motion.p
               variants={fadeUp}
@@ -92,7 +92,7 @@ const Home = () => {
               animate="show"
               className="font-bold leading-none"
               style={{
-                fontSize: '54px',
+                fontSize: 'clamp(28px, 2.8140vw, 54px)',
                 background: 'linear-gradient(to bottom, #fffcf6, #969696)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -109,7 +109,7 @@ const Home = () => {
               transition={{ duration: 0.45, ease: 'easeOut', delay: 0.15 }}
               className="font-bold leading-none whitespace-nowrap"
               style={{
-                fontSize: '90px',
+                fontSize: 'clamp(30px, 4.6900vw, 90px)',
                 marginTop: '0px',
                 paddingBottom: '8px',
                 background: 'linear-gradient(to right, #3AF9FF, #00A7AD)',
@@ -128,8 +128,8 @@ const Home = () => {
               transition={{ duration: 0.45, ease: 'easeOut', delay: 0.3 }}
               className="font-normal"
               style={{
-                fontSize: '27px',
-                lineHeight: '39.944px',
+                fontSize: 'clamp(16px, 1.4070vw, 27px)',
+                lineHeight: 'clamp(24px, 2.0815vw, 39.944px)',
                 marginTop: '36px',
                 maxWidth: '631px',
                 background: 'linear-gradient(to bottom, #fffcf6, #969696)',
@@ -160,7 +160,7 @@ const Home = () => {
             initial={rm ? false : { opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: 'easeOut', delay: 0.35 }}
-            className="absolute right-0 pointer-events-none flex items-center justify-center"
+            className="absolute right-0 pointer-events-none hidden xl:flex items-center justify-center"
             style={{ top: '65px', width: '875px', height: '520px' }}
           >
             <span className="text-gs-textMuted text-sm">[ esports image ]</span>
@@ -332,13 +332,13 @@ const Home = () => {
                     transition={{ duration: 0.35, ease: 'easeOut' }}
                     className="grid grid-cols-5 text-center"
                     style={{
-                      padding: '16px 32px',
+                      padding: '16px clamp(12px, 1.6676vw, 32px)',
                       fontSize: '14px',
                       background: i % 2 === 0 ? '#0D1F3C' : '#112040',
                     }}
                   >
                     <span className="text-gs-textMuted">{row.rank}</span>
-                    <span className="text-gs-text">{row.username}</span>
+                    <span className="text-gs-text min-w-0 truncate px-1" title={row.username}>{row.username}</span>
                     <span className="text-gs-teal font-bold">Lv {levelFromPoints(row.points)}</span>
                     <span className="text-gs-text">{row.points.toLocaleString()}</span>
                     <span className="text-gs-textMuted">{row.tier}</span>

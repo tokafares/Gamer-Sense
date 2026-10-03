@@ -31,7 +31,9 @@ const FEATURE_PATHS = new Set([...FEATURE_NAV.map(n => n.to), ...DUELS_PATHS, ..
 export default function Header() {
   const { pathname } = useLocation()
   const reduced = useReducedMotion()
-  const isMobile = useIsMobile()
+  // The full desktop nav (up to 7 links plus the account area) needs ~1200px; below that,
+  // including tablets, use the hamburger drawer. 1280px and wider are unchanged.
+  const isMobile = useIsMobile(1200)
   const [menuOpen, setMenuOpen] = useState(false)
   const { isAuthenticated, user, openLoginModal, logout } = useAuthStore()
 

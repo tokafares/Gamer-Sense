@@ -13,6 +13,16 @@ import {
 } from '../lib/animations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
+// Desktop sizes come from the 1920×1080 Figma design and scale down from there.
+// The hero is (100vh − 86.4px) tall and places its text at percentages of that height, so a
+// fixed font size overlaps on shorter or narrower screens. Each size is therefore capped by
+// the viewport width and by the hero height. The divisors sit just under 19.2 (1920 / 100)
+// and 993.6 (the hero height at 1080), so at exactly 1920×1080 min() returns the design value.
+const HERO_HEIGHT = 'max(500px, 100vh - 86.4px)'
+function fluid(px: number): string {
+  return `min(${px}px, ${(px / 19.19).toFixed(4)}vw, calc(${HERO_HEIGHT} * ${(px / 993).toFixed(5)}))`
+}
+
 export default function HeroSection() {
   const reduced = useReducedMotion()
   const isMobile = useIsMobile()
@@ -113,7 +123,7 @@ export default function HeroSection() {
           className="absolute font-beaufort font-bold leading-none bg-gradient-to-b from-[#FFFCF6] to-[#CCCCCC] bg-clip-text text-transparent whitespace-nowrap"
           style={isMobile
             ? { left: 0, right: 0, textAlign: 'center', top: '15%', fontSize: '18px' }
-            : { left: LEFT, top: '20%', fontSize: '80px' }}
+            : { left: LEFT, top: '20%', fontSize: fluid(80) }}
           variants={heroTitle}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -129,7 +139,7 @@ export default function HeroSection() {
             right: isMobile ? 0 : undefined,
             textAlign: isMobile ? 'center' : undefined,
             top: isMobile ? '22%' : '30%',
-            fontSize: isMobile ? '26px' : '135px',
+            fontSize: isMobile ? '26px' : fluid(135),
             lineHeight: 1.04,
             whiteSpace: 'nowrap',
             width: isMobile ? '100%' : 'max-content',
@@ -153,7 +163,7 @@ export default function HeroSection() {
           className="absolute font-['Inter',sans-serif] font-normal leading-snug h-auto pb-[8px] bg-gradient-to-b from-[#FFFCF6] to-[#969696] bg-clip-text text-transparent"
           style={isMobile
             ? { left: 0, right: 0, textAlign: 'center', top: '31%', fontSize: '11px', width: '100%', paddingLeft: '40px', paddingRight: '40px', boxSizing: 'border-box' }
-            : { left: LEFT, top: '46%', fontSize: '24px', width: '480px' }}
+            : { left: LEFT, top: '46%', fontSize: fluid(24), width: fluid(480) }}
           variants={heroSubtitleAnim}
           initial={reduced ? false : 'hidden'}
           animate="show"
@@ -167,7 +177,7 @@ export default function HeroSection() {
             src={GetStartedBtn}
             alt="Get Started"
             className="cursor-pointer flex-shrink-0"
-            style={{ width: isMobile ? '165px' : '345px', height: 'auto', display: isMobile ? 'inline-block' : 'block' }}
+            style={{ width: isMobile ? '165px' : fluid(345), height: 'auto', display: isMobile ? 'inline-block' : 'block' }}
             variants={heroButtonAnim}
             initial={reduced ? false : 'hidden'}
             animate="show"
