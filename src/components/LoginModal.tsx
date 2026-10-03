@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useAuthStore } from '../store/authStore'
 import type { AuthUser } from '../store/authStore'
 import { apiPost, ApiError } from '../lib/api'
+import { DEMO_MODE } from '../lib/env'
 
 interface LoginResponse {
   token: string
@@ -209,6 +210,12 @@ export default function LoginModal() {
                 </button>
               ))}
             </div>
+
+            {DEMO_MODE && (
+              <p style={{ margin: '0 0 16px', padding: '10px 12px', borderRadius: 6, border: '1px solid #1E3A5F', background: 'rgba(0, 201, 167, 0.08)', color: '#C9D4E5', fontSize: 13, lineHeight: 1.5 }}>
+                Demo mode: any email and password signs you in as a guest. Nothing is sent anywhere.
+              </p>
+            )}
 
             <form onSubmit={handleSubmit} noValidate>
               {/* Username — register only */}

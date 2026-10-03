@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
+import { HAS_API } from '../lib/env'
 import { apiGet, ApiError } from '../lib/api'
 import type { UserProfile } from '../types/profile'
 
 export function useProfile(userId: string | null | undefined) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(!!userId && !!import.meta.env.VITE_API_URL)
+  const [loading, setLoading] = useState(!!userId && HAS_API)
   const [error,   setError]   = useState<string | null>(null)
 
   useEffect(() => {
-    if (!userId || !import.meta.env.VITE_API_URL) {
+    if (!userId || !HAS_API) {
       setLoading(false)
       return
     }

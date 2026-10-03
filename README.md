@@ -2,7 +2,7 @@
 
 Sharpen your League of Legends game sense without the stress of ranked games or coaching. Inspired by chess.com, GamerSense turns real in-game situations (rotations, trades, fights and macro decisions) into quizzes, timed drills and head-to-head duels.
 
-**Live demo:** currently offline. The production backend on Railway is not running, so there is no public link at the moment.
+**[Live demo](https://gamersense-touka.vercel.app)** (backend-free demo build, see [Demo mode](#demo-mode)). You're signed in as a guest automatically; live 1v1 duels need the real server and are switched off in the demo.
 
 ![GamerSense landing page](https://tokafares.vercel.app/screenshots/gamersense/landing.webp)
 
@@ -76,6 +76,21 @@ gamersense/
 | Cache | Redis (`ioredis`) |
 | External data | Riot Data Dragon |
 | Deployment | Docker + nginx, Railway, Vercel |
+
+## Demo mode
+
+The `demo` branch can be built without any backend by setting `VITE_DEMO_MODE=true`. The public demo is deployed this way.
+
+- **API in the browser.** `src/lib/api.ts` routes every request to `src/lib/demo/mockApi.ts`, which mirrors the backend's response shapes and rules: +100 / +10 for answers, +150 / +75 / 0 for Guess the Rank, the same tier thresholds and the same XP level curve. Progress is saved per browser in `localStorage`, so points, levels (including the level-up popup), the profile and the leaderboard all update as you play.
+- **Content.** Questions and Guess the Rank clips come from the backend seed (`src/lib/demo/seedData.ts`, generated from `backend/prisma/seed.ts`). The leaderboard's other players and the Guess the Rank vote breakdowns are made-up sample data.
+- **Guest account.** Visitors start signed in as "Guest Summoner". After logging out, any email and password signs back in as the guest.
+- **Duels and admin.** Real-time 1v1 matches need the Socket.io server, so the duel routes show a short explanation instead. The admin panel route is not registered.
+- **Champion data** still comes straight from Riot's Data Dragon.
+- A small **Demo** badge in the corner explains all of this.
+
+```bash
+VITE_DEMO_MODE=true npm run dev     # or: VITE_DEMO_MODE=true npm run build
+```
 
 ## Running locally
 

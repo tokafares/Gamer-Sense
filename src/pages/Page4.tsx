@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { HAS_API } from '../lib/env'
 import { motion, useReducedMotion } from 'framer-motion'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -77,7 +78,7 @@ export default function Page4() {
 
   // Fetch all questions for the active lane whenever lane changes
   useEffect(() => {
-    if (!import.meta.env.VITE_API_URL) return
+    if (!HAS_API) return
     let cancelled = false
     stopTimer()
     setFetchLoading(true)
@@ -153,7 +154,7 @@ export default function Page4() {
     setLocked(true)
     let earned = 0
     let correct = false
-    if (import.meta.env.VITE_API_URL) {
+    if (HAS_API) {
       try {
         const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number; totalPoints: number }>('/answers/submit', {
           questionId: question.id,

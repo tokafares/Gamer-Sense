@@ -1,3 +1,6 @@
+import { DEMO_MODE } from './env'
+import { DemoHttpError, demoRequest } from './demo/mockApi'
+
 const BASE_URL: string = import.meta.env.VITE_API_URL ?? ''
 const TOKEN_KEY = 'gs_token'
 
@@ -46,6 +49,16 @@ async function request<T>(
   path: string,
   body?: unknown,
 ): Promise<T> {
+  // Demo build: answer from the in-browser mock API, surfacing errors as ApiError like the real client.
+  if (DEMO_MODE) {
+    try {
+      return await demoRequest<T>(method, path, body)
+    } catch (err) {
+      if (err instanceof DemoHttpError) throw new ApiError(err.status, err.body, `API error ${err.status}`)
+      throw err
+    }
+  }
+
   const response = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: buildHeaders(),

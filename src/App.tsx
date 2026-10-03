@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
-import { useEffect, lazy, Suspense } from 'react'
+import { useEffect, lazy, Suspense, type ReactNode } from 'react'
 import RequireAuth from './components/RequireAuth'
 import { useIsMobile } from './hooks/useIsMobile'
 import { prefetchPageImages } from './lib/prefetch'
@@ -15,6 +15,9 @@ import Woman from './assets/C15 1 (2).png'
 import SeparatorLine from './assets/Rectangle 6.svg'
 import LoginModal from './components/LoginModal'
 import LevelUpToast from './components/LevelUpToast'
+import DemoBadge from './components/demo/DemoBadge'
+import DemoServerNotice from './components/demo/DemoServerNotice'
+import { DEMO_MODE } from './lib/env'
 import { Link } from 'react-router-dom'
 
 const Page1        = lazy(() => import('./pages/Page1'))
@@ -89,6 +92,9 @@ function Landing() {
   )
 }
 
+// Demo build: duels need the Socket.io server, so their routes explain that instead.
+const duelRoute = (page: ReactNode) => (DEMO_MODE ? <DemoServerNotice /> : <RequireAuth>{page}</RequireAuth>)
+
 function App() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -132,22 +138,24 @@ function App() {
       <Route path="/scenarios"     element={<RequireAuth><Page3 /></RequireAuth>} />
       <Route path="/blitz"         element={<RequireAuth><Page4 /></RequireAuth>} />
       <Route path="/knowledge-hub" element={<Page5 />} />
-      <Route path="/duels"         element={<RequireAuth><Page6 /></RequireAuth>} />
-      <Route path="/trivia-invite" element={<RequireAuth><Page7 /></RequireAuth>} />
+      <Route path="/duels"         element={duelRoute(<Page6 />)} />
+      <Route path="/trivia-invite" element={duelRoute(<Page7 />)} />
       <Route path="/trivia"        element={<RequireAuth><Page8 /></RequireAuth>} />
-      <Route path="/match-winner"  element={<RequireAuth><Page9 /></RequireAuth>} />
+      <Route path="/match-winner"  element={duelRoute(<Page9 />)} />
       <Route path="/profile"       element={<RequireAuth><Page10 /></RequireAuth>} />
       <Route path="/match"         element={<RequireAuth><Page11 /></RequireAuth>} />
       <Route path="/results"       element={<RequireAuth><Page12 /></RequireAuth>} />
       <Route path="/champion/:id" element={<ChampionDetail />} />
-      <Route path="/gtr-invite" element={<RequireAuth><GtrInvite /></RequireAuth>} />
-      <Route path="/admin"     element={<AdminPanel />} />
-      <Route path="/match/join/:token" element={<RequireAuth><MatchJoin /></RequireAuth>} />
+      <Route path="/gtr-invite" element={duelRoute(<GtrInvite />)} />
+      {/* The admin panel needs the real API and an admin account, so the demo leaves it out. */}
+      {!DEMO_MODE && <Route path="/admin"     element={<AdminPanel />} />}
+      <Route path="/match/join/:token" element={duelRoute(<MatchJoin />)} />
       <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
       <LoginModal />
       <LevelUpToast />
+      {DEMO_MODE && <DemoBadge />}
     </>
   )
 }

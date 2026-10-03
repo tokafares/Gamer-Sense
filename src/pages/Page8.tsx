@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { HAS_API } from '../lib/env'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
@@ -93,7 +94,7 @@ export default function Page8() {
 
   // Solo mode: fetch all questions for the lane whenever lane changes
   useEffect(() => {
-    if (isMatchMode || !import.meta.env.VITE_API_URL) return
+    if (isMatchMode || !HAS_API) return
     let cancelled = false
     setFetchLoading(true)
     setFetchError(null)
@@ -249,7 +250,7 @@ export default function Page8() {
     // Solo mode
     let earned = 0
     let correct = false
-    if (import.meta.env.VITE_API_URL) {
+    if (HAS_API) {
       try {
         const res = await apiPost<{ correct: boolean; correctAnswer: string; pointsEarned: number; totalPoints: number }>('/answers/submit', {
           questionId: question.id,

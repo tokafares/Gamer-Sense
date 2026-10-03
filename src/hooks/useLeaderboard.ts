@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
+import { HAS_API } from '../lib/env'
 import { apiGet, ApiError } from '../lib/api'
 import type { LeaderboardEntry } from '../types/leaderboard'
 
-const hasBackend = !!import.meta.env.VITE_API_URL
+const hasBackend = HAS_API
 
 export function useLeaderboard() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { HAS_API } from '../lib/env'
 import { apiGet, apiPost, ApiError } from '../lib/api'
 
 export interface GTRRound {
@@ -40,7 +41,7 @@ export function useGTRRound(roundIndex: number, roundId?: string) {
     setResult(null)
     setError(null)
 
-    if (!import.meta.env.VITE_API_URL) { setLoading(false); return }
+    if (!HAS_API) { setLoading(false); return }
 
     let cancelled = false
     setLoading(true)

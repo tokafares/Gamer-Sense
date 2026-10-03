@@ -404,3 +404,10 @@ For bottom-anchored labels (rank cards): `justifyContent: 'flex-end', paddingBot
 
 ### GTR result flow — Page 9 → Page 12
 After `submitVote` resolves in `useGTRRound`, save result + stats to game store via `setGTRResult`. Page 12 reads `gtrResult` from the store to render `votedRank`, `correctRank`, `totalVotes`, and `percentages`. Bar heights are derived dynamically: `height = (pct / maxPct) * BAR_RENDER_MAX`. User's pick renders teal, correct answer renders gold.
+
+## Demo mode (VITE_DEMO_MODE)
+- `src/lib/env.ts` exports `DEMO_MODE` and `HAS_API`. Gate data fetching on `HAS_API` (not `import.meta.env.VITE_API_URL`) so it also works in the demo build.
+- `src/lib/api.ts` sends every request to `src/lib/demo/mockApi.ts` when `DEMO_MODE` is on. New REST endpoints need a matching handler there, or the demo returns 404 for them.
+- `src/lib/demo/seedData.ts` is generated from `backend/prisma/seed.ts`; regenerate it when seed questions or GTR clips change.
+- Duel routes render `DemoServerNotice` and `/admin` is not registered in demo mode (see `duelRoute` in `App.tsx`).
+- `fadeUp` and the other variants in `lib/animations.ts` use `hidden` / `show` keys, not `visible`.
