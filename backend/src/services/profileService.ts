@@ -20,7 +20,6 @@ export async function getProfile(userId: string) {
   return {
     id: user.id,
     username: user.username,
-    email: user.email,
     avatarUrl: user.avatarUrl,
     level: prog.level,
     xp: prog.xp,
